@@ -28,9 +28,9 @@ $ python run.py
 Then browse to http://127.0.0.1:5000/, and you can begin exploring profiles from the `examples` directory. You can add new profiles to that directory, collected using Linux `perf`. Here are instructions for a generic CPU profile at 49 Hertz for 120 seconds:
 
 ```bash
-# perf record -F 49 -a -g -- sleep 120
-# perf script --header > stacks.myproductionapp.2018-03-30_01
-# gzip stacks.myproductionapp.2018-03-30_01	# optional
+$ sudo perf record -F 49 -a -g -- sleep 120
+$ sudo perf script --header > stacks.myproductionapp.2018-03-30_01
+$ gzip stacks.myproductionapp.2018-03-30_01	# optional
 ```
 
 There are extra steps to fetch stacks correctly for some runtimes, depending on the runtime. For example, we've previously published Java steps in [Java in Flames](https://medium.com/netflix-techblog/java-in-flames-e763b3d32166): java needs to be running with the -XX:+PreserveFramePointer option, and [perf-map-agent](https://github.com/jvm-profiling-tools/perf-map-agent) must be run immediately after the `perf record` to dump a JIT symbol table in /tmp.
