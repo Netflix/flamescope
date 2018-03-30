@@ -50,14 +50,26 @@ def calculate_stack_range(filename):
 
     return collections.namedtuple('range',['start', 'end'])(floor(start), ceil(end))
 
+def library2type(library):
+    if library == "":
+        return ""
+    if library.startswith("/tmp/perf-"):
+        return "jit"
+    if library.startswith("["):
+        return "kernel"
+    if library.find("vmlinux") > 0:
+        return "kernel"
+    return "user"
+
 # add a stack to the root tree
 def add_stack(root, stack):
     root['v'] += 1
     last = root
-    for name in stack:
+    for pair in stack:
+        libtype = library2type(pair[1])
         found = 0
         for child in last['c']:
-            if child['n'] == name:
+            if child['n'] == pair[0] and child['l'] == libtype:
                 last = child
                 found = 1
                 break
@@ -66,7 +78,8 @@ def add_stack(root, stack):
         else:
             newframe = {}
             newframe['c'] = []
-            newframe['n'] = name
+            newframe['n'] = pair[0]
+            newframe['l'] = libtype
             newframe['v'] = 1
             last['c'].append(newframe)
             last = newframe
@@ -114,10 +127,12 @@ def generate_stack(filename, range_start = None, range_end = None):
     root = {}
     root['c'] = []
     root['n'] = "root"
+    root['l'] = ""
     root['v'] = 0
 
     stack = []
     ts = -1
+    comm = ""
     # overscan is seconds beyond the time range to keep scanning, which allows
     # for some out-of-order samples up to this duration
     overscan = 0.1
@@ -132,7 +147,10 @@ def generate_stack(filename, range_start = None, range_end = None):
         if (r):
             if (stack):
                 # process prior stack
-                if (re.search(idle_regexp, ";".join(stack))):
+                stackstr = ""
+                for pair in stack:
+                    stackstr += pair[0] + ";"
+                if (re.search(idle_regexp, stackstr)):
                     # skip idle
                     stack = []
                 elif (ts >= start and ts <= end):
@@ -143,13 +161,18 @@ def generate_stack(filename, range_start = None, range_end = None):
                 break
             r = re.search(comm_regexp, line)
             if (r):
-                stack.append(r.group(1).rstrip())
+                comm = r.group(1).rstrip()
+                stack.append([comm, ""])
             else:
-                stack.append("<unknown>")
+                stack.append(["<unknown>", ""])
         else:
             r = re.search(frame_regexp, line)
             if (r):
-                stack.insert(1, r.group(1))
+                name = r.group(1)
+                # strip leading "L" from java symbols:
+                if (comm == "java" and name.startswith("L")):
+                    name = name[1:]
+                stack.insert(1, [name, r.group(2)])
     # last stack
     if (ts >= start and ts <= end):
         root = add_stack(root, stack)
