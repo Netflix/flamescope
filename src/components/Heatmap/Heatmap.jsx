@@ -86,7 +86,7 @@ class Heatmap extends Component {
 
         const heatmapNode = document.getElementById('heatmap')
         while (heatmapNode.firstChild) {
-            heatmapNode.removeChild(heatmapNode.firstChild);
+            heatmapNode.removeChild(heatmapNode.firstChild)
         }
 
         var width = heatmapNode.offsetWidth
@@ -121,6 +121,7 @@ class Heatmap extends Component {
             .xAxisScaleTicks(ticks)
             .highlightColor('#936EB5')
             .highlightOpacity('0.4')
+            .gridStrokeOpacity(0.0)
             .invertHighlightRows(true)
             .onClick(onClick)
             .onMouseOver(onMouseOver)
@@ -132,7 +133,7 @@ class Heatmap extends Component {
                 top: 40,
                 right: 0,
                 bottom: 10,
-                left: -20
+                left: 3
             })
 
         function heatmap2time(cell, end = false) {
