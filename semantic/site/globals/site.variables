@@ -1,0 +1,26 @@
+/*******************************
+     User Global Variables
+*******************************/
+
+/*-------------------
+       Fonts
+--------------------*/
+
+@fontName          : 'Source Sans Pro';
+@headerFont        : @fontName, sans-serif;
+@pageFont          : @fontName, sans-serif;
+@googleFontSizes   : '300,400,700,400italic,700italic';
+
+/*-------------------
+      Site Colors
+--------------------*/
+
+/*---  Colors  ---*/
+@grey             : #5B5B5B;
+
+/*-------------------
+       Links
+--------------------*/
+
+@linkColor           : #D9D9D9;
+@linkHoverColor      : darken(saturate(@linkColor, 20), 15, relative);
