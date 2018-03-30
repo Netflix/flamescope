@@ -10,6 +10,8 @@ from app import config
 # global defaults
 YRATIO = 1000   # milliseconds
 DEFAULT_ROWS = 50
+heatmap_cache = {}
+heatmap_mtimes = {}
 
 # read and cache offsets
 def read_offsets(filename):
@@ -17,6 +19,17 @@ def read_offsets(filename):
     end = float("-inf")
     offsets = []
     path = config.STACK_DIR + '/' + filename
+
+    # fetch modification timestamp and check cache
+    try:
+        mtime = os.path.getmtime(path)
+    except:
+        print("ERROR: Can't check file stats for %s." % path)
+        return abort(500)
+    if path in heatmap_cache:
+        if mtime == heatmap_mtimes[path]:
+            # use cached heatmap
+            return heatmap_cache[path]
 
     # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):
@@ -65,7 +78,10 @@ def read_offsets(filename):
 
     f.close()
 
-    return collections.namedtuple('offsets',['start', 'end', 'offsets'])(start, end, offsets)
+    heatmap = collections.namedtuple('offsets',['start', 'end', 'offsets'])(start, end, offsets)
+    heatmap_cache[path] = heatmap
+    heatmap_mtimes[path] = mtime
+    return heatmap
 
 # return a heatmap from the cached offsets
 def generate_heatmap(filename, rows = None):
