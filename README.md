@@ -1,6 +1,6 @@
 # FlameScope
 
-![FlameScope](docs/screenshot-flamescope-01.png)
+![FlameScope](docs/screenshot-flamescope-02-annotated.png)
 
 [![TravisCI](https://img.shields.io/travis/Netflix/flamescope.svg)](https://travis-ci.org/Netflix/flamescope)
 [![NetflixOSS Lifecycle](https://img.shields.io/osslifecycle/Netflix/flamescope.svg)]()
