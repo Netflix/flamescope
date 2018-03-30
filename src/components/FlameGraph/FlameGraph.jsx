@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
 import { select } from 'd3-selection'
 import 'd3-flame-graph/dist/d3-flamegraph.css'
+import './flamegraph.less'
 
 const styles = {
     container: {
@@ -68,7 +69,7 @@ class FlameGraph extends Component {
         const { data } = this.state;
         const width = document.getElementById('flamegraph').offsetWidth
 
-        const cellHeight = 22;
+        const cellHeight = 16
         const chart = flamegraph()
             .width(width)
             .cellHeight(cellHeight)
