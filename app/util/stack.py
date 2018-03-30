@@ -62,27 +62,39 @@ def library2type(library):
     return "user"
 
 # add a stack to the root tree
-def add_stack(root, stack):
+def add_stack(root, stack, comm):
     root['v'] += 1
     last = root
     for pair in stack:
-        libtype = library2type(pair[1])
-        found = 0
-        for child in last['c']:
-            if child['n'] == pair[0] and child['l'] == libtype:
-                last = child
-                found = 1
-                break
-        if (found):
-            last['v'] += 1
-        else:
-            newframe = {}
-            newframe['c'] = []
-            newframe['n'] = pair[0]
-            newframe['l'] = libtype
-            newframe['v'] = 1
-            last['c'].append(newframe)
-            last = newframe
+        # Split inlined frames. "->" is used by software such as java
+        # perf-map-agent. For example, "a->b->c" means c() is inlined in b(),
+        # and b() is inlined in a(). This code will identify b() and c() as
+        # the "inlined" library type, and a() as whatever the library says
+        # it is.
+        names = pair[0].split('->')
+        n = 0
+        for name in names:
+            # strip leading "L" from java symbols (only reason we need comm):
+            if (comm == "java" and name.startswith("L")):
+                name = name[1:]
+            libtype = library2type(pair[1]) if n == 0 else "inlined"
+            n += 1
+            found = 0
+            for child in last['c']:
+                if child['n'] == name and child['l'] == libtype:
+                    last = child
+                    found = 1
+                    break
+            if (found):
+                last['v'] += 1
+            else:
+                newframe = {}
+                newframe['c'] = []
+                newframe['n'] = name
+                newframe['l'] = libtype
+                newframe['v'] = 1
+                last['c'].append(newframe)
+                last = newframe
     return root
 
 # return stack samples for a given range
@@ -154,7 +166,7 @@ def generate_stack(filename, range_start = None, range_end = None):
                     # skip idle
                     stack = []
                 elif (ts >= start and ts <= end):
-                    root = add_stack(root, stack)
+                    root = add_stack(root, stack, comm)
                 stack = []
             ts = float(r.group(1))
             if (ts > end + overscan):
@@ -169,9 +181,6 @@ def generate_stack(filename, range_start = None, range_end = None):
             r = re.search(frame_regexp, line)
             if (r):
                 name = r.group(1)
-                # strip leading "L" from java symbols:
-                if (comm == "java" and name.startswith("L")):
-                    name = name[1:]
                 # strip instruction offset (+0xfe200...)
                 c = name.find("+")
                 if (c > 0):
