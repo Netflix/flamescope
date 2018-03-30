@@ -14,16 +14,32 @@ FlameScope begins by displaying the input data as an interactive subsecond-offse
 
 FlameScope is in early stages of development and under constant change, so bugs and issues are expected. We count on your support to find and report them!
 
-## Getting Started
+## Installation / Instructions
 
-FlameScope is composed of two main components, the Python backend, and a React client interface. A pre-built client bundle is distributed with the backend, so to get started, you just need to install the Python requirements and start the application.
+The quickest way to get started is to run the pre-built client bundle:
 
 ```bash
+$ git clone https://github.com/Netflix/flamescope
+$ cd flamescope
 $ pip install -r requirements.txt
 $ python run.py
 ```
 
-Altough not necessary, we **strongly** suggest using [virtualenv](https://github.com/pypa/virtualenv) to isolate your Python environment.
+Then browse to http://127.0.0.1:5000/, and you can begin exploring profiles from the `examples` directory. You can add new profiles to that directory, collected using Linux `perf`. Here are instructions for a generic CPU profile at 49 Hertz for 120 seconds:
+
+```bash
+# perf record -F 49 -a -g -- sleep 120
+# perf script --header > stacks.myproductionapp.2018-03-30_01
+# gzip stacks.myproductionapp.2018-03-30_01	# optional
+```
+
+There are extra steps to fetch stacks correctly for some runtimes, depending on the runtime. For example, we've previously published Java steps in [Java in Flames](https://medium.com/netflix-techblog/java-in-flames-e763b3d32166): java needs to be running with the -XX:+PreserveFramePointer option, and [perf-map-agent](https://github.com/jvm-profiling-tools/perf-map-agent) must be run immediately after the `perf record` to dump a JIT symbol table in /tmp.
+
+FlameScope can visualize any Linux `perf script` output that includes stack traces, including page faults, context switches, and other events. See the References section below for documentation.
+
+FlameScope is composed of two main components, the Python backend, and a React client interface. A pre-built client bundle is distributed with the backend, so the quickest way to get started is to install the Python requirements and start the application, as described earlier.
+
+Although not necessary, we **strongly** suggest using [virtualenv](https://github.com/pypa/virtualenv) to isolate your Python environment.
 
 By default, FlameScope will load a list of files from the `examples` directory, which includes a two profile examples.
 
@@ -38,10 +54,6 @@ HOST = '127.0.0.1' # web server host
 PORT = 5000 # web server port
 JSONIFY_PRETTYPRINT_REGULAR = False # pretty print api json responses
 ```
-
-## Generating Profiles
-
-FlameScope relies on `perf script` output files to build both heatmap and flame graphs visualizations. Refer to ...
 
 ## Building Client from Source
 
@@ -69,3 +81,7 @@ $ npm run webpack-watch
 
 - [Flame Graphs](http://www.brendangregg.com/flamegraphs.html)
 - [Subsecond-offset Heat Maps](http://www.brendangregg.com/HeatMaps/subsecondoffset.html)
+- [Java in Flames](https://medium.com/netflix-techblog/java-in-flames-e763b3d32166)
+- [Linux perf kernel docs](https://github.com/torvalds/linux/tree/master/tools/perf/Documentation)
+- [Linux perf wiki](https://perf.wiki.kernel.org/index.php/Main_Page)
+- [Linux perf examples](http://www.brendangregg.com/perf.html)
