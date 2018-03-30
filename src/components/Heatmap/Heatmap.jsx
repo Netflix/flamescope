@@ -21,7 +21,11 @@ const styles = {
 }
 
 const rowsOptions = [
+    { key: 10, text: '10', value: '10' },
+    { key: 25, text: '25', value: '25' },
+    { key: 49, text: '49', value: '49' },
     { key: 50, text: '50', value: '50' },
+    { key: 99, text: '99', value: '99' },
     { key: 100, text: '100', value: '100' },
 ]
 

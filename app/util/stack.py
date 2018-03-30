@@ -172,6 +172,10 @@ def generate_stack(filename, range_start = None, range_end = None):
                 # strip leading "L" from java symbols:
                 if (comm == "java" and name.startswith("L")):
                     name = name[1:]
+                # strip instruction offset (+0xfe200...)
+                c = name.find("+")
+                if (c > 0):
+                    name = name[:c]
                 # strip symbol args (...):
                 c = name.find("(")
                 if (c > 0):

@@ -53,7 +53,7 @@
 # This event_regexp matches the event line, and puts time in the first group:
 #
 event_regexp = " +([0-9.]+): .+?:"
-frame_regexp = "^[\t ]*[0-9a-fA-F]+ (.+?)[+0-9a-fx]* \((.*)\)"
+frame_regexp = "^[\t ]*[0-9a-fA-F]+ (.+) \((.*)\)"
 comm_regexp = "^ *([^0-9]+)"
 
 # idle stack identification. just a regexp for now:
