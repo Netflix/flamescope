@@ -2452,9 +2452,9 @@ d3-geo@1.9.1:
   dependencies:
     d3-array "1"
 
-d3-heatmap2@^0.2.8:
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/d3-heatmap2/-/d3-heatmap2-0.2.8.tgz#8837169dad4a999826428b6fc3d9e2ebbfdb90e1"
+d3-heatmap2@^0.2.9:
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/d3-heatmap2/-/d3-heatmap2-0.2.9.tgz#6bc8e17762ed27329674e96c3c8b203324714ab7"
   dependencies:
     d3 "^4.13.0"
     yargs "^11.0.0"
