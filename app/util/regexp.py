@@ -36,7 +36,7 @@
 #                 2037fe8 [unknown] ([unknown])
 # other combinations are possible.
 #
-# Some extra examples (excluding stacks):
+# Some extra event-line examples (excluding stacks):
 #
 # java 52025 [026] 99161.926202: cycles: 
 # java 14341 [016] 252732.474759: cycles:      7f36571947c0 nmethod::is_nmethod() const (/...
@@ -46,10 +46,14 @@
 #         bash 25370/25370 6036036.799684: cpu-clock:            4b913b [unknown] (/bin/bash)
 # other combinations are possible.
 #
+# Some extra stack-line examples:
+#
+#           7fa4c651fb95 CardTableModRefBS::process_stride(Space*, MemRegion, int, int, OopsInGenClosure*, CardTableRS*, signed char**, unsigned long, unsigned long) (/usr/lib/jvm/java-8-oracle-1.8.0.121/jre/lib/amd64/server/libjvm.so)
+#
 # This event_regexp matches the event line, and puts time in the first group:
 #
 event_regexp = " +([0-9.]+): .+?:"
-frame_regexp = "^[\t ]*[0-9a-fA-F]+ ([^ +]+)[+0-9a-fx]* \((.*)\)"
+frame_regexp = "^[\t ]*[0-9a-fA-F]+ (.+?)[+0-9a-fx]* \((.*)\)"
 comm_regexp = "^ *([^0-9]+)"
 
 # idle stack identification. just a regexp for now:
