@@ -9,11 +9,21 @@ from os.path import isfile, join
 from app import config
 from math import ceil, floor
 
+# These functions support listing profiles and fetching their stack traces as
+# JSON, and for custom ranges. The profile parsed here is the output of
+# Linux "perf script". See the comment in regexp.py for a variety of output
+# that must be parsed correctly, which changes based on the Linux kernel
+# version, plus there are full examples as examples/perf.*.
+
+# get profile files
 def get_stack_list():
     files = [f for f in listdir(config.STACK_DIR) if isfile(join(config.STACK_DIR, f))]
     return files
 
-# get sample start and end
+# Get sample start and end.
+# At this point we've probably already made a pass through the profile file
+# for generating its heatmap, so why not fetch these times then? Because we're
+# supporting a stateless interface, and the user may start here.
 def calculate_stack_range(filename):
     start = float("+inf")
     end = float("-inf")
@@ -36,7 +46,12 @@ def calculate_stack_range(filename):
             return abort(500)
     
     for line in f.readlines():
-        if (line[0] == '#'):
+        # 1. Skip '#' comments
+        # 2. Since we're only interested in the event summary lines, skip the
+        # stack trace lines based on those that start with '\t'. This is a
+        # performance optimization that avoids using the regexp needlessly,
+        # and makes a large difference.
+        if (line[0] == '#' or line[0] == '\t'):
             continue
         r = re.search(event_regexp, line)
         if (r):
@@ -155,7 +170,12 @@ def generate_stack(filename, range_start = None, range_end = None):
     for line in f.readlines():
         if (line[0] == '#'):
             continue
-        r = re.search(event_regexp, line)
+        # As a performance optimization, skip an event regexp search if the
+        # line looks like a stack trace based on starting with '\t'. This
+        # makes a big difference.
+        r = None
+        if (line[0] != '\t'):
+            r = re.search(event_regexp, line)
         if (r):
             if (stack):
                 # process prior stack
