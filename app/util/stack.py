@@ -227,7 +227,7 @@ def generate_stack(filename, range_start = None, range_end = None):
                 stack.insert(1, [name, r.group(2)])
     # last stack
     if (ts >= start and ts <= end):
-        root = add_stack(root, stack)
+        root = add_stack(root, stack, comm)
 
     # close file
     f.close()
