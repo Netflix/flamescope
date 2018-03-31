@@ -53,7 +53,7 @@ def read_offsets(filename):
     # - event_regexp: to identify event timestamps
     # - idle_regexp: for filtering idle stacks
     # this populates start, end, and offsets
-    for line in f.readlines():
+    for line in f:
         if (line[0] == '#'):
             continue
         r = re.search(event_regexp, line)

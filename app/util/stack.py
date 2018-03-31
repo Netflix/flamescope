@@ -57,7 +57,7 @@ def calculate_stack_range(filename):
             f.close()
             return abort(500)
     
-    for line in f.readlines():
+    for line in f:
         # 1. Skip '#' comments
         # 2. Since we're only interested in the event summary lines, skip the
         # stack trace lines based on those that start with '\t'. This is a
@@ -182,7 +182,7 @@ def generate_stack(filename, range_start = None, range_end = None):
     # process perf script output and search for two things:
     # - event_regexp: to identify event timestamps
     # - idle_regexp: for filtering idle stacks
-    for line in f.readlines():
+    for line in f:
         if (line[0] == '#'):
             continue
         # As a performance optimization, skip an event regexp search if the
