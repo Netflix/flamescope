@@ -10,6 +10,7 @@ from app import config
 from math import ceil, floor
 stack_times = {}        # cached start and end times for profiles
 stack_mtimes = {}       # modification timestamp for profiles
+stack_index = {}        # cached event times
 
 # These functions support listing profiles and fetching their stack traces as
 # JSON, and for custom ranges. The profile parsed here is the output of
@@ -22,13 +23,14 @@ def get_stack_list():
     files = [f for f in listdir(config.STACK_DIR) if isfile(join(config.STACK_DIR, f))]
     return files
 
-# Get sample start and end.
+# Get sample start and end, and populate stack_index for faster range lookup.
 # At this point we've probably already made a pass through the profile file
 # for generating its heatmap, so why not fetch these times then? Because we're
 # supporting a stateless interface, and the user may start here.
 def calculate_stack_range(filename):
     start = float("+inf")
     end = float("-inf")
+    index_factor = 100      # save one timestamp per this many lines
     path = config.STACK_DIR + '/' + filename
 
     # check for cached times
@@ -57,7 +59,10 @@ def calculate_stack_range(filename):
             f.close()
             return abort(500)
     
+    linenum = -1
+    stack_index[path] = []
     for line in f:
+        linenum += 1
         # 1. Skip '#' comments
         # 2. Since we're only interested in the event summary lines, skip the
         # stack trace lines based on those that start with '\t'. This is a
@@ -68,6 +73,8 @@ def calculate_stack_range(filename):
         r = re.search(event_regexp, line)
         if (r):
             ts = float(r.group(1))
+            if ((linenum % index_factor) == 0):
+                stack_index[path].append([linenum, ts])
             if (ts < start):
                 start = ts
             elif (ts > end):
@@ -179,12 +186,30 @@ def generate_stack(filename, range_start = None, range_end = None):
     # for some out-of-order samples up to this duration
     overscan = 0.1
 
+    # determine skip lines
+    lastline = 0
+    skiplines = 0
+    if path in stack_index:
+        for pair in stack_index[path]:
+            if start < pair[1]:
+                # scanned too far, use last entry
+                skiplines = lastline
+                break
+            lastline = pair[0]
+
     # process perf script output and search for two things:
     # - event_regexp: to identify event timestamps
     # - idle_regexp: for filtering idle stacks
+    linenum = -1
     for line in f:
+        linenum += 1
+        # Performance optimization. Makes a large difference.
+        if (linenum < skiplines):
+            continue
+        # skip comments
         if (line[0] == '#'):
             continue
+
         # As a performance optimization, skip an event regexp search if the
         # line looks like a stack trace based on starting with '\t'. This
         # makes a big difference.
