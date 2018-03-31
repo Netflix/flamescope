@@ -8,6 +8,8 @@ from os import listdir
 from os.path import isfile, join
 from app import config
 from math import ceil, floor
+stack_times = {}        # cached start and end times for profiles
+stack_mtimes = {}       # modification timestamp for profiles
 
 # These functions support listing profiles and fetching their stack traces as
 # JSON, and for custom ranges. The profile parsed here is the output of
@@ -28,6 +30,16 @@ def calculate_stack_range(filename):
     start = float("+inf")
     end = float("-inf")
     path = config.STACK_DIR + '/' + filename
+
+    # check for cached times
+    try:
+        mtime = os.path.getmtime(path)
+    except:
+        print("ERROR: Can't check file stats for %s." % path)
+        return abort(500)
+    if path in stack_times:
+        if mtime == stack_mtimes[path]:
+            return stack_times[path]
 
     # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):
@@ -62,8 +74,11 @@ def calculate_stack_range(filename):
                 end = ts
     
     f.close()
+    times = collections.namedtuple('range',['start', 'end'])(floor(start), ceil(end))
+    stack_times[path] = times
+    stack_mtimes[path] = mtime
 
-    return collections.namedtuple('range',['start', 'end'])(floor(start), ceil(end))
+    return times
 
 def library2type(library):
     if library == "":
