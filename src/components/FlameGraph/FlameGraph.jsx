@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Dimmer, Loader, Divider } from 'semantic-ui-react'
+import { Dimmer, Loader, Divider, Container, Button, Input } from 'semantic-ui-react'
 import { pushBreadcrumb, popBreadcrumb } from '../../actions/Navbar'
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
@@ -23,13 +23,22 @@ class FlameGraph extends Component {
     constructor(props) {
         super(props);
     
-        ['drawFlamegraph'].forEach((k) => {
+        [
+            'drawFlamegraph',
+            'handleResetClick',
+            'handleClearClick',
+            'handleSearchInputChange',
+            'handleSearchClick',
+            'handleOnKeyDown',
+        ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
     
         this.state = {
           data: {},
           loading: false,
+          chart: null,
+          searchTerm: '',
         };
     }
 
@@ -83,27 +92,78 @@ class FlameGraph extends Component {
         select(`#flamegraph`)
             .datum(data)
             .call(chart)
+
+        this.setState({chart: chart})
+    }
+
+    handleResetClick() {
+        this.state.chart.resetZoom()
+    }
+
+    handleClearClick() {
+        this.setState({searchTerm: ''})
+        this.state.chart.clear()
+    }
+
+    handleSearchInputChange(event, data) {
+        this.setState({searchTerm: data.value})
+    }
+
+    handleSearchClick() {
+        this.state.chart.search(this.state.searchTerm)
+    }
+
+    handleOnKeyDown(event) {
+        if (event.which == 13) {
+            this.state.chart.search(this.state.searchTerm)
+        }
     }
 
     render() {
+        const searchButton = 
+        <Button color='red' size='small' onClick={this.handleSearchClick}>
+            <Button.Content>Search</Button.Content>
+        </Button>
         
         return (
-            <div style={styles.container}>
+            <div>
                 <Dimmer page inverted active={this.state.loading}>
                     <Loader size='huge' inverted>Loading</Loader>
                 </Dimmer> 
-                <div
-                    ref={`flamegraph`}
-                    id={`flamegraph`}
-                    key={`flamegraph`}
-                />
-                <Divider />
-                <div
-                    ref={`details`}
-                    id={`details`}
-                    key={`details`}
-                    style={styles.details}
-                />
+                <Container style={styles.container}>
+                    <Container textAlign='right'>
+                        <Button inverted color='red' size='small' onClick={this.handleResetClick}>
+                            <Button.Content>
+                                Reset Zoom
+                            </Button.Content>
+                        </Button>
+                        <Button inverted color='red' size='small' onClick={this.handleClearClick}>
+                            <Button.Content>
+                                Clear
+                            </Button.Content>
+                        </Button>
+                        <Input
+                            action={searchButton}
+                            placeholder='Search...'
+                            value={this.state.searchTerm}
+                            onChange={this.handleSearchInputChange}
+                            onKeyDown={this.handleOnKeyDown}
+                        />
+                    </Container>
+                    <Divider />
+                    <div
+                        ref={`flamegraph`}
+                        id={`flamegraph`}
+                        key={`flamegraph`}
+                    />
+                    <Divider />
+                    <div
+                        ref={`details`}
+                        id={`details`}
+                        key={`details`}
+                        style={styles.details}
+                    />
+                </Container>
             </div>
         )
     }
