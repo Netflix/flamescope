@@ -144,13 +144,7 @@ class Heatmap extends Component {
             var secs = data.columns[cell[0]]
             var millisDelta = end ? data.rows[0] - data.rows[1] : 0.0
             var millis = data.rows[cell[1]] + millisDelta
-            if (millis > 999) {
-                var quotient = Math.floor(millis / 1000)
-                var remainder = millis % 1000
-                secs = secs + quotient
-                millis = remainder
-            }
-            return secs + '.' + millis
+            return secs + ( millis / 1000 )
         }
         
         let selectStart = null
