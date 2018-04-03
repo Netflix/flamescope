@@ -6,7 +6,7 @@
 # This file is part of FlameScope, a performance analysis tool created by the
 # Netflix cloud performance team. See:
 #
-#     https://github.com/Netflix/flamescope
+#    https://github.com/Netflix/flamescope
 #
 # Copyright 2018 Netflix, Inc.
 #
