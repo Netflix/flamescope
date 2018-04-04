@@ -79,9 +79,11 @@ $ npm run webpack-watch
 
 ## References
 
+- [FlameScope Introduction (video)](https://www.youtube.com/watch?v=cFuI8SAAvJg)
+- [FlameScope Examples (video)](https://www.youtube.com/watch?v=gRawd7CO-Q8)
 - [Flame Graphs](http://www.brendangregg.com/flamegraphs.html)
-- [Subsecond-offset Heat Maps](http://www.brendangregg.com/HeatMaps/subsecondoffset.html)
 - [Java in Flames](https://medium.com/netflix-techblog/java-in-flames-e763b3d32166)
+- [Subsecond-offset Heat Maps](http://www.brendangregg.com/HeatMaps/subsecondoffset.html)
 - [Linux perf kernel docs](https://github.com/torvalds/linux/tree/master/tools/perf/Documentation)
 - [Linux perf wiki](https://perf.wiki.kernel.org/index.php/Main_Page)
 - [Linux perf examples](http://www.brendangregg.com/perf.html)
