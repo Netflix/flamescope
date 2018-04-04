@@ -8,8 +8,8 @@
     "webpack": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "ssh://git@stash.corp.netflix.com:7999/cldperf/flamescope.git",
-  "author": "Martin Spier <spiermar@gmail.com>",
+  "repository": "https://github.com/Netflix/flamescope.git",
+  "author": "Martin Spier <mspier@netflix.com>",
   "license": "Apache-2.0",
   "dependencies": {
     "d3-flame-graph": "2.0.0-alpha4",
