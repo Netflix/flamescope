@@ -23,7 +23,7 @@ import collections
 from regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
 from flask import abort
 from os import walk
-from os.path import join
+from os.path import abspath, join
 from app import config
 from math import ceil, floor
 stack_times = {}        # cached start and end times for profiles
@@ -160,7 +160,11 @@ def add_stack(root, stack, comm):
 
 # return stack samples for a given range
 def generate_stack(filename, range_start = None, range_end = None):
-    path = config.STACK_DIR + '/' + filename
+    path = join(config.STACK_DIR, filename)
+    # ensure the file is below STACK_DIR:
+    if not abspath(path).startswith(abspath(config.STACK_DIR)):
+        print("ERROR: File %s is not in STACK_DIR" % path)
+        return abort(404)
 
     # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):

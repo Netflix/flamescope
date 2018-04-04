@@ -19,8 +19,8 @@
 
 import os
 import re
-import time
 import collections
+from os.path import abspath, join
 from math import ceil, floor
 from flask import abort
 from regexp import event_regexp, idle_regexp
@@ -37,7 +37,11 @@ def read_offsets(filename):
     start = float("+inf")
     end = float("-inf")
     offsets = []
-    path = config.STACK_DIR + '/' + filename
+    path = join(config.STACK_DIR, filename)
+    # ensure the file is below STACK_DIR:
+    if not abspath(path).startswith(abspath(config.STACK_DIR)):
+        print("ERROR: File %s is not in STACK_DIR" % path)
+        return abort(404)
 
     # fetch modification timestamp and check cache
     try:
