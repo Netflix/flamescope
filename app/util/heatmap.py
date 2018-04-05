@@ -17,6 +17,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+from ..common import fileutil
 import os
 import re
 import time
@@ -38,6 +39,9 @@ def read_offsets(filename):
     end = float("-inf")
     offsets = []
     path = config.STACK_DIR + '/' + filename
+
+    if not fileutil.validpath(path):
+        return abort(500)
 
     # fetch modification timestamp and check cache
     try:

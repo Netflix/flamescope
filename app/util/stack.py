@@ -17,6 +17,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+from ..common import fileutil
 import os
 import re
 import collections
@@ -51,6 +52,9 @@ def calculate_stack_range(filename):
     end = float("-inf")
     index_factor = 100      # save one timestamp per this many lines
     path = config.STACK_DIR + '/' + filename
+
+    if not fileutil.validpath(path):
+        return abort(500)
 
     # check for cached times
     try:
@@ -156,6 +160,9 @@ def add_stack(root, stack, comm):
 # return stack samples for a given range
 def generate_stack(filename, range_start = None, range_end = None):
     path = config.STACK_DIR + '/' + filename
+
+    if not fileutil.validpath(path):
+        return abort(500)
 
     # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):
