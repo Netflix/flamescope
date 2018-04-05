@@ -2,7 +2,7 @@
 
 ![FlameScope](docs/screenshot-flamescope-02-annotated.png)
 
-[![Gitter](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/flamescope)
+[![Gitter](https://badges.gitter.im/gitterHQ/gitter.svg)](https://gitter.im/flamescope)
 [![TravisCI](https://img.shields.io/travis/Netflix/flamescope.svg)](https://travis-ci.org/Netflix/flamescope)
 [![NetflixOSS Lifecycle](https://img.shields.io/osslifecycle/Netflix/flamescope.svg)]()
 [![License](https://img.shields.io/github/license/Netflix/flamescope.svg)](http://www.apache.org/licenses/LICENSE-2.0)
