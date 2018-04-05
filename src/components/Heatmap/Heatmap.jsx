@@ -50,7 +50,7 @@ const rowsOptions = [
 class Heatmap extends Component {
     constructor(props) {
         super(props);
-    
+
         [
             'drawHeatmap',
             'handleSettingsClose',
@@ -61,7 +61,7 @@ class Heatmap extends Component {
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
-    
+
         this.state = {
           data: {},
           rows: '50',
@@ -164,48 +164,48 @@ class Heatmap extends Component {
             var millis = data.rows[cell[1]] + millisDelta
             return secs + ( millis / 1000 )
         }
-        
+
         let selectStart = null
         let selectEnd = null
 
         function rangeSelect(cell) {
-            if (!selectStart) {
-                selectStart = cell
-                chart.setHighlight([{"start": selectStart, "end": selectStart}])
-                chart.updateHighlight()
-            } else if (!selectEnd) {
-                selectEnd = cell
-                chart.setHighlight([{"start": selectStart, "end": selectEnd}])
-                chart.updateHighlight()
-                window.location.href = `/#/heatmap/${filename}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
-            } else {
-                selectStart = cell
-                selectEnd = null
-                chart.setHighlight([{"start": selectStart, "end": selectStart}])
-                chart.updateHighlight()
-            }
+          if (!selectStart) {
+            selectStart = cell
+            chart.setHighlight([{"start": selectStart, "end": selectStart}])
+            chart.updateHighlight()
+          } else if (!selectEnd) {
+            selectEnd = cell
+            chart.setHighlight([{"start": selectStart, "end": selectEnd}])
+            chart.updateHighlight()
+            window.location.href = `/#/heatmap/${filename}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
+          } else {
+            selectStart = cell
+            selectEnd = null
+            chart.setHighlight([{"start": selectStart, "end": selectStart}])
+            chart.updateHighlight()
+          }
         }
 
         function hover(cell) {
-			if (selectStart && !selectEnd) {
-				if (cell[0] > selectStart[0]) { // column is higher
-					chart.setHighlight([{"start": selectStart, "end": cell}])
-					chart.updateHighlight()
-				} else if (cell[0] == selectStart[0]) { // same column
-                    if (cell[1] <= selectStart[1]) { // row is lower or equal
-                        chart.setHighlight([{"start": selectStart, "end": cell}])
-                        chart.updateHighlight()
-                    } else {
-                        chart.setHighlight([{"start": selectStart, "end": selectStart}])
-                        chart.updateHighlight()
-                    }
-				} else {
-					chart.setHighlight([{"start": selectStart, "end": selectStart}])
-					chart.updateHighlight()
-				}
-			}
-		}
-            
+          if (selectStart && !selectEnd) {
+            if (cell[0] > selectStart[0]) { // column is higher
+              chart.setHighlight([{"start": selectStart, "end": cell}])
+              chart.updateHighlight()
+            } else if (cell[0] == selectStart[0]) { // same column
+              if (cell[1] <= selectStart[1]) { // row is lower or equal
+                chart.setHighlight([{"start": selectStart, "end": cell}])
+                chart.updateHighlight()
+              } else {
+                chart.setHighlight([{"start": selectStart, "end": selectStart}])
+                chart.updateHighlight()
+              }
+            } else {
+              chart.setHighlight([{"start": selectStart, "end": selectStart}])
+              chart.updateHighlight()
+            }
+          }
+        }
+
         select("#heatmap")
             .datum(data.values)
             .call(chart)
@@ -225,7 +225,7 @@ class Heatmap extends Component {
             if (event.defaultPrevented) {
               return // do nothing if the event was already processed
             }
-          
+
             if (event.key === 'Escape') {
                 selectStart = null
                 selectEnd = null
