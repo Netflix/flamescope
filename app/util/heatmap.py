@@ -23,8 +23,9 @@ import time
 import collections
 from math import ceil, floor
 from flask import abort
-from regexp import event_regexp, idle_regexp
+
 from app import config
+from .regexp import event_regexp, idle_regexp
 
 # global defaults
 YRATIO = 1000   # milliseconds
@@ -118,7 +119,7 @@ def generate_heatmap(filename, rows = None):
         rowoffsets.append(YRATIO * (float(i) / rows))
     rowoffsets.reverse()
     cols = int(ceil(end) - floor(start))
-    timeoffsets = range(0, cols)
+    timeoffsets = list(range(0, cols))
     # init cells (values) to zero
     values = []
     for i in range(0, cols):

@@ -19,6 +19,7 @@
 
 import json
 from flask import Blueprint, request, jsonify
+
 from app.util.heatmap import generate_heatmap
 
 MOD_HEATMAP = Blueprint( \

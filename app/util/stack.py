@@ -20,13 +20,14 @@
 import os
 import re
 import collections
-from regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
 from flask import abort
-from app import config
 from os import listdir
 from os.path import isfile, join
-from app import config
 from math import ceil, floor
+
+from app import config
+from .regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
+
 stack_times = {}        # cached start and end times for profiles
 stack_mtimes = {}       # modification timestamp for profiles
 stack_index = {}        # cached event times
@@ -77,7 +78,7 @@ def calculate_stack_range(filename):
             print("ERROR: Can't read stack file, %s." % path)
             f.close()
             return abort(500)
-    
+
     linenum = -1
     stack_index[path] = []
     for line in f:
@@ -98,7 +99,7 @@ def calculate_stack_range(filename):
                 start = ts
             elif (ts > end):
                 end = ts
-    
+
     f.close()
     times = collections.namedtuple('range',['start', 'end'])(floor(start), ceil(end))
     stack_times[path] = times
