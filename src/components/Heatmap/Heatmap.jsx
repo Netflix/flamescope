@@ -50,7 +50,7 @@ const rowsOptions = [
 class Heatmap extends Component {
     constructor(props) {
         super(props);
-    
+
         [
             'drawHeatmap',
             'handleSettingsClose',
@@ -61,7 +61,7 @@ class Heatmap extends Component {
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
-    
+
         this.state = {
           data: {},
           rows: '50',
@@ -148,8 +148,8 @@ class Heatmap extends Component {
             .onClick(onClick)
             .onMouseOver(onMouseOver)
             .colorScale(scaleLinear()
-                .domain([0, data.maxvalue / 2, data.maxvalue])
-                .range(['#FFFFFF', '#FF5032', '#E50914'])
+                .domain([0, data.maxvalue / 3, data.maxvalue])
+                .range(['#FFFFFF', '#0F9FFA', '#E50914'])
             )
             .margin({
                 top: 40,
@@ -164,7 +164,7 @@ class Heatmap extends Component {
             var millis = data.rows[cell[1]] + millisDelta
             return secs + ( millis / 1000 )
         }
-        
+
         let selectStart = null
         let selectEnd = null
 
@@ -205,7 +205,7 @@ class Heatmap extends Component {
 				}
 			}
 		}
-            
+
         select("#heatmap")
             .datum(data.values)
             .call(chart)
@@ -225,7 +225,7 @@ class Heatmap extends Component {
             if (event.defaultPrevented) {
               return // do nothing if the event was already processed
             }
-          
+
             if (event.key === 'Escape') {
                 selectStart = null
                 selectEnd = null
