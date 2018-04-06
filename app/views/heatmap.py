@@ -17,13 +17,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import json
 from flask import Blueprint, request, jsonify
 
 from app.util.heatmap import generate_heatmap
 
-MOD_HEATMAP = Blueprint( \
-    'heatmap', __name__, url_prefix='/heatmap' \
+MOD_HEATMAP = Blueprint(
+    'heatmap', __name__, url_prefix='/heatmap'
 )
 
 @MOD_HEATMAP.route("/", methods=['GET'])

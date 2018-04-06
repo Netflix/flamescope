@@ -1,0 +1,15 @@
+[flake8]
+ignore = E265
+# TODO E265 Block comment should start with '# ' - some start with tab
+         E302
+# TODO E302 Expected 2 blank lines, found 0
+         E501
+# TODO E501 Line too long (82 > 79 characters)
+         W292
+# TODO W292	No newline at end of file
+
+# TODO get complexity down to ~10
+# app/util/heatmap.py:37:1: C901 'read_offsets' is too complex (19)
+# app/util/stack.py:51:1: C901 'calculate_stack_range' is too complex (17)
+# app/util/stack.py:162:1: C901 'generate_stack' is too complex (29)
+max-complexity = 30

@@ -51,7 +51,7 @@ def read_offsets(filename):
     # fetch modification timestamp and check cache
     try:
         mtime = os.path.getmtime(path)
-    except:
+    except Exception:
         print("ERROR: Can't check file stats for %s." % path)
         return abort(500)
     if path in heatmap_cache:
@@ -63,14 +63,14 @@ def read_offsets(filename):
     if filename.endswith(".gz"):
         try:
             f = os.popen("gunzip -c " + path)
-        except:
+        except Exception:
             print("ERROR: Can't gunzip -c stack file %s." % path)
             f.close()
             return abort(500)
     else:
         try:
             f = open(path, 'r')
-        except:
+        except Exception:
             print("ERROR: Can't read stack file %s." % path)
             f.close()
             return abort(500)
@@ -106,13 +106,13 @@ def read_offsets(filename):
 
     f.close()
 
-    heatmap = collections.namedtuple('offsets',['start', 'end', 'offsets'])(start, end, offsets)
+    heatmap = collections.namedtuple('offsets', ['start', 'end', 'offsets'])(start, end, offsets)
     heatmap_cache[path] = heatmap
     heatmap_mtimes[path] = mtime
     return heatmap
 
 # return a heatmap from the cached offsets
-def generate_heatmap(filename, rows = None):
+def generate_heatmap(filename, rows=None):
     o = read_offsets(filename)
     start = o.start
     end = o.end
@@ -138,7 +138,7 @@ def generate_heatmap(filename, rows = None):
     # increment heatmap cells
     for ts in offsets:
         col = int(floor(ts - floor(start)))
-        row = rows - int(floor(rows * (ts % 1))) -1
+        row = rows - int(floor(rows * (ts % 1))) - 1
         values[col][row] += 1
         if (values[col][row] > maxvalue):
             maxvalue = values[col][row]

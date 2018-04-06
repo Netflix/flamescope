@@ -65,7 +65,7 @@ def calculate_stack_range(filename):
     # check for cached times
     try:
         mtime = os.path.getmtime(path)
-    except:
+    except Exception:
         print("ERROR: Can't check file stats for %s." % path)
         return abort(500)
     if path in stack_times:
@@ -76,14 +76,14 @@ def calculate_stack_range(filename):
     if filename.endswith(".gz"):
         try:
             f = os.popen("gunzip -c " + path)
-        except:
+        except Exception:
             print("ERROR: Can't gunzip -c stack file, %s." % path)
             f.close()
             return abort(500)
     else:
         try:
             f = open(path, 'r')
-        except:
+        except Exception:
             print("ERROR: Can't read stack file, %s." % path)
             f.close()
             return abort(500)
@@ -110,7 +110,7 @@ def calculate_stack_range(filename):
                 end = ts
 
     f.close()
-    times = collections.namedtuple('range',['start', 'end'])(floor(start), ceil(end))
+    times = collections.namedtuple('range', ['start', 'end'])(floor(start), ceil(end))
     stack_times[path] = times
     stack_mtimes[path] = mtime
 
@@ -164,7 +164,7 @@ def add_stack(root, stack, comm):
     return root
 
 # return stack samples for a given range
-def generate_stack(filename, range_start = None, range_end = None):
+def generate_stack(filename, range_start=None, range_end=None):
     path = join(config.STACK_DIR, filename)
     # ensure the file is below STACK_DIR:
     if not abspath(path).startswith(abspath(config.STACK_DIR)):
@@ -178,14 +178,14 @@ def generate_stack(filename, range_start = None, range_end = None):
     if filename.endswith(".gz"):
         try:
             f = os.popen("gunzip -c " + path)
-        except:
+        except Exception:
             print("ERROR: Can't gunzip -c stack file, %s." % path)
             f.close()
             return abort(500)
     else:
         try:
             f = open(path, 'r')
-        except:
+        except Exception:
             print("ERROR: Can't read stack file, %s." % path)
             f.close()
             return abort(500)

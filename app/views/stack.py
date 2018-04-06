@@ -17,13 +17,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import json
 from flask import Blueprint, request, jsonify
 
 from app.util.stack import generate_stack, get_stack_list
 
-MOD_STACK = Blueprint( \
-    'stack', __name__, url_prefix='/stack' \
+MOD_STACK = Blueprint(
+    'stack', __name__, url_prefix='/stack'
 )
 
 @MOD_STACK.route("/list", methods=['GET'])
