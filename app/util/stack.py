@@ -22,11 +22,10 @@ import os
 import re
 import collections
 from flask import abort
-from os import listdir
-from os.path import isfile, join
-from math import ceil, floor
-
+from os import walk
+from os.path import abspath, join
 from app import config
+from math import ceil, floor
 from .regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
 
 stack_times = {}        # cached start and end times for profiles
@@ -41,8 +40,14 @@ stack_index = {}        # cached event times
 
 # get profile files
 def get_stack_list():
-    files = [f for f in listdir(config.STACK_DIR) if isfile(join(config.STACK_DIR, f))]
-    return files
+    all_files = []
+    for root, dirs, files in walk(join(config.STACK_DIR)):
+        start = root[len(config.STACK_DIR) + 1:]
+        for f in files:
+            if not f.startswith('.'):
+                all_files.append(join(start, f))
+
+    return all_files
 
 # Get sample start and end, and populate stack_index for faster range lookup.
 # At this point we've probably already made a pass through the profile file
@@ -160,7 +165,11 @@ def add_stack(root, stack, comm):
 
 # return stack samples for a given range
 def generate_stack(filename, range_start = None, range_end = None):
-    path = config.STACK_DIR + '/' + filename
+    path = join(config.STACK_DIR, filename)
+    # ensure the file is below STACK_DIR:
+    if not abspath(path).startswith(abspath(config.STACK_DIR)):
+        print("ERROR: File %s is not in STACK_DIR" % path)
+        return abort(404)
 
     if not fileutil.validpath(path):
         return abort(500)
