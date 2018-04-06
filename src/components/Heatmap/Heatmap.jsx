@@ -61,6 +61,7 @@ class Heatmap extends Component {
             'handleSettingsClose',
             'handleSettingsOpen',
             'handleApply',
+            'handleEnhanceColors',
             'handleRowsChange',
             'fetchData',
         ].forEach((k) => {
@@ -267,6 +268,11 @@ class Heatmap extends Component {
                 }
             )
         }
+    }
+
+    handleEnhanceColors(){
+      this.setState({enhanceColors: !this.state.enhanceColors})
+      this.fetchData()
     }
 
     render() {
