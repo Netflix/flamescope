@@ -47,6 +47,11 @@ const rowsOptions = [
     { key: 100, text: '100', value: '100' },
 ]
 
+const heatmapColors = {
+  default:  ['#FFFFFF', '#FF0000'],
+  enhanced: ['#FFFFFF', '#6AAAFF', '#FFA095', '#E50914']
+}
+
 class Heatmap extends Component {
     constructor(props) {
         super(props);
