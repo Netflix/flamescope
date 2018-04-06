@@ -110,7 +110,7 @@ class Heatmap extends Component {
     }
 
     drawHeatmap() {
-        const { data } = this.state;
+        const { data , enhanceColors} = this.state;
         const { filename } = this.props.match.params
 
         const heatmapNode = document.getElementById('heatmap')
@@ -155,8 +155,8 @@ class Heatmap extends Component {
             .onClick(onClick)
             .onMouseOver(onMouseOver)
             .colorScale(scaleLinear()
-                .domain([0, data.maxvalue / 3, data.maxvalue])
-                .range(['#FFFFFF', '#0F9FFA', '#E50914'])
+                .domain( enhanceColors ? [0, 1, 3.2, data.maxvalue] : [0, data.maxvalue])
+                .range( enhanceColors ? heatmapColors.enhanced : heatmapColors.default)
             )
             .margin({
                 top: 40,
