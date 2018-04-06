@@ -20,6 +20,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Dimmer, Loader, Divider, Button, Container, Modal, Dropdown, Label } from 'semantic-ui-react'
 import { pushBreadcrumb, popBreadcrumb } from '../../actions/Navbar'
+import { exportGraph } from '../../actions/SvgSaver'
 import { connect } from 'react-redux'
 import { select } from 'd3-selection'
 import { scaleLinear } from 'd3-scale'
@@ -50,7 +51,7 @@ const rowsOptions = [
 class Heatmap extends Component {
     constructor(props) {
         super(props);
-    
+
         [
             'drawHeatmap',
             'handleSettingsClose',
@@ -61,7 +62,7 @@ class Heatmap extends Component {
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
-    
+
         this.state = {
           data: {},
           rows: '50',
@@ -164,7 +165,7 @@ class Heatmap extends Component {
             var millis = data.rows[cell[1]] + millisDelta
             return secs + ( millis / 1000 )
         }
-        
+
         let selectStart = null
         let selectEnd = null
 
@@ -205,7 +206,7 @@ class Heatmap extends Component {
 				}
 			}
 		}
-            
+
         select("#heatmap")
             .datum(data.values)
             .call(chart)
@@ -225,7 +226,7 @@ class Heatmap extends Component {
             if (event.defaultPrevented) {
               return // do nothing if the event was already processed
             }
-          
+
             if (event.key === 'Escape') {
                 selectStart = null
                 selectEnd = null
@@ -288,6 +289,13 @@ class Heatmap extends Component {
                     </Modal.Actions>
                 </Modal>
                 <Container style={styles.container}>
+                    <Button inverted color='blue' size='small' onClick={exportGraph}>
+                        <Button.Content>
+                          Save As PNG
+                          <a id='output_svg'>
+                          </a>
+                        </Button.Content>
+                    </Button>
                     <Container textAlign='right'>
                         <Label pointing='right' color='red' size='large'>
                             Rows

@@ -20,6 +20,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Dimmer, Loader, Divider, Container, Button, Input } from 'semantic-ui-react'
 import { pushBreadcrumb, popBreadcrumb } from '../../actions/Navbar'
+import { exportGraph } from '../../actions/SvgSaver'
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
 import { select } from 'd3-selection'
@@ -40,7 +41,7 @@ const styles = {
 class FlameGraph extends Component {
     constructor(props) {
         super(props);
-    
+
         [
             'drawFlamegraph',
             'handleResetClick',
@@ -51,7 +52,7 @@ class FlameGraph extends Component {
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
-    
+
         this.state = {
           data: {},
           loading: false,
@@ -64,8 +65,8 @@ class FlameGraph extends Component {
         const { filename, start, end } = this.props.match.params
         this.props.pushBreadcrumb('f_heatmap_' + filename, 'Heatmap (' + filename + ')', '/#/heatmap/' + filename)
         this.props.pushBreadcrumb(
-            'flamegraph_' + filename + '_' + start + '_' + end, 
-            'Flame Graph (' + start + ', ' + end + ')', 
+            'flamegraph_' + filename + '_' + start + '_' + end,
+            'Flame Graph (' + start + ', ' + end + ')',
             '/#/heatmap/' + filename + '/flamegraph/' + start + '/' + end
         )
     }
@@ -138,18 +139,25 @@ class FlameGraph extends Component {
     }
 
     render() {
-        const searchButton = 
+        const searchButton =
         <Button color='red' size='small' onClick={this.handleSearchClick}>
             <Button.Content>Search</Button.Content>
         </Button>
-        
+
         return (
             <div>
                 <Dimmer page inverted active={this.state.loading}>
                     <Loader size='huge' inverted>Loading</Loader>
-                </Dimmer> 
+                </Dimmer>
                 <Container style={styles.container}>
                     <Container textAlign='right'>
+                        <Button inverted color='blue' size='small' onClick={exportGraph}>
+                            <Button.Content>
+                              Save As PNG
+                              <a id='output_svg'>
+                              </a>
+                            </Button.Content>
+                        </Button>
                         <Button inverted color='red' size='small' onClick={this.handleResetClick}>
                             <Button.Content>
                                 Reset Zoom
