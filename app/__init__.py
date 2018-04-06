@@ -34,11 +34,11 @@ import os
 from .views.stack import MOD_STACK
 from .views.heatmap import MOD_HEATMAP
 
-from flask import Flask, request, abort, jsonify
+from flask import Flask, jsonify
 
-APP = Flask(__name__, \
-    static_folder=os.getcwd() + '/app/public', static_url_path=''
-)
+APP = Flask(__name__,
+            static_folder=os.getcwd() + '/app/public',
+            static_url_path='')
 
 APP.config.from_pyfile('config.py', silent=True)
 
