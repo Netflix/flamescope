@@ -67,6 +67,7 @@ class Heatmap extends Component {
           rows: '50',
           loading: false,
           settingsOpen: false,
+          enhanceColors: false
         };
     }
 
