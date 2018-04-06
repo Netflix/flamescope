@@ -312,12 +312,17 @@ class Heatmap extends Component {
                             selection
                             labeled
                         />
-                        {/* <Button animated='vertical' color='red' onClick={this.handleSettingsOpen}>
+                      { /*<Button animated='vertical' color='red' onClick={this.handleSettingsOpen}>
                             <Button.Content hidden>Settings</Button.Content>
                             <Button.Content visible>
                                 <Icon name='cogs' />
                             </Button.Content>
-                        </Button> */}
+                        </Button>*/}
+                      <Button toggle active={this.state.enhanceColors} onClick={this.handleEnhanceColors} style={{marginLeft: '8px'}}>
+                        <Button.Content visible>
+                          Enhance Colors
+                        </Button.Content>
+                      </Button>
                     </Container>
                     <Divider />
                     <div
