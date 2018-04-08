@@ -32,7 +32,7 @@ const styles = {
 export default class FileList extends Component {
     constructor(props) {
         super(props);
-    
+
         this.state = {
           files: [],
           loading: false,
@@ -55,11 +55,12 @@ export default class FileList extends Component {
             <Segment style={styles.container}>
                 <Dimmer page inverted active={this.state.loading}>
                     <Loader size='massive' inverted>Loading</Loader>
-                </Dimmer>    
+                </Dimmer>
                 <List>
                     {this.state.files.map(function(filename) {
+                        const path = encodeURIComponent(filename);
                         return (
-                            <List.Item style={styles.listItem} as='a' href={`/#/heatmap/${filename}`} key={filename}>
+                            <List.Item style={styles.listItem} as='a' href={`/#/heatmap/${path}`} key={filename}>
                                 <List.Icon name='file' />
                                 <List.Content>{filename}</List.Content>
                             </List.Item>

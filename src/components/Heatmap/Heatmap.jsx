@@ -171,41 +171,47 @@ class Heatmap extends Component {
 
         function rangeSelect(cell) {
             if (!selectStart) {
-                selectStart = cell
-                chart.setHighlight([{"start": selectStart, "end": selectStart}])
-                chart.updateHighlight()
+              selectStart = cell
+              chart.setHighlight([{"start": selectStart, "end": selectStart}])
+              chart.updateHighlight()
             } else if (!selectEnd) {
+              if (isBefore(selectStart, cell)) {
                 selectEnd = cell
-                chart.setHighlight([{"start": selectStart, "end": selectEnd}])
-                chart.updateHighlight()
-                window.location.href = `/#/heatmap/${filename}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
-            } else {
+              } else {
+                selectEnd = selectStart
                 selectStart = cell
-                selectEnd = null
-                chart.setHighlight([{"start": selectStart, "end": selectStart}])
-                chart.updateHighlight()
+              }
+              chart.setHighlight([{"start": selectStart, "end": selectEnd}])
+              chart.updateHighlight()
+              window.location.href = `/#/heatmap/${filename}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
+            } else {
+              selectStart = cell
+              selectEnd = null
+              chart.setHighlight([{"start": selectStart, "end": selectStart}])
+              chart.updateHighlight()
             }
         }
 
         function hover(cell) {
-			if (selectStart && !selectEnd) {
-				if (cell[0] > selectStart[0]) { // column is higher
-					chart.setHighlight([{"start": selectStart, "end": cell}])
-					chart.updateHighlight()
-				} else if (cell[0] == selectStart[0]) { // same column
-                    if (cell[1] <= selectStart[1]) { // row is lower or equal
-                        chart.setHighlight([{"start": selectStart, "end": cell}])
-                        chart.updateHighlight()
-                    } else {
-                        chart.setHighlight([{"start": selectStart, "end": selectStart}])
-                        chart.updateHighlight()
-                    }
-				} else {
-					chart.setHighlight([{"start": selectStart, "end": selectStart}])
-					chart.updateHighlight()
-				}
-			}
-		}
+          if (selectStart && !selectEnd) {
+            if (isBefore(selectStart, cell)) {
+              chart.setHighlight([{"start": selectStart, "end": cell}])
+            } else {
+              chart.setHighlight([{"start": cell, "end": selectStart}])
+            }
+            chart.updateHighlight()
+          }
+        }
+
+        /**
+         * Returns true if cellA is before cellB in our time domain.
+         */
+        function isBefore(cellA, cellB) {
+            if (cellA[0] < cellB[0]) {
+              return true
+            }
+            return cellA[0] == cellB[0] && cellA[1] > cellB[1]
+        }
 
         select("#heatmap")
             .datum(data.values)
