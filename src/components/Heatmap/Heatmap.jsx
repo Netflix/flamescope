@@ -295,14 +295,14 @@ class Heatmap extends Component {
                     </Modal.Actions>
                 </Modal>
                 <Container style={styles.container}>
-                    <Button inverted color='blue' size='small' onClick={exportGraph}>
-                        <Button.Content>
-                          Save As PNG
-                          <a id='output_svg'>
-                          </a>
-                        </Button.Content>
-                    </Button>
                     <Container textAlign='right'>
+                        <Button inverted color='blue' size='small' onClick={exportGraph}>
+                            <Button.Content>
+                              Save As PNG
+                              <a id='output_svg'>
+                              </a>
+                            </Button.Content>
+                        </Button>
                         <Label pointing='right' color='red' size='large'>
                             Rows
                         </Label>
