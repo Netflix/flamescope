@@ -5,3 +5,4 @@ yarn-error.log
 examples/*
 !examples/perf.stacks01
 !examples/perf.test01
+.pytest_cache/
