@@ -19,7 +19,6 @@
 
 from ..common import fileutil
 import os
-import re
 import gzip
 import collections
 from os.path import abspath, join
@@ -85,11 +84,11 @@ def read_offsets(filename):
     for line in f:
         if (line[0] == '#'):
             continue
-        r = re.search(event_regexp, line)
+        r = event_regexp.search(line)
         if (r):
             if (stack != ""):
                 # process prior stack
-                if (not re.search(idle_regexp, stack)):
+                if (not idle_regexp.search(stack)):
                     offsets.append(ts)
                 # don't try to cache stacks (could be many Gbytes):
                 stack = ""
@@ -100,7 +99,7 @@ def read_offsets(filename):
         else:
             stack += line.rstrip()
     # last stack
-    if (not re.search(idle_regexp, stack)):
+    if (not idle_regexp.search(stack)):
         offsets.append(ts)
     if (ts > end):
         end = ts

@@ -1,3 +1,4 @@
+import re
 #
 # Parsing
 #
@@ -71,11 +72,11 @@
 #
 # This event_regexp matches the event line, and puts time in the first group:
 #
-event_regexp = " +([0-9.]+): .+?:"
-frame_regexp = "^[\t ]*[0-9a-fA-F]+ (.+) \((.*)\)"
-comm_regexp = "^ *([^0-9]+)"
+event_regexp = re.compile(" +([0-9.]+): .+?:")
+frame_regexp = re.compile("^[\t ]*[0-9a-fA-F]+ (.+) \((.*)\)")
+comm_regexp = re.compile("^ *([^0-9]+)")
 
 # idle stack identification. just a regexp for now:
-idle_process = "swapper"
-idle_stack = "(cpuidle|cpu_idle|cpu_bringup_and_idle|native_safe_halt|xen_hypercall_sched_op|xen_hypercall_vcpu_op)"
-idle_regexp = "%s.*%s" % (idle_process, idle_stack)
+idle_process = re.compile("swapper")
+idle_stack = re.compile("(cpuidle|cpu_idle|cpu_bringup_and_idle|native_safe_halt|xen_hypercall_sched_op|xen_hypercall_vcpu_op)")
+idle_regexp = re.compile("%s.*%s" % (idle_process.pattern, idle_stack.pattern))
