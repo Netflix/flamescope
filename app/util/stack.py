@@ -19,6 +19,7 @@
 
 from ..common import fileutil
 import os
+import gzip
 import re
 import collections
 from flask import abort
@@ -75,9 +76,9 @@ def calculate_stack_range(filename):
     # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):
         try:
-            f = os.popen("gunzip -c " + path)
+            f = gzip.open(path, 'rt')
         except Exception:
-            print("ERROR: Can't gunzip -c stack file, %s." % path)
+            print("ERROR: Can't open gzipped file, %s." % path)
             f.close()
             return abort(500)
     else:
