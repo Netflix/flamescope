@@ -281,10 +281,6 @@ def generate_stack(filename, range_start=None, range_end=None):
                 c = name.find("+")
                 if (c > 0):
                     name = name[:c]
-                # strip symbol args (...):
-                c = name.find("(")
-                if (c > 0):
-                    name = name[:c]
                 stack.insert(1, [name, r.group(2)])
     # last stack
     if (ts >= start and ts <= end):
