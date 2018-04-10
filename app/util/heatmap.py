@@ -24,6 +24,7 @@ import collections
 from os.path import abspath, join
 from math import ceil, floor
 from flask import abort
+from pathlib import Path
 
 from app import config
 from .regexp import event_regexp, idle_regexp
@@ -45,7 +46,7 @@ def read_offsets(filename):
         print("ERROR: File %s is not in STACK_DIR" % path)
         return abort(404)
 
-    if not fileutil.validpath(path):
+    if not Path(path).exists():
         return abort(500)
 
     # fetch modification timestamp and check cache
