@@ -1,6 +1,10 @@
-click==6.7
-Flask==0.12.2
-itsdangerous==0.24
-Jinja2==2.10
-MarkupSafe==1.0
-Werkzeug==0.14.1
+click (6.7)
+Flask (0.12.2)
+itsdangerous (0.24)
+Jinja2 (2.10)
+MarkupSafe (1.0)
+pathlib (1.0.1)
+pip (9.0.3)
+setuptools (39.0.1)
+Werkzeug (0.14.1)
+wheel (0.31.0)
