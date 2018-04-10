@@ -48,7 +48,7 @@ const rowsOptions = [
 ]
 
 const heatmapColors = {
-  default:  ['#FFFFFF', '#FF0000'],
+  default:  ['#FFFFFF', '#FFA095'],
   enhanced: ['#FFFFFF', '#6AAAFF', '#FFA095', '#E50914']
 }
 
