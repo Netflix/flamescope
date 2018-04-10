@@ -78,22 +78,22 @@ Webpack can also watch and recompile files whenever they change. To build and st
 $ npm run webpack-watch
 ```
 
-## Building and running in docker
+## Building a Docker Image
 
-Build docker image:
+FlameScope provides a Dockerfile to build a Docker image:
 
-```
-docker build -t flamescope .
-```
-
-The image expects to have stacks bind-mounted into `/stacks` and listens
-on port 5000. To view stacks from `/tmp/stacks` on the host, do:
-
-```
-docker run --rm -it -v /tmp/stacks:/stacks:ro -p 5000:5000 flamescope
+```bash
+$ cd flamescope
+$ docker build -t flamescope .
 ```
 
-Then browse to http://127.0.0.1:5000/.
+The container expects the profiles to be bind-mounted into `/stacks` and listens on port 5000. To view profiles from `/tmp/stacks`, start the container with the following command:
+
+```
+$ docker run --rm -it -v /tmp/stacks:/stacks:ro -p 5000:5000 flamescope
+```
+
+Then access FlameScope on [http://127.0.0.1:5000](http://127.0.0.1:5000/)
 
 ## References
 
