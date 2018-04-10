@@ -72,7 +72,6 @@ def calculate_stack_range(filename):
         if mtime == stack_mtimes[path]:
             return stack_times[path]
 
-    # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):
         try:
             f = gzip.open(path, 'rt')
@@ -174,12 +173,11 @@ def generate_stack(filename, range_start=None, range_end=None):
     if not fileutil.validpath(path):
         return abort(500)
 
-    # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):
         try:
-            f = os.popen("gunzip -c " + path)
+            f = gzip.open(path, 'rt')
         except Exception:
-            print("ERROR: Can't gunzip -c stack file, %s." % path)
+            print("ERROR: Can't open gzipped file, %s." % path)
             f.close()
             return abort(500)
     else:
