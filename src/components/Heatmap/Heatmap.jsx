@@ -48,8 +48,8 @@ const rowsOptions = [
 ]
 
 const heatmapColors = {
-  default:  ['#FFFFFF', '#FFA095'],
-  enhanced: ['#FFFFFF', '#6AAAFF', '#FFA095', '#E50914']
+  default:  ['#FFFFFF', '#FF5032', '#E50914'],
+  enhanced: ['#FFFFFF', '#6AAAFF', '#FAA0B5', '#FF5032', '#E50914']
 }
 
 class Heatmap extends Component {
@@ -155,7 +155,7 @@ class Heatmap extends Component {
             .onClick(onClick)
             .onMouseOver(onMouseOver)
             .colorScale(scaleLinear()
-                .domain( enhanceColors ? [0, 1, 3.2, data.maxvalue] : [0, data.maxvalue])
+                .domain( enhanceColors ? [0, 1, 3, data.maxvalue/2, data.maxvalue] : [0, data.maxvalue/2 , data.maxvalue])
                 .range( enhanceColors ? heatmapColors.enhanced : heatmapColors.default)
             )
             .margin({
