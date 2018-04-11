@@ -47,6 +47,11 @@ const rowsOptions = [
     { key: 100, text: '100', value: '100' },
 ]
 
+const heatmapColors = {
+  default:  ['#FFFFFF', '#FF5032', '#E50914'],
+  enhanced: ['#FFFFFF', '#6AAAFF', '#FAA0B5', '#FF5032', '#E50914']
+}
+
 class Heatmap extends Component {
     constructor(props) {
         super(props);
@@ -56,6 +61,7 @@ class Heatmap extends Component {
             'handleSettingsClose',
             'handleSettingsOpen',
             'handleApply',
+            'handleEnhanceColors',
             'handleRowsChange',
             'fetchData',
         ].forEach((k) => {
@@ -67,6 +73,7 @@ class Heatmap extends Component {
           rows: '50',
           loading: false,
           settingsOpen: false,
+          enhanceColors: false
         };
     }
 
@@ -103,7 +110,7 @@ class Heatmap extends Component {
     }
 
     drawHeatmap() {
-        const { data } = this.state;
+        const { data , enhanceColors} = this.state;
         const { filename } = this.props.match.params
 
         const heatmapNode = document.getElementById('heatmap')
@@ -148,8 +155,8 @@ class Heatmap extends Component {
             .onClick(onClick)
             .onMouseOver(onMouseOver)
             .colorScale(scaleLinear()
-                .domain([0, data.maxvalue / 2, data.maxvalue])
-                .range(['#FFFFFF', '#FF5032', '#E50914'])
+                .domain( enhanceColors ? [0, 1, 3, data.maxvalue/2, data.maxvalue] : [0, data.maxvalue/2 , data.maxvalue])
+                .range( enhanceColors ? heatmapColors.enhanced : heatmapColors.default)
             )
             .margin({
                 top: 40,
@@ -269,6 +276,11 @@ class Heatmap extends Component {
         }
     }
 
+    handleEnhanceColors(){
+      this.setState({enhanceColors: !this.state.enhanceColors})
+      this.fetchData()
+    }
+
     render() {
         return (
             <div>
@@ -306,12 +318,17 @@ class Heatmap extends Component {
                             selection
                             labeled
                         />
-                        {/* <Button animated='vertical' color='red' onClick={this.handleSettingsOpen}>
+                      { /*<Button animated='vertical' color='red' onClick={this.handleSettingsOpen}>
                             <Button.Content hidden>Settings</Button.Content>
                             <Button.Content visible>
                                 <Icon name='cogs' />
                             </Button.Content>
-                        </Button> */}
+                        </Button>*/}
+                      <Button toggle active={this.state.enhanceColors} onClick={this.handleEnhanceColors} style={{marginLeft: '8px'}}>
+                        <Button.Content visible>
+                          Enhance Colors
+                        </Button.Content>
+                      </Button>
                     </Container>
                     <Divider />
                     <div
