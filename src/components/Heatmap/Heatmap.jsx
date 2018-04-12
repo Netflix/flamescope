@@ -139,7 +139,7 @@ class Heatmap extends Component {
         var ticks = Math.floor(width / 50)
 
         var legendWidth = Math.min(width * 0.8, 400)
-        var legendTicks = Math.floor(legendWidth / 100)
+        var legendTicks = legendWidth > 100 ? Math.floor(legendWidth / 50) : 2
 
         function onClick(d, i, j) {
             rangeSelect([i, j])
