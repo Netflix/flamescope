@@ -138,6 +138,9 @@ class Heatmap extends Component {
 
         var ticks = Math.floor(width / 50)
 
+        var legendWidth = Math.min(width * 0.8, 400)
+        var legendTicks = Math.floor(legendWidth / 100)
+
         function onClick(d, i, j) {
             rangeSelect([i, j])
         }
@@ -151,6 +154,7 @@ class Heatmap extends Component {
             .title("")
             .subtitle("")
             .legendLabel("Count")
+            .legendScaleTicks(legendTicks)
             .width(width)
             .xAxisScale([data.columns[0], data.columns[data.columns.length - 1]])
             .xAxisScaleTicks(ticks)
