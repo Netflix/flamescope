@@ -60,9 +60,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development' // use 'development' unless process.env.NODE_ENV is defined
-    }),
+    new webpack.EnvironmentPlugin(['NODE_ENV']),
     new webpack.LoaderOptionsPlugin({
       options: {
         eslint: {

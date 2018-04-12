@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "main": "app/public/index.html",
   "scripts": {
-    "webpack-server": "webpack-dev-server --hot --mode development",
-    "webpack-watch": "webpack --watch --mode development",
-    "webpack": "webpack --mode production",
+    "webpack-server": "NODE_ENV=development webpack-dev-server --hot --mode development",
+    "webpack-watch": "NODE_ENV=development webpack --watch --mode development",
+    "webpack": "NODE_ENV=production webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "https://github.com/Netflix/flamescope.git",
@@ -35,6 +35,7 @@
     "babel-eslint": "^8.2.2",
     "babel-loader": "^8.0.0-beta",
     "babel-plugin-lodash": "^3.3.2",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.13",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.0",
     "eslint-loader": "^2.0.0",
