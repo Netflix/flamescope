@@ -19,7 +19,7 @@
 
 import os
 import re
-invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -]')
+invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')
 
 def validpath(pathname):
     if invalidchars.search(pathname):
