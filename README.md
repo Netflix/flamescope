@@ -34,6 +34,8 @@ $ sudo perf script --header > stacks.myproductionapp.2018-03-30_01
 $ gzip stacks.myproductionapp.2018-03-30_01	# optional
 ```
 
+If you are profiling C++ code, you may want to pipe stacks through `c++filt` to get readable frames.
+
 There are extra steps to fetch stacks correctly for some runtimes, depending on the runtime. For example, we've previously published Java steps in [Java in Flames](https://medium.com/netflix-techblog/java-in-flames-e763b3d32166): java needs to be running with the -XX:+PreserveFramePointer option, and [perf-map-agent](https://github.com/jvm-profiling-tools/perf-map-agent) must be run immediately after the `perf record` to dump a JIT symbol table in /tmp.
 
 FlameScope can visualize any Linux `perf script` output that includes stack traces, including page faults, context switches, and other events. See the References section below for documentation.
