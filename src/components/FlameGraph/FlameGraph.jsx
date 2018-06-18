@@ -60,7 +60,7 @@ class FlameGraph extends Component {
         };
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         const { filename, start, end } = this.props.match.params
         this.props.pushBreadcrumb('f_heatmap_' + filename, 'Heatmap (' + filename + ')', '/#/heatmap/' + filename)
         this.props.pushBreadcrumb(

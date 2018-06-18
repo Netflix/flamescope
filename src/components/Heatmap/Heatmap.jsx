@@ -83,7 +83,7 @@ class Heatmap extends Component {
         };
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         const { filename } = this.props.match.params
 
         this.props.pushBreadcrumb('heatmap_' + filename, 'Heatmap (' + filename + ')', '/#/heatmap/' + filename)
