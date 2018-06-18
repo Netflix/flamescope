@@ -2430,9 +2430,9 @@ d3-ease@1, d3-ease@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-ease/-/d3-ease-1.0.3.tgz#68bfbc349338a380c44d8acc4fbc3304aa2d8c0e"
 
-d3-flame-graph@2.0.0-alpha4:
-  version "2.0.0-alpha4"
-  resolved "https://registry.yarnpkg.com/d3-flame-graph/-/d3-flame-graph-2.0.0-alpha4.tgz#5bc21d8bd1931dd244c949750fcf51c327619cd9"
+d3-flame-graph@2.0.0-alpha5:
+  version "2.0.0-alpha5"
+  resolved "https://registry.yarnpkg.com/d3-flame-graph/-/d3-flame-graph-2.0.0-alpha5.tgz#d30ce91606b2cfe7b5cd9587e6676026afe9d3cf"
   dependencies:
     d3 "^4.10.0"
     d3-tip "^0.7.1"
@@ -7929,6 +7929,10 @@ yargs@~1.2.6:
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-1.2.6.tgz#9c7b4a82fd5d595b2bf17ab6dcc43135432fe34b"
   dependencies:
     minimist "^0.1.0"
+
+yarn@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.7.0.tgz#0076b9fde6010e01950526a609bc53bc175ef925"
 
 yeoman-environment@^2.0.0, yeoman-environment@^2.0.5:
   version "2.0.5"

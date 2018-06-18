@@ -73,7 +73,7 @@ import re
 # This event_regexp matches the event line, and puts time in the first group:
 #
 event_regexp = re.compile(" +([0-9.]+): .+?:")
-frame_regexp = re.compile("^[\t ]*[0-9a-fA-F]+ (.+) \((.*)\)")
+frame_regexp = re.compile("^[\t ]*[0-9a-fA-F]+ (.+) \((.*?)\)$")
 comm_regexp = re.compile("^ *([^0-9]+)")
 
 # idle stack identification. just a regexp for now:
