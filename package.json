@@ -25,8 +25,7 @@
     "semantic-ui-less": "^2.3.1",
     "semantic-ui-react": "^0.79.0",
     "yarn": "^1.7.0",
-    "query-string": "^6.1",
-    "yarn": "^1.7.0"
+    "query-string": "^6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.42",
