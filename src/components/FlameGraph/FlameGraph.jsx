@@ -102,6 +102,19 @@ class FlameGraph extends Component {
         this.props.popBreadcrumb('f_heatmap_' + filename)
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.location.search !== this.props.location.search) {
+            const query = queryString.parse(nextProps.location.search);
+            const sq = query["search"];
+            if (sq) {
+                this.setState({searchTerm: sq});
+                this.state.chart.search(sq);
+            } else {
+                this.state.chart.clear()
+            }
+        }
+    }
+
     drawFlamegraph() {
         const { data } = this.state;
         const width = document.getElementById('flamegraph').offsetWidth
