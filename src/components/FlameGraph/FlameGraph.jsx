@@ -25,6 +25,7 @@ import { flamegraph } from 'd3-flame-graph'
 import { select } from 'd3-selection'
 import 'd3-flame-graph/dist/d3-flamegraph.css'
 import './flamegraph.less'
+import queryString from 'query-string'
 
 const styles = {
     container: {
@@ -84,6 +85,15 @@ class FlameGraph extends Component {
             .then( () => {
                 this.drawFlamegraph()
             })
+            .then( () => {
+                const query = queryString.parse(this.props.location.search);
+                const sq = query["search"];
+                if (sq) {
+                    this.setState({searchTerm: sq});
+                    this.state.chart.search(sq);
+                }
+            })
+
     }
 
     componentWillUnmount() {
@@ -188,6 +198,7 @@ class FlameGraph extends Component {
 }
 
 FlameGraph.propTypes = {
+    location: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     popBreadcrumb: PropTypes.func.isRequired,
     pushBreadcrumb: PropTypes.func.isRequired,
