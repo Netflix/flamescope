@@ -105,11 +105,12 @@ class FlameGraph extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.location.search !== this.props.location.search) {
             const query = queryString.parse(nextProps.location.search);
-            const sq = query["search"];
+            const sq = query['search'];
             if (sq) {
                 this.setState({searchTerm: sq});
                 this.state.chart.search(sq);
             } else {
+                this.setState({searchTerm: ''});
                 this.state.chart.clear()
             }
         }
@@ -142,8 +143,9 @@ class FlameGraph extends Component {
     }
 
     handleClearClick() {
-        this.setState({searchTerm: ''})
-        this.state.chart.clear()
+        const params = new URLSearchParams(this.props.location.search);
+        params.delete('search');
+        this.props.history.push({search: params.toString(),});
     }
 
     handleSearchInputChange(event, data) {
@@ -151,7 +153,9 @@ class FlameGraph extends Component {
     }
 
     handleSearchClick() {
-        this.state.chart.search(this.state.searchTerm)
+        const params = new URLSearchParams(this.props.location.search);
+        params.set('search', this.state.searchTerm);
+        this.props.history.push({search: params.toString(),});
     }
 
     handleOnKeyDown(event) {
@@ -212,6 +216,7 @@ class FlameGraph extends Component {
 
 FlameGraph.propTypes = {
     location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     popBreadcrumb: PropTypes.func.isRequired,
     pushBreadcrumb: PropTypes.func.isRequired,
