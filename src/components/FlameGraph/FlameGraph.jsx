@@ -49,6 +49,7 @@ class FlameGraph extends Component {
             'handleSearchInputChange',
             'handleSearchClick',
             'handleOnKeyDown',
+            'updateSearchQuery',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -143,9 +144,7 @@ class FlameGraph extends Component {
     }
 
     handleClearClick() {
-        const params = new URLSearchParams(this.props.location.search);
-        params.delete('search');
-        this.props.history.push({search: params.toString(),});
+        this.updateSearchQuery('');
     }
 
     handleSearchInputChange(event, data) {
@@ -153,15 +152,23 @@ class FlameGraph extends Component {
     }
 
     handleSearchClick() {
-        const params = new URLSearchParams(this.props.location.search);
-        params.set('search', this.state.searchTerm);
-        this.props.history.push({search: params.toString(),});
+        this.updateSearchQuery(this.state.searchTerm);
     }
 
     handleOnKeyDown(event) {
         if (event.which == 13) {
-            this.state.chart.search(this.state.searchTerm)
+            this.updateSearchQuery(this.state.searchTerm);
         }
+    }
+
+    updateSearchQuery(nextQuery) {
+        const params = new URLSearchParams(this.props.location.search);
+        if (nextQuery === '') {
+            params.delete('search');
+        } else {
+            params.set('search', nextQuery);
+        }
+        this.props.history.push({search: params.toString(),});
     }
 
     render() {
