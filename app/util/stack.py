@@ -124,7 +124,7 @@ def library2type(library):
         return "kernel"
     if library.find("vmlinux") > 0:
         return "kernel"
-    return "user"
+    return "inline"
 
 # add a stack to the root tree
 def add_stack(root, stack, comm):

@@ -72,7 +72,10 @@ import re
 #
 # This event_regexp matches the event line, and puts time in the first group:
 #
-event_regexp = re.compile(" +([0-9.]+): .+?:")
+# Use named capture for event_regexp, for perf/bcc/DTrace, and use that match to determine
+# how to parse the stack frames, etc
+event_regexp = re.compile(r"(?:^\s+?\S+\s+PID:\s+\d+\s+TID:\s+\d+\s+\[(?P<DTrace>\d+)\]\n)|"
+                          r"(?: +(?P<perf>[0-9.]+): .+?:)")
 frame_regexp = re.compile("^[\t ]*[0-9a-fA-F]+ (.+) \((.*?)\)$")
 comm_regexp = re.compile("^ *([^0-9]+)")
 

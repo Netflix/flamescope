@@ -92,7 +92,13 @@ def read_offsets(filename):
                     offsets.append(ts)
                 # don't try to cache stacks (could be many Gbytes):
                 stack = ""
-            ts = float(r.group(1))
+            # TODO:
+            # For DTrace, which produces integer millisecond timestamps, we have to divide by 1000.0 for this to work
+            # as expected
+            if (r.group('DTrace')):
+              ts = float(r.group('DTrace'))/1000.0
+            else:
+              ts = float(r.group('perf'))
             if (ts < start):
                 start = ts
             stack = line.rstrip()
@@ -139,7 +145,10 @@ def generate_heatmap(filename, rows=None):
     for ts in offsets:
         col = int(floor(ts - floor(start)))
         row = rows - int(floor(rows * (ts % 1))) - 1
-        values[col][row] += 1
+        try:
+          values[col][row] += 1
+        except:
+          print("col: {} row: {} maxvalue: {}".format(col,row,maxvalue))
         if (values[col][row] > maxvalue):
             maxvalue = values[col][row]
 
