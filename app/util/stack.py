@@ -133,8 +133,8 @@ def library2type(library):
     return "user"
 
 # add a stack to the root tree
-def add_stack(root, stack, comm):
-    root['v'] += 1
+def add_stack(root, stack, comm, count=1):
+    root['v'] += count
     last = root
     for pair in stack:
         # Split inlined frames. "->" is used by software such as java
@@ -157,13 +157,13 @@ def add_stack(root, stack, comm):
                     found = 1
                     break
             if (found):
-                last['v'] += 1
+                last['v'] += count
             else:
                 newframe = {}
                 newframe['c'] = []
                 newframe['n'] = name
                 newframe['l'] = libtype
-                newframe['v'] = 1
+                newframe['v'] = count
                 last['c'].append(newframe)
                 last = newframe
     return root
@@ -241,6 +241,7 @@ def generate_stack(filename, range_start=None, range_end=None):
     # - event_regexp: to identify event timestamps
     # - idle_regexp: for filtering idle stacks
     linenum = -1
+    stack_count = 0
     for line in f:
         linenum += 1
         # Performance optimization. Makes a large difference.
@@ -266,7 +267,11 @@ def generate_stack(filename, range_start=None, range_end=None):
                     # skip idle
                     stack = []
                 elif (ts >= start and ts <= end):
-                    root = add_stack(root, stack, comm)
+                    if stack_count:
+                        root = add_stack(root, stack, comm, stack_count)
+                        stack_count = 0  # reset
+                    else:
+                        root = add_stack(root, stack, comm)
                 stack = []
             if r.group('perf'):
                 ts = float(r.group('perf'))
@@ -289,15 +294,18 @@ def generate_stack(filename, range_start=None, range_end=None):
             if (r):
                 if (r.group('DTrace_frame')):
                     name = r.group('DTrace_frame')
-                    frame_source = r.group('DTrace_frame_src')
+                    frame_lib = r.group('DTrace_frame_lib_or_mod')
+                elif (r.group('DTrace_stack_count')):
+                    stack_count = int(r.group('DTrace_stack_count'))
+                    continue
                 else:
                     name = r.group('perf_frame')
-                    frame_source = r.group('perf_frame_src')
+                    frame_lib = r.group('perf_frame_lib')
                 # strip instruction offset (+0xfe200...)
                 c = name.find("+")
                 if (c > 0):
                     name = name[:c]
-                stack.insert(1, [name, frame_source])
+                stack.insert(1, [name, frame_lib])
     # last stack
     if (ts >= start and ts <= end):
         root = add_stack(root, stack, comm)

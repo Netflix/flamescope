@@ -93,8 +93,9 @@ import re
 # how to parse the stack frames, etc
 event_regexp = re.compile(r"(?:^\s+?\S+\s+PID:\s+\d+\s+TID:\s+\d+\s+\[(?P<DTrace>\d+)\]\n)|"
                           r"(?: +(?P<perf>[0-9.]+): .+?:)")
-frame_regexp = re.compile(r"(?:^[\t ]*[0-9a-fA-F]+ (?P<perf_frame>.+) \((?P<perf_frame_src>.*?)\)$)|"
-                          r"(?:^(?:(?P<DTrace_frame_src>[^`]+)`)?(?P<DTrace_frame>[^\n]+)\n)")
+frame_regexp = re.compile(r"(?:^[\t ]*[0-9a-fA-F]+ (?P<perf_frame>.+) \((?P<perf_frame_lib>.*?)\)$)|"
+                          r"(?:^\s+(?P<DTrace_stack_count>\d+)\n)|"
+                          r"(?:^(?:(?P<DTrace_frame_lib_or_mod>[^`]+)`)?(?P<DTrace_frame>[^\n]+)\n)")
 comm_regexp = re.compile(r"(?:^ *(?P<perf_comm>[^0-9]+))|"
                          r"(?:^\s+?(?P<DTrace_comm>\S+)\s+PID:\s+\d+\s+TID:)")
 
