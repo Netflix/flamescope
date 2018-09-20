@@ -70,16 +70,37 @@ import re
 #
 #           7fa4c651fb95 CardTableModRefBS::process_stride(Space*, MemRegion, int, int, OopsInGenClosure*, CardTableRS*, signed char**, unsigned long, unsigned long) (/usr/lib/jvm/java-8-oracle-1.8.0.121/jre/lib/amd64/server/libjvm.so)
 #
+# DTrace script output examples:
+#
+# Stack examples:
+#
+#            sched PID:     0 TID:     0 [1537196709608]
+# unix`cpu_halt+0x1ec
+# unix`cpu_halt+0x1d8
+# unix`idle+0x12c
+# unix`thread_start+0x4
+#           145
+#
+#
+# event-line examples (excluding stacks):
+#        aggrocrag PID: 53448 TID:     7 [1537196700199]
+#              awk PID: 52259 TID:     1 [1537196700465]
+#            sched PID:     0 TID:     0 [1537196709608]
+
 # This event_regexp matches the event line, and puts time in the first group:
 #
 # Use named capture for event_regexp, for perf/bcc/DTrace, and use that match to determine
 # how to parse the stack frames, etc
 event_regexp = re.compile(r"(?:^\s+?\S+\s+PID:\s+\d+\s+TID:\s+\d+\s+\[(?P<DTrace>\d+)\]\n)|"
                           r"(?: +(?P<perf>[0-9.]+): .+?:)")
-frame_regexp = re.compile("^[\t ]*[0-9a-fA-F]+ (.+) \((.*?)\)$")
-comm_regexp = re.compile("^ *([^0-9]+)")
+frame_regexp = re.compile(r"(?:^[\t ]*[0-9a-fA-F]+ (?P<perf_frame>.+) \((?P<perf_frame_src>.*?)\)$)|"
+                          r"(?:^(?:(?P<DTrace_frame_src>[^`]+)`)?(?P<DTrace_frame>[^\n]+)\n)")
+comm_regexp = re.compile(r"(?:^ *(?P<perf_comm>[^0-9]+))|"
+                         r"(?:^\s+?(?P<DTrace_comm>\S+)\s+PID:\s+\d+\s+TID:)")
 
 # idle stack identification. just a regexp for now:
 idle_process = re.compile("swapper")
-idle_stack = re.compile("(cpuidle|cpu_idle|cpu_bringup_and_idle|native_safe_halt|xen_hypercall_sched_op|xen_hypercall_vcpu_op)")
+idle_stack = re.compile(r"(cpuidle|cpu_idle|cpu_bringup_and_idle|native_safe_halt|"
+                        r"xen_hypercall_sched_op|xen_hypercall_vcpu_op|"
+                        r"cpu_halt)")
 idle_regexp = re.compile("%s.*%s" % (idle_process.pattern, idle_stack.pattern))

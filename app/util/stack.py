@@ -100,7 +100,11 @@ def calculate_stack_range(filename):
             continue
         r = event_regexp.search(line)
         if (r):
-            ts = float(r.group(1))
+            if (r.group('DTrace')):
+              # scale millisecs to seconds
+              ts = float(r.group('DTrace'))/1000.0
+            else:
+              ts = float(r.group('perf'))
             if ((linenum % index_factor) == 0):
                 stack_index[path].append([linenum, ts])
             if (ts < start):
@@ -116,7 +120,7 @@ def calculate_stack_range(filename):
     return times
 
 def library2type(library):
-    if library == "":
+    if library == "" or library is None:
         return ""
     if library.startswith("/tmp/perf-"):
         return "jit"
@@ -124,7 +128,9 @@ def library2type(library):
         return "kernel"
     if library.find("vmlinux") > 0:
         return "kernel"
-    return "inline"
+    if library.find("unix") > 0:
+        return "kernel"
+    return "user"
 
 # add a stack to the root tree
 def add_stack(root, stack, comm):
@@ -262,24 +268,36 @@ def generate_stack(filename, range_start=None, range_end=None):
                 elif (ts >= start and ts <= end):
                     root = add_stack(root, stack, comm)
                 stack = []
-            ts = float(r.group(1))
+            if r.group('perf'):
+                ts = float(r.group('perf'))
+            else:
+                # Convert from millisecs to seconds
+                ts = float(r.group('DTrace'))/1000.0
             if (ts > end + overscan):
                 break
             r = comm_regexp.search(line)
             if (r):
-                comm = r.group(1).rstrip()
+                if (r.group('perf_comm')):
+                    comm = r.group('perf_comm').rstrip()
+                else:
+                    comm = r.group('DTrace_comm').rstrip()
                 stack.append([comm, ""])
             else:
                 stack.append(["<unknown>", ""])
         else:
             r = frame_regexp.search(line)
             if (r):
-                name = r.group(1)
+                if (r.group('DTrace_frame')):
+                    name = r.group('DTrace_frame')
+                    frame_source = r.group('DTrace_frame_src')
+                else:
+                    name = r.group('perf_frame')
+                    frame_source = r.group('perf_frame_src')
                 # strip instruction offset (+0xfe200...)
                 c = name.find("+")
                 if (c > 0):
                     name = name[:c]
-                stack.insert(1, [name, r.group(2)])
+                stack.insert(1, [name, frame_source])
     # last stack
     if (ts >= start and ts <= end):
         root = add_stack(root, stack, comm)

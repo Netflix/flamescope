@@ -92,9 +92,8 @@ def read_offsets(filename):
                     offsets.append(ts)
                 # don't try to cache stacks (could be many Gbytes):
                 stack = ""
-            # TODO:
-            # For DTrace, which produces integer millisecond timestamps, we have to divide by 1000.0 for this to work
-            # as expected
+            # For DTrace, which produces integer millisecond timestamps, we have to divide by 1000.0
+            # to convert to fractional seconds that are expected here
             if (r.group('DTrace')):
               ts = float(r.group('DTrace'))/1000.0
             else:

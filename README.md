@@ -34,6 +34,43 @@ $ sudo perf script --header > stacks.myproductionapp.2018-03-30_01
 $ gzip stacks.myproductionapp.2018-03-30_01	# optional
 ```
 
+If using DTrace on Solaris, you can create a new profile using this DTrace script:
+
+```C
+#!/usr/sbin/dtrace -qs
+
+/* prof_flamescope.d */
+/* Generate a 120 second sample at 49 Hz of the CPU kernel stacks attributed
+ * by execname, for consumption by flamescope */
+
+#pragma D option bufsize=512k
+#pragma D option aggsize=512k
+
+profile-49Hz
+{
+  @c[execname,pid,tid,walltimestamp/1000000,stack()]  = count();
+}
+
+tick-1s
+{
+  printa("\n%16s PID: %5d TID: %5d [%u]%k %@12u\n",@c);
+  trunc(@c);
+}
+
+tick-120sec
+{
+  exit(0);
+}
+```
+
+And here's how to run that script, analogous to how you would for Linux `perf`:
+
+```bash
+ts=$(date '+%Y%m%d-%H%M')
+sudo dtrace -s prof_flamescope.d > stacks.myapp.${ts}
+gzip stacks.myapp.${ts} # optional
+```
+
 If you are profiling C++ code, you may want to pipe stacks through `c++filt` to get readable frames.
 
 There are extra steps to fetch stacks correctly for some runtimes, depending on the runtime. For example, we've previously published Java steps in [Java in Flames](https://medium.com/netflix-techblog/java-in-flames-e763b3d32166): java needs to be running with the -XX:+PreserveFramePointer option, and [perf-map-agent](https://github.com/jvm-profiling-tools/perf-map-agent) must be run immediately after the `perf record` to dump a JIT symbol table in /tmp.
