@@ -100,8 +100,8 @@ comm_regexp = re.compile(r"(?:^ *(?P<perf_comm>[^0-9]+))|"
                          r"(?:^\s+?(?P<DTrace_comm>\S+)\s+PID:\s+\d+\s+TID:)")
 
 # idle stack identification. just a regexp for now:
-idle_process = re.compile("swapper")
+idle_process = re.compile("(swapper|sched)")
 idle_stack = re.compile(r"(cpuidle|cpu_idle|cpu_bringup_and_idle|native_safe_halt|"
                         r"xen_hypercall_sched_op|xen_hypercall_vcpu_op|"
-                        r"cpu_halt)")
+                        r"cpu_halt|idle)")
 idle_regexp = re.compile("%s.*%s" % (idle_process.pattern, idle_stack.pattern))
