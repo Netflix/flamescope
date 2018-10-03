@@ -113,6 +113,35 @@ class Heatmap extends Component {
             .then( () => {
                 this.drawHeatmap()
             })
+            .then( () => {
+                this.emptyLegend()
+                this.splitLegend()
+            })
+    }
+
+    emptyLegend() {
+        const legend = document.getElementById('legend')
+        while (legend.firstChild) {
+            legend.removeChild(legend.firstChild)
+        }
+        console.log('legend empty')
+    }
+
+    splitLegend() {
+        const heatmapNode = document.getElementById('heatmap')
+        const map = heatmapNode.childNodes[0]
+        const defs = map.querySelector('defs')
+        const legend = map.querySelector('.legendWrapper')
+
+        legend.removeAttribute('transform');
+        const legendContainer = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+        legendContainer.style.overflow = 'visible';
+
+        legendContainer.appendChild(defs)
+        legendContainer.appendChild(legend)
+
+        const l = document.getElementById('legend')
+        l.appendChild(legendContainer)
     }
 
     drawHeatmap() {
@@ -291,6 +320,8 @@ class Heatmap extends Component {
             {enhanceColors: !this.state.enhanceColors},
             function() {
                 this.drawHeatmap()
+                this.emptyLegend()
+                this.splitLegend()
             }
         )
     }
@@ -354,6 +385,13 @@ class Heatmap extends Component {
                         id={`heatmap`}
                         key={`heatmap`}
                         className={`heatmap`}
+                    />
+
+                    <div
+                        ref={`legend`}
+                        id={`legend`}
+                        key={`legend`}
+                        className={`legend`}
                     />
                     <Divider />
                     <div
