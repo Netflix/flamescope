@@ -25,6 +25,7 @@ import { flamegraph } from 'd3-flame-graph'
 import { select } from 'd3-selection'
 import 'd3-flame-graph/dist/d3-flamegraph.css'
 import './flamegraph.less'
+import queryString from 'query-string'
 
 const styles = {
     container: {
@@ -48,6 +49,7 @@ class FlameGraph extends Component {
             'handleSearchInputChange',
             'handleSearchClick',
             'handleOnKeyDown',
+            'updateSearchQuery',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -84,12 +86,35 @@ class FlameGraph extends Component {
             .then( () => {
                 this.drawFlamegraph()
             })
+            .then( () => {
+                const query = queryString.parse(this.props.location.search);
+                const sq = query["search"];
+                if (sq) {
+                    this.setState({searchTerm: sq});
+                    this.state.chart.search(sq);
+                }
+            })
+
     }
 
     componentWillUnmount() {
         const { filename, start, end } = this.props.match.params
         this.props.popBreadcrumb('flamegraph_' + filename + '_' + start + '_' + end)
         this.props.popBreadcrumb('f_heatmap_' + filename)
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.location.search !== this.props.location.search) {
+            const query = queryString.parse(nextProps.location.search);
+            const sq = query['search'];
+            if (sq) {
+                this.setState({searchTerm: sq});
+                this.state.chart.search(sq);
+            } else {
+                this.setState({searchTerm: ''});
+                this.state.chart.clear()
+            }
+        }
     }
 
     drawFlamegraph() {
@@ -119,8 +144,7 @@ class FlameGraph extends Component {
     }
 
     handleClearClick() {
-        this.setState({searchTerm: ''})
-        this.state.chart.clear()
+        this.updateSearchQuery('');
     }
 
     handleSearchInputChange(event, data) {
@@ -128,13 +152,23 @@ class FlameGraph extends Component {
     }
 
     handleSearchClick() {
-        this.state.chart.search(this.state.searchTerm)
+        this.updateSearchQuery(this.state.searchTerm);
     }
 
     handleOnKeyDown(event) {
         if (event.which == 13) {
-            this.state.chart.search(this.state.searchTerm)
+            this.updateSearchQuery(this.state.searchTerm);
         }
+    }
+
+    updateSearchQuery(nextQuery) {
+        const params = new URLSearchParams(this.props.location.search);
+        if (nextQuery === '') {
+            params.delete('search');
+        } else {
+            params.set('search', nextQuery);
+        }
+        this.props.history.push({search: params.toString(),});
     }
 
     render() {
@@ -188,6 +222,8 @@ class FlameGraph extends Component {
 }
 
 FlameGraph.propTypes = {
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     popBreadcrumb: PropTypes.func.isRequired,
     pushBreadcrumb: PropTypes.func.isRequired,
