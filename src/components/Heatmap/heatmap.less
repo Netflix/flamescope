@@ -4,12 +4,24 @@ text {
     font-family: "Source Sans Pro", sans-serif !important;
 }
 
-.heatmap svg {
+.heatmap {
+    overflow-x: auto;
+    width: ~"calc(100vw - 64px)";
+    margin: 0 auto;
     position: relative;
     left: 50%;
-    -webkit-transform: translateX(-50%);
-    -ms-transform: translateX(-50%);
     transform: translateX(-50%);
+    position: relative;
+    text-align: center;
+}
+
+.legend {
+    width: 316px;
+    height: 80px;
+    margin: auto;
+    display: block;
+    padding-top: 30px;
+    padding-bottom: 60px;
 }
 
 .ui.page.modals.dimmer.transition.visible.active {

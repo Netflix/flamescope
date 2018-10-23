@@ -103,7 +103,7 @@ class FlameGraph extends Component {
         this.props.popBreadcrumb('f_heatmap_' + filename)
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.location.search !== this.props.location.search) {
             const query = queryString.parse(nextProps.location.search);
             const sq = query['search'];

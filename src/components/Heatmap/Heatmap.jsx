@@ -174,6 +174,10 @@ class Heatmap extends Component {
                 bottom: 10,
                 left: 3
             })
+            .legendElement("#legend")
+            .legendHeight(50)
+            .legendWidth(300)
+            .legendMargin({top: 0, right: 0, bottom: 30, left: 0})
 
         function heatmap2time(cell, end = false) {
             var secs = data.columns[cell[0]]
@@ -354,6 +358,13 @@ class Heatmap extends Component {
                         id={`heatmap`}
                         key={`heatmap`}
                         className={`heatmap`}
+                    />
+
+                    <div
+                        ref={`legend`}
+                        id={`legend`}
+                        key={`legend`}
+                        className={`legend`}
                     />
                     <Divider />
                     <div
