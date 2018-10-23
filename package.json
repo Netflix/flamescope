@@ -1,6 +1,6 @@
 {
   "name": "flamescope",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "app/public/index.html",
   "scripts": {
     "webpack-server": "NODE_ENV=development webpack-dev-server --hot --mode development",
