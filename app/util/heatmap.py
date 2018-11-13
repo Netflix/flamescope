@@ -30,7 +30,7 @@ from app import config
 from .regexp import event_regexp, idle_regexp
 
 # global defaults
-USE_HEATMAPCACHE = True
+USE_HEATMAP_FILECACHE = True
 YRATIO = 1000   # milliseconds
 DEFAULT_ROWS = 50
 heatmap_cache = {}
@@ -61,8 +61,10 @@ def read_offsets(filename):
             # use cached heatmap
             return heatmap_cache[path]
 
-    if avail_heatmap_filecache(path, mtime):
-        return read_heatmap_filecache(path)
+    if USE_HEATMAP_FILECACHE and avail_heatmap_filecache(path, mtime):
+        fc = read_heatmap_filecache(path)
+        if fc.mtime == mtime:
+            return fc.heatmap
 
     # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):
@@ -114,7 +116,7 @@ def read_offsets(filename):
     heatmap = collections.namedtuple('offsets', ['start', 'end', 'offsets'])(start, end, offsets)
     heatmap_cache[path] = heatmap
     heatmap_mtimes[path] = mtime
-    if USE_HEATMAPCACHE:
+    if USE_HEATMAP_FILECACHE:
         write_heatmap_filecache(path, heatmap, mtime)
     return heatmap
 
@@ -124,7 +126,7 @@ def convert_path_to_filecache(path):
 
 def write_heatmap_filecache(path, heatmap, mtime):
     f = open(convert_path_to_filecache(path), 'wt')
-    f.write(json.dumps({'start': heatmap.start, 'end': heatmap.end, 'offsets': heatmap.offsets}))
+    f.write(json.dumps({'start': heatmap.start, 'end': heatmap.end, 'offsets': heatmap.offsets, 'mtime': mtime}))
     f.close()
 
 
@@ -133,9 +135,12 @@ def read_heatmap_filecache(path):
     h = json.loads(f.read())
     print('read', h)
     f.close()
-    return collections.namedtuple('offsets', ['start', 'end', 'offsets'])(h['start'], h['end'], h['offsets'])
+    return collections.namedtuple('cache', ['heatmap', 'mtime'])(
+            collections.namedtuple('offsets', ['start', 'end', 'offsets'])(h['start'], h['end'], h['offsets']),
+            h['mtime']
+            )
 
-def avail_heatmap_filecache(path, mtime):
+def avail_heatmap_filecache(path):
     filename = convert_path_to_filecache(path)
     return isfile(filename)
 
