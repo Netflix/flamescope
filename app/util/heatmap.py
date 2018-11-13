@@ -30,7 +30,6 @@ from app import config
 from .regexp import event_regexp, idle_regexp
 
 # global defaults
-USE_HEATMAP_FILECACHE = True
 YRATIO = 1000   # milliseconds
 DEFAULT_ROWS = 50
 heatmap_cache = {}
@@ -61,7 +60,7 @@ def read_offsets(filename):
             # use cached heatmap
             return heatmap_cache[path]
 
-    if USE_HEATMAP_FILECACHE and avail_heatmap_filecache(path):
+    if config.USE_HEATMAP_FILECACHE and avail_heatmap_filecache(path):
         fc = read_heatmap_filecache(path)
         if fc.mtime == mtime:
             return fc.heatmap
@@ -116,7 +115,7 @@ def read_offsets(filename):
     heatmap = collections.namedtuple('offsets', ['start', 'end', 'offsets'])(start, end, offsets)
     heatmap_cache[path] = heatmap
     heatmap_mtimes[path] = mtime
-    if USE_HEATMAP_FILECACHE:
+    if config.USE_HEATMAP_FILECACHE:
         write_heatmap_filecache(path, heatmap, mtime)
     return heatmap
 
@@ -133,7 +132,6 @@ def write_heatmap_filecache(path, heatmap, mtime):
 def read_heatmap_filecache(path):
     f = open(convert_path_to_filecache(path), 'rt')
     h = json.loads(f.read())
-    print('read', h)
     f.close()
     return collections.namedtuple('cache', ['heatmap', 'mtime'])(
             collections.namedtuple('offsets', ['start', 'end', 'offsets'])(h['start'], h['end'], h['offsets']),
