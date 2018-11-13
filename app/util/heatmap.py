@@ -22,7 +22,7 @@ import os
 import gzip
 import collections
 import json
-from os.path import abspath, join, isfile
+from os.path import abspath, join, isfile, dirname, basename
 from math import ceil, floor
 from flask import abort
 
@@ -61,7 +61,7 @@ def read_offsets(filename):
             # use cached heatmap
             return heatmap_cache[path]
 
-    if USE_HEATMAP_FILECACHE and avail_heatmap_filecache(path, mtime):
+    if USE_HEATMAP_FILECACHE and avail_heatmap_filecache(path):
         fc = read_heatmap_filecache(path)
         if fc.mtime == mtime:
             return fc.heatmap
@@ -121,7 +121,7 @@ def read_offsets(filename):
     return heatmap
 
 def convert_path_to_filecache(path):
-    return path + '-heatmap-cache'
+    return dirname(path) + '/.' + basename(path) + '-heatmap-cache'
 
 
 def write_heatmap_filecache(path, heatmap, mtime):
