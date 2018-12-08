@@ -54,13 +54,19 @@ class FlameGraph extends Component {
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
+
+        const preferredLayout = () => {
+            if(localStorage.getItem('layout')){
+                return localStorage.getItem('layout');
+            } else return 'flame';
+        }
     
         this.state = {
           data: {},
           loading: false,
           chart: null,
           searchTerm: '',
-          layout: 'flame'
+          layout: preferredLayout()
         };
     }
 
@@ -130,6 +136,7 @@ class FlameGraph extends Component {
             .transitionDuration(750)
             .sort(true)
             .title('')
+            .inverted(this.state.layout == 'icicle')
 
         var details = document.getElementById("details")
         chart.details(details)
@@ -178,6 +185,7 @@ class FlameGraph extends Component {
             this.state.chart
                 .inverted(this.state.layout == 'icicle')
                 .resetZoom()
+            localStorage.setItem('layout', this.state.layout)
         })
     }
 
