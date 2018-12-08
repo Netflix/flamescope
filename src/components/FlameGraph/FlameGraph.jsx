@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Dimmer, Loader, Divider, Container, Button, Input } from 'semantic-ui-react'
+import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown } from 'semantic-ui-react'
 import { pushBreadcrumb, popBreadcrumb } from '../../actions/Navbar'
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
@@ -50,6 +50,7 @@ class FlameGraph extends Component {
             'handleSearchClick',
             'handleOnKeyDown',
             'updateSearchQuery',
+            'handleLayoutChange',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -59,6 +60,7 @@ class FlameGraph extends Component {
           loading: false,
           chart: null,
           searchTerm: '',
+          layout: 'flame'
         };
     }
 
@@ -171,12 +173,32 @@ class FlameGraph extends Component {
         this.props.history.push({search: params.toString(),});
     }
 
+    handleLayoutChange(event, data) {
+        const newLayout = data.value
+        this.setState({layout: newLayout}, () => {
+            this.state.chart.inverted(this.state.layout == 'icicle')
+            select(`#flamegraph`)
+                .datum(this.state.data)
+                .call(this.state.chart)
+        })
+    }
+
     render() {
         const searchButton = 
         <Button color='red' size='small' onClick={this.handleSearchClick}>
             <Button.Content>Search</Button.Content>
         </Button>
-        
+        const layoutOptions = [
+            {
+                text: "Flame Layout",
+                value: "flame"
+            },
+            {
+                text: "Icicle Layout",
+                value: "icicle"
+            }
+        ]
+
         return (
             <div>
                 <Dimmer page inverted active={this.state.loading}>
@@ -184,6 +206,7 @@ class FlameGraph extends Component {
                 </Dimmer> 
                 <Container style={styles.container}>
                     <Container textAlign='right'>
+                        <Dropdown selection options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} />
                         <Button inverted color='red' size='small' onClick={this.handleResetClick}>
                             <Button.Content>
                                 Reset Zoom
