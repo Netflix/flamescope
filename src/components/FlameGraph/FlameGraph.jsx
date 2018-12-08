@@ -174,12 +174,10 @@ class FlameGraph extends Component {
     }
 
     handleLayoutChange(event, data) {
-        const newLayout = data.value
-        this.setState({layout: newLayout}, () => {
-            this.state.chart.inverted(this.state.layout == 'icicle')
-            select(`#flamegraph`)
-                .datum(this.state.data)
-                .call(this.state.chart)
+        this.setState({layout: data.value}, () => {
+            this.state.chart
+                .inverted(this.state.layout == 'icicle')
+                .resetZoom()
         })
     }
 
