@@ -26,7 +26,7 @@ import { select } from 'd3-selection'
 import 'd3-flame-graph/dist/d3-flamegraph.css'
 import './flamegraph.less'
 import queryString from 'query-string'
-import {layout} from '../../config.jsx'
+import { layout } from '../../config.jsx'
 
 const styles = {
     container: {
