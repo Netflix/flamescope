@@ -26,6 +26,7 @@ import { select } from 'd3-selection'
 import 'd3-flame-graph/dist/d3-flamegraph.css'
 import './flamegraph.less'
 import queryString from 'query-string'
+import {layout} from '../../config.jsx'
 
 const styles = {
     container: {
@@ -58,7 +59,7 @@ class FlameGraph extends Component {
         const preferredLayout = () => {
             if(localStorage.getItem('layout')){
                 return localStorage.getItem('layout');
-            } else return 'flame';
+            } else return layout.flame;
         }
     
         this.state = {
@@ -136,7 +137,7 @@ class FlameGraph extends Component {
             .transitionDuration(750)
             .sort(true)
             .title('')
-            .inverted(this.state.layout == 'icicle')
+            .inverted(this.state.layout === layout.icicle)
 
         var details = document.getElementById("details")
         chart.details(details)
@@ -183,7 +184,7 @@ class FlameGraph extends Component {
     handleLayoutChange(event, data) {
         this.setState({layout: data.value}, () => {
             this.state.chart
-                .inverted(this.state.layout == 'icicle')
+                .inverted(this.state.layout === layout.icicle)
                 .resetZoom()
             localStorage.setItem('layout', this.state.layout)
         })
@@ -196,12 +197,12 @@ class FlameGraph extends Component {
         </Button>
         const layoutOptions = [
             {
-                text: "Flame Layout",
-                value: "flame"
+                text: "Flame",
+                value: layout.flame
             },
             {
-                text: "Icicle Layout",
-                value: "icicle"
+                text: "Icicle",
+                value: layout.icicle
             }
         ]
 
@@ -212,7 +213,7 @@ class FlameGraph extends Component {
                 </Dimmer> 
                 <Container style={styles.container}>
                     <Container textAlign='right'>
-                        <Dropdown selection options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} />
+                        <Dropdown selection options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} compact button />
                         <Button inverted color='red' size='small' onClick={this.handleResetClick}>
                             <Button.Content>
                                 Reset Zoom
