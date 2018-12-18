@@ -36,7 +36,10 @@ const styles = {
         fontSize: '14px',
         fontWeight: 300,
         minHeight: '5em',
-    }
+    },
+    layoutDropdown: {
+        marginRight: 3.25,
+    },
 }
 
 class FlameGraph extends Component {
@@ -192,7 +195,7 @@ class FlameGraph extends Component {
 
     render() {
         const searchButton = 
-        <Button color='red' size='small' onClick={this.handleSearchClick}>
+        <Button inverted color='red' size='small' onClick={this.handleSearchClick}>
             <Button.Content>Search</Button.Content>
         </Button>
         const layoutOptions = [
@@ -213,13 +216,13 @@ class FlameGraph extends Component {
                 </Dimmer> 
                 <Container style={styles.container}>
                     <Container textAlign='right'>
-                        <Dropdown selection options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} compact button />
-                        <Button inverted color='red' size='small' onClick={this.handleResetClick}>
+                        <Dropdown selection style={styles.layoutDropdown} options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} compact />
+                        <Button size='small' onClick={this.handleResetClick}>
                             <Button.Content>
                                 Reset Zoom
                             </Button.Content>
                         </Button>
-                        <Button inverted color='red' size='small' onClick={this.handleClearClick}>
+                        <Button size='small' onClick={this.handleClearClick}>
                             <Button.Content>
                                 Clear
                             </Button.Content>
