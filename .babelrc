@@ -11,7 +11,6 @@
         }
       }],
       "@babel/react",
-      "@babel/es2017"
     ],
     "plugins": [
       "@babel/plugin-proposal-class-properties",

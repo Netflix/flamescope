@@ -26,5 +26,9 @@ module.exports = {
     rules: {
       'no-console': ['off'] 
     },
-  };
-  
+    settings: {
+      react: {
+        version: "16.6",
+      },
+    },
+};

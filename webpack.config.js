@@ -77,5 +77,15 @@ module.exports = {
   performance: {
     hints: false,
   },
+  devServer: {
+    proxy: {
+      '/heatmap/**': {
+        target: 'http://localhost:5000',
+      },
+      '/stack/**': {
+        target: 'http://localhost:5000',
+      },
+    },
+  },
 }
 
