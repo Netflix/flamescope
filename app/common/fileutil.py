@@ -20,16 +20,37 @@
 import os
 import re
 import magic
+import gzip
+from os.path import abspath
+from app.common.error import InvalidFileError
+from app import config
 
 invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')
 
-def validpath(pathname):
-    if invalidchars.search(pathname):
+def validpath(file_path):
+    if invalidchars.search(file_path):
         return False
-    if not os.path.exists(pathname):
+    if not os.path.exists(file_path):
         return False
     return True
 
 
-def is_compressed(file_path):
+def get_file_mime(file_path):
     return magic.from_file(file_path, mime=True)
+
+
+def get_file(file_path):
+    # ensure the file is below PROFILE_DIR:
+    if not abspath(file_path).startswith(abspath(config.PROFILE_DIR)):
+        raise InvalidFileError("File %s is not in PROFILE_DIR" % file_path)
+    if not validpath(file_path):
+        raise InvalidFileError("Invalid characters or file %s does not exist." % file_path)
+
+    mime = get_file_mime(file_path)
+
+    if mime == 'application/gzip':
+        return gzip.open(file_path, 'rt')
+    elif mime == 'text/plain':
+        return open(file_path, 'r')
+    else:
+        raise InvalidFileError('Unknown mime type.')

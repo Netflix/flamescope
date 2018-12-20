@@ -19,13 +19,13 @@
 
 from ..common import fileutil
 import os
-import gzip
 import collections
 from flask import abort
 from os.path import abspath, join
 from app import config
 from math import ceil, floor
 from app.common.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
+from app.common.fileutil import get_file
 
 stack_times = {}        # cached start and end times for profiles
 stack_mtimes = {}       # modification timestamp for profiles
@@ -54,20 +54,7 @@ def calculate_profile_range(filename):
         if mtime == stack_mtimes[path]:
             return stack_times[path]
 
-    if filename.endswith(".gz"):
-        try:
-            f = gzip.open(path, 'rt')
-        except Exception:
-            print("ERROR: Can't open gzipped file, %s." % path)
-            f.close()
-            return abort(500)
-    else:
-        try:
-            f = open(path, 'r')
-        except Exception:
-            print("ERROR: Can't read stack file, %s." % path)
-            f.close()
-            return abort(500)
+    f = get_file(filename)
 
     linenum = -1
     stack_index[path] = []
@@ -155,23 +142,10 @@ def generate_flame_graph(filename, range_start=None, range_end=None):
     if not fileutil.validpath(path):
         return abort(500)
 
-    if filename.endswith(".gz"):
-        try:
-            f = gzip.open(path, 'rt')
-        except Exception:
-            print("ERROR: Can't open gzipped file, %s." % path)
-            f.close()
-            return abort(500)
-    else:
-        try:
-            f = open(path, 'r')
-        except Exception:
-            print("ERROR: Can't read stack file, %s." % path)
-            f.close()
-            return abort(500)
+    f = get_file(filename)
 
     # calculate profile file range
-    r = calculate_profile_range(filename)
+    r = calculate_profile_range(f)
     start = r.start
     end = r.end
 

@@ -17,22 +17,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from flask import Blueprint, request, jsonify, abort
-from app.controllers.heatmap import generate_heatmap
-from app.common.error import InvalidFileError
+class InvalidFileError(Exception):
+    """Exception raised invalid file types.
 
-MOD_HEATMAP = Blueprint(
-    'heatmap', __name__, url_prefix='/heatmap'
-)
+    Attributes:
+        message -- explanation of the error
+    """
 
-@MOD_HEATMAP.route("/", methods=['GET'])
-def get_heatmap():
-    filename = request.args.get('filename')
-    rows = request.args.get('rows', None)
-    if rows is not None:
-        rows = int(rows)
-    try:
-        heatmap = generate_heatmap(filename, rows)
-        return jsonify(heatmap)
-    except InvalidFileError as err:
-        abort(500, err.message)
+    def __init__(self, message):
+        self.message = message
