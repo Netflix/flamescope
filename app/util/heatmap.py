@@ -21,7 +21,8 @@ from ..common import fileutil
 import os
 import gzip
 import collections
-from os.path import abspath, join
+import json
+from os.path import abspath, join, isfile, dirname, basename
 from math import ceil, floor
 from flask import abort
 
@@ -58,6 +59,11 @@ def read_offsets(filename):
         if mtime == heatmap_mtimes[path]:
             # use cached heatmap
             return heatmap_cache[path]
+
+    if config.USE_HEATMAP_FILECACHE and avail_heatmap_filecache(path):
+        fc = read_heatmap_filecache(path)
+        if fc.mtime == mtime:
+            return fc.heatmap
 
     # read .gz files via a "gunzip -c" pipe
     if filename.endswith(".gz"):
@@ -109,7 +115,32 @@ def read_offsets(filename):
     heatmap = collections.namedtuple('offsets', ['start', 'end', 'offsets'])(start, end, offsets)
     heatmap_cache[path] = heatmap
     heatmap_mtimes[path] = mtime
+    if config.USE_HEATMAP_FILECACHE:
+        write_heatmap_filecache(path, heatmap, mtime)
     return heatmap
+
+def convert_path_to_filecache(path):
+    return dirname(path) + '/.' + basename(path) + '-heatmap-cache'
+
+
+def write_heatmap_filecache(path, heatmap, mtime):
+    f = open(convert_path_to_filecache(path), 'wt')
+    f.write(json.dumps({'start': heatmap.start, 'end': heatmap.end, 'offsets': heatmap.offsets, 'mtime': mtime}))
+    f.close()
+
+
+def read_heatmap_filecache(path):
+    f = open(convert_path_to_filecache(path), 'rt')
+    h = json.loads(f.read())
+    f.close()
+    return collections.namedtuple('cache', ['heatmap', 'mtime'])(
+            collections.namedtuple('offsets', ['start', 'end', 'offsets'])(h['start'], h['end'], h['offsets']),
+            h['mtime']
+            )
+
+def avail_heatmap_filecache(path):
+    filename = convert_path_to_filecache(path)
+    return isfile(filename)
 
 # return a heatmap from the cached offsets
 def generate_heatmap(filename, rows=None):
