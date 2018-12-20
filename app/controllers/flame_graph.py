@@ -22,42 +22,24 @@ import os
 import gzip
 import collections
 from flask import abort
-from os import walk
 from os.path import abspath, join
 from app import config
 from math import ceil, floor
-from .regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
+from app.common.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
 
 stack_times = {}        # cached start and end times for profiles
 stack_mtimes = {}       # modification timestamp for profiles
 stack_index = {}        # cached event times
 
-# These functions support listing profiles and fetching their stack traces as
-# JSON, and for custom ranges. The profile parsed here is the output of
-# Linux "perf script". See the comment in regexp.py for a variety of output
-# that must be parsed correctly, which changes based on the Linux kernel
-# version, plus there are full examples as examples/perf.*.
-
-# get profile files
-def get_stack_list():
-    all_files = []
-    for root, dirs, files in walk(join(config.STACK_DIR)):
-        start = root[len(config.STACK_DIR) + 1:]
-        for f in files:
-            if not f.startswith('.'):
-                all_files.append(join(start, f))
-
-    return all_files
-
 # Get sample start and end, and populate stack_index for faster range lookup.
 # At this point we've probably already made a pass through the profile file
 # for generating its heatmap, so why not fetch these times then? Because we're
 # supporting a stateless interface, and the user may start here.
-def calculate_stack_range(filename):
+def calculate_profile_range(filename):
     start = float("+inf")
     end = float("-inf")
     index_factor = 100      # save one timestamp per this many lines
-    path = config.STACK_DIR + '/' + filename
+    path = config.PROFILE_DIR + '/' + filename
 
     if not fileutil.validpath(path):
         return abort(500)
@@ -163,11 +145,11 @@ def add_stack(root, stack, comm):
     return root
 
 # return stack samples for a given range
-def generate_stack(filename, range_start=None, range_end=None):
-    path = join(config.STACK_DIR, filename)
-    # ensure the file is below STACK_DIR:
-    if not abspath(path).startswith(abspath(config.STACK_DIR)):
-        print("ERROR: File %s is not in STACK_DIR" % path)
+def generate_flame_graph(filename, range_start=None, range_end=None):
+    path = join(config.PROFILE_DIR, filename)
+    # ensure the file is below PROFILE_DIR:
+    if not abspath(path).startswith(abspath(config.PROFILE_DIR)):
+        print("ERROR: File %s is not in PROFILE_DIR" % path)
         return abort(404)
 
     if not fileutil.validpath(path):
@@ -188,8 +170,8 @@ def generate_stack(filename, range_start=None, range_end=None):
             f.close()
             return abort(500)
 
-    # calculate stack file range
-    r = calculate_stack_range(filename)
+    # calculate profile file range
+    r = calculate_profile_range(filename)
     start = r.start
     end = r.end
 

@@ -52,7 +52,7 @@ FlameScope configuration file can be found in `app/config.py`.
 
 ```python
 DEBUG = True # run the web server in debug mode
-STACK_DIR = 'examples' # path where flamescope will look for profiles
+PROFILE_DIR = 'examples' # path where flamescope will look for profiles
 HOST = '127.0.0.1' # web server host
 PORT = 5000 # web server port
 JSONIFY_PRETTYPRINT_REGULAR = False # pretty print api json responses

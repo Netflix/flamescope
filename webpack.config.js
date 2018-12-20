@@ -79,10 +79,13 @@ module.exports = {
   },
   devServer: {
     proxy: {
+      '/profile/**': {
+        target: 'http://localhost:5000',
+      },
       '/heatmap/**': {
         target: 'http://localhost:5000',
       },
-      '/stack/**': {
+      '/flamegraph/**': {
         target: 'http://localhost:5000',
       },
     },

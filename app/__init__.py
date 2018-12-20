@@ -31,8 +31,9 @@ Initialize application
 """
 
 import os
-from .views.stack import MOD_STACK
-from .views.heatmap import MOD_HEATMAP
+from app.views.flame_graph import MOD_FLAME_GRAPH
+from app.views.heatmap import MOD_HEATMAP
+from app.views.profile_list import MOD_PROFILE_LIST
 
 from flask import Flask, jsonify
 
@@ -67,5 +68,6 @@ def internal_error(err):
 
 
 # Registering module blueprints
-APP.register_blueprint(MOD_STACK)
+APP.register_blueprint(MOD_FLAME_GRAPH)
 APP.register_blueprint(MOD_HEATMAP)
+APP.register_blueprint(MOD_PROFILE_LIST)

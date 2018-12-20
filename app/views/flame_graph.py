@@ -17,19 +17,17 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import os
-import re
-import magic
+from flask import Blueprint, request, jsonify
 
-invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')
+from app.controllers.flame_graph import generate_flame_graph
 
-def validpath(pathname):
-    if invalidchars.search(pathname):
-        return False
-    if not os.path.exists(pathname):
-        return False
-    return True
+MOD_FLAME_GRAPH = Blueprint(
+    'flamegraph', __name__, url_prefix='/flamegraph'
+)
 
-
-def is_compressed(file_path):
-    return magic.from_file(file_path, mime=True)
+@MOD_FLAME_GRAPH.route("/", methods=['GET'])
+def get_flame_graph():
+    filename = request.args.get('filename')
+    range_start = request.args.get('start', None)
+    range_end = request.args.get('end', None)
+    return jsonify(generate_flame_graph(filename, range_start, range_end))

@@ -17,21 +17,17 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from flask import Blueprint, request, jsonify
+from os import walk
+from os.path import join
+from app import config
 
-from app.util.stack import generate_stack, get_stack_list
+# get profile files
+def get_profile_list():
+    all_files = []
+    for root, dirs, files in walk(join(config.PROFILE_DIR)):
+        start = root[len(config.PROFILE_DIR) + 1:]
+        for f in files:
+            if not f.startswith('.'):
+                all_files.append(join(start, f))
 
-MOD_STACK = Blueprint(
-    'stack', __name__, url_prefix='/stack'
-)
-
-@MOD_STACK.route("/list", methods=['GET'])
-def get_list():
-    return jsonify(get_stack_list())
-
-@MOD_STACK.route("/", methods=['GET'])
-def get_stack():
-    filename = request.args.get('filename')
-    range_start = request.args.get('start', None)
-    range_end = request.args.get('end', None)
-    return jsonify(generate_stack(filename, range_start, range_end))
+    return all_files

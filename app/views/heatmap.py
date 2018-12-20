@@ -19,7 +19,7 @@
 
 from flask import Blueprint, request, jsonify
 
-from app.util.heatmap import generate_heatmap
+from app.controllers.heatmap import generate_heatmap
 
 MOD_HEATMAP = Blueprint(
     'heatmap', __name__, url_prefix='/heatmap'

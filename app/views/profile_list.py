@@ -17,19 +17,14 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import os
-import re
-import magic
+from flask import Blueprint, request, jsonify
 
-invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')
+from app.controllers.profile_list import get_profile_list
 
-def validpath(pathname):
-    if invalidchars.search(pathname):
-        return False
-    if not os.path.exists(pathname):
-        return False
-    return True
+MOD_PROFILE_LIST = Blueprint(
+    'profile', __name__, url_prefix='/profile'
+)
 
-
-def is_compressed(file_path):
-    return magic.from_file(file_path, mime=True)
+@MOD_PROFILE_LIST.route("/", methods=['GET'])
+def get_list():
+    return jsonify(get_profile_list())

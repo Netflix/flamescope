@@ -41,7 +41,7 @@ export default class FileList extends Component {
 
     componentDidMount() {
         this.setState({loading: true})
-        fetch('/stack/list')
+        fetch('/profile')
             .then(res => {
                 return res.json()
             })

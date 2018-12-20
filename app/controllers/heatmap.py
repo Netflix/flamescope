@@ -26,7 +26,7 @@ from math import ceil, floor
 from flask import abort
 
 from app import config
-from .regexp import event_regexp, idle_regexp
+from app.common.regexp import event_regexp, idle_regexp
 
 # global defaults
 YRATIO = 1000   # milliseconds
@@ -39,10 +39,10 @@ def read_offsets(filename):
     start = float("+inf")
     end = float("-inf")
     offsets = []
-    path = join(config.STACK_DIR, filename)
-    # ensure the file is below STACK_DIR:
-    if not abspath(path).startswith(abspath(config.STACK_DIR)):
-        print("ERROR: File %s is not in STACK_DIR" % path)
+    path = join(config.PROFILE_DIR, filename)
+    # ensure the file is below PROFILE_DIR:
+    if not abspath(path).startswith(abspath(config.PROFILE_DIR)):
+        print("ERROR: File %s is not in PROFILE_DIR" % path)
         return abort(404)
 
     if not fileutil.validpath(path):

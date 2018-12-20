@@ -88,7 +88,7 @@ class FlameGraph extends Component {
         const { filename, start, end } = this.props.match.params
 
         this.setState({loading: true})
-        fetch('/stack/?filename=' + filename + '&start=' + start + '&end=' + end)
+        fetch('/flamegraph/?filename=' + filename + '&start=' + start + '&end=' + end)
             .then(res => {
                 return res.json()
             })

@@ -10,5 +10,5 @@ def test_app(app):
     assert app is not None
 
 
-def test_list_stacks(client):
-    assert client.get(url_for('stack.get_list')).status_code == 200
+def test_list_profiles(client):
+    assert client.get(url_for('profile_list.get_list')).status_code == 200
