@@ -18,7 +18,9 @@
 #    limitations under the License.
 
 from math import ceil, floor
-from app.common.perfutil import perf_read_offsets
+from os.path import join
+from app.common.heatmaputil import read_offsets
+from app import config
 
 # global defaults
 YRATIO = 1000  # milliseconds
@@ -26,7 +28,8 @@ DEFAULT_ROWS = 50
 
 # return a heatmap from the cached offsets
 def generate_heatmap(filename, rows=None):
-    (start, end, offsets) = perf_read_offsets(filename)
+    file_path = join(config.PROFILE_DIR, filename)
+    (start, end, offsets) = read_offsets(file_path)
     maxvalue = 0
 
     if rows is None:

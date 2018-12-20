@@ -18,21 +18,19 @@
 #    limitations under the License.
 
 import collections
-from os.path import join, getmtime
+from os.path import getmtime
 from app.common.regexp import event_regexp, idle_regexp
 from app.common.fileutil import get_file
-from app import config
 
 # global cache
 offsets_cache = {}
 offsets_mtimes = {}
 
 # read and cache offsets
-def perf_read_offsets(filename):
+def perf_read_offsets(file_path):
     start = float("+inf")
     end = float("-inf")
     offsets = []
-    file_path = join(config.PROFILE_DIR, filename)
     
     # fetch modification timestamp and check cache
     mtime = getmtime(file_path)

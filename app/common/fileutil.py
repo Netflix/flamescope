@@ -21,8 +21,11 @@ import os
 import re
 import magic
 import gzip
+import json
+from json import JSONDecodeError
 from os.path import abspath
 from app.common.error import InvalidFileError
+from app.common.regexp import event_regexp
 from app import config
 
 invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')
@@ -37,6 +40,16 @@ def validpath(file_path):
 
 def get_file_mime(file_path):
     return magic.from_file(file_path, mime=True)
+
+
+def is_perf_file(f):
+    for line in f:
+        if (line[0] == '#'):
+            continue
+        r = event_regexp.search(line)
+        if r:
+            return True
+        return False
 
 
 def get_file(file_path):
@@ -54,3 +67,22 @@ def get_file(file_path):
         return open(file_path, 'r')
     else:
         raise InvalidFileError('Unknown mime type.')
+
+
+def get_profile_type(file_path):
+    f = get_file(file_path)
+    if is_perf_file(f):
+        f.close()
+        return ('perf_script', None)
+    else:
+        try:
+            f.seek(0)
+            r = json.load(f)
+            f.close()
+            if isinstance(r, list):
+                if 'ph' in r[0]:
+                    return ('trace_event', r)
+            raise InvalidFileError('Unknown JSON file.')
+        except JSONDecodeError:
+            f.close()
+            raise InvalidFileError('Unknown file type.')
