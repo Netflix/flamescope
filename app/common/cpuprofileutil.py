@@ -34,7 +34,7 @@ def cpuprofile_read_offsets(profile):
     idle_id = get_idle_id(profile['nodes'])
     start_time = math.floor(profile['startTime'] / 1000000) * 1000000
     end_time = math.ceil(profile['endTime'] / 1000000) * 1000000
-    
+
     offsets = []
     current_time = start_time
 

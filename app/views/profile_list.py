@@ -17,7 +17,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 
 from app.controllers.profile_list import get_profile_list
 

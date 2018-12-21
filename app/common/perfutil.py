@@ -32,7 +32,7 @@ def perf_read_offsets(file_path):
 
     stack = ""
     ts = -1
-    
+
     # process perf script output and search for two things:
     # - event_regexp: to identify event timestamps
     # - idle_regexp: for filtering idle stacks

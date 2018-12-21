@@ -11,4 +11,4 @@ def test_app(app):
 
 
 def test_list_profiles(client):
-    assert client.get(url_for('profile_list.get_list')).status_code == 200
+    assert client.get(url_for('profile.get_list')).status_code == 200
