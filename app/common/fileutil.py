@@ -82,6 +82,8 @@ def get_profile_type(file_path):
             if isinstance(r, list):
                 if 'ph' in r[0]:
                     return ('trace_event', r)
+            elif 'nodes' in r:
+                return ('cpuprofile', r)
             raise InvalidFileError('Unknown JSON file.')
         except JSONDecodeError:
             f.close()

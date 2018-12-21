@@ -18,13 +18,28 @@
 #    limitations under the License.
 
 from app.common.perfutil import perf_read_offsets
+from app.common.cpuprofileutil import cpuprofile_read_offsets
 from app.common.fileutil import get_profile_type
 from app.common.error import InvalidFileError
+from os.path import getmtime
+
+# global cache
+offsets_cache = {}
+offsets_mtimes = {}
 
 def read_offsets(file_path):
+    # fetch modification timestamp and check cache
+    mtime = getmtime(file_path)
+    if file_path in offsets_cache:
+        if mtime == offsets_mtimes[file_path]:
+            # use cached heatmap
+            return offsets_cache[file_path]
+
     (profile_type, parsed_profile) = get_profile_type(file_path)
     if profile_type == 'perf_script':
         return perf_read_offsets(file_path)
+    elif profile_type == 'cpuprofile':
+        return cpuprofile_read_offsets(parsed_profile)
     elif profile_type == 'trace_event':
         # TODO: process trace_event file.
         raise InvalidFileError('Unknown file type.')

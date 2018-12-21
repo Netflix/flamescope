@@ -18,26 +18,15 @@
 #    limitations under the License.
 
 import collections
-from os.path import getmtime
 from app.common.regexp import event_regexp, idle_regexp
 from app.common.fileutil import get_file
 
-# global cache
-offsets_cache = {}
-offsets_mtimes = {}
 
 # read and cache offsets
 def perf_read_offsets(file_path):
     start = float("+inf")
     end = float("-inf")
     offsets = []
-    
-    # fetch modification timestamp and check cache
-    mtime = getmtime(file_path)
-    if file_path in offsets_cache:
-        if mtime == offsets_mtimes[file_path]:
-            # use cached heatmap
-            return offsets_cache[file_path]
 
     f = get_file(file_path)
 
