@@ -63,6 +63,4 @@ def perf_read_offsets(file_path):
     f.close()
 
     res = collections.namedtuple('offsets', ['start', 'end', 'offsets'])(start, end, offsets)
-    offsets_cache[file_path] = res
-    offsets_mtimes[file_path] = mtime
     return res
