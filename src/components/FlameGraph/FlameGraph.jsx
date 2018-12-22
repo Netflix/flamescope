@@ -140,6 +140,7 @@ class FlameGraph extends Component {
             .transitionDuration(750)
             .sort(true)
             .title('')
+            .minFrameSize(5)
             .inverted(this.state.layout === layout.icicle)
 
         var details = document.getElementById("details")
