@@ -38,4 +38,3 @@ def generate_flame_graph(filename, range_start, range_end, profile_type=None):
         raise InvalidFileError('Unknown file type.')
     else:
         raise InvalidFileError('Unknown file type.')
-    

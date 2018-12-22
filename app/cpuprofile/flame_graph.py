@@ -19,6 +19,8 @@
 
 import json
 import copy
+from os.path import join
+from app.common.fileutil import get_file
 from app import config
 
 class Node:
@@ -26,13 +28,13 @@ class Node:
         self.name = name
         self.value = 0
         self.children = []
-        
+  
     def get_child(self, name):
         for child in self.children:
             if child.name == name:
                 return child
         return None
-        
+
     def add(self, stack, value):
         if len(stack) > 0:
             name = stack[0]
@@ -40,12 +42,17 @@ class Node:
             if child is None:
                 child = Node(name)
                 self.children.append(child)
-            child.add(stack[1:], value)    
+            child.add(stack[1:], value)
         else:
             self.value += value
+    
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=2)
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__,
+            sort_keys=True,
+            indent=2
+        )
 
 
 def parse_nodes(data):
@@ -62,7 +69,7 @@ def parse_nodes(data):
 
 
 def generate_callgraph(root, node_id, nodes, stack):
-    node = nodes[node_id] # break in case id doesn't exist
+    node = nodes[node_id]  # break in case id doesn't exist
     if node['function_name'] != '(idle)':
         if node['function_name'] == '':
             node['function_name'] = '(anonymous)'
@@ -88,4 +95,3 @@ def cpuprofile_generate_flame_graph(filename, range_start, range_end, profile=No
     generate_callgraph(root, root_id, nodes, [])
 
     return root
-    
