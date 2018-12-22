@@ -28,7 +28,7 @@ class Node:
         self.name = name
         self.value = 0
         self.children = []
-  
+
     def get_child(self, name):
         for child in self.children:
             if child.name == name:
@@ -45,7 +45,7 @@ class Node:
             child.add(stack[1:], value)
         else:
             self.value += value
-    
+
     def toJSON(self):
         return json.dumps(
             self,
