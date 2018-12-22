@@ -25,7 +25,7 @@ import json
 from json import JSONDecodeError
 from os.path import abspath
 from app.common.error import InvalidFileError
-from app.common.regexp import event_regexp
+from app.perf.regexp import event_regexp
 from app import config
 
 invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')

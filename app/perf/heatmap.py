@@ -18,7 +18,7 @@
 #    limitations under the License.
 
 import collections
-from app.common.regexp import event_regexp, idle_regexp
+from .regexp import event_regexp, idle_regexp
 from app.common.fileutil import get_file
 
 

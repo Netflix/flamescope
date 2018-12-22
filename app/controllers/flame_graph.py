@@ -24,7 +24,7 @@ from flask import abort
 from os.path import abspath, join
 from app import config
 from math import ceil, floor
-from app.common.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
+from app.perf.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
 from app.common.fileutil import get_file
 
 stack_times = {}        # cached start and end times for profiles
