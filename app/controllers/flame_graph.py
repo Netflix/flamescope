@@ -21,17 +21,18 @@ from os.path import join
 from app.common.fileutil import get_profile_type
 from app.common.error import InvalidFileError
 from app.perf.flame_graph import perf_generate_flame_graph
+from app.cpuprofile.flame_graph import cpuprofile_generate_flame_graph
 from app import config
 
 def generate_flame_graph(filename, range_start, range_end, profile_type=None):
+    parsed_profile = None
     if not profile_type:
         file_path = join(config.PROFILE_DIR, filename)
         (profile_type, parsed_profile) = get_profile_type(file_path)
     if profile_type == 'perf_script':
         return perf_generate_flame_graph(filename, range_start, range_end)
     elif profile_type == 'cpuprofile':
-        # TODO: process cpuprofile file.
-        raise InvalidFileError('Unknown file type.')
+        return cpuprofile_generate_flame_graph(filename, range_start, range_end, parsed_profile)
     elif profile_type == 'trace_event':
         # TODO: process trace_event file.
         raise InvalidFileError('Unknown file type.')

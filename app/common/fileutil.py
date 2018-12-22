@@ -62,8 +62,6 @@ def get_file(file_path):
 
     mime = get_file_mime(file_path)
 
-    print(mime)
-
     if mime in ['application/x-gzip', 'application/gzip']:
         return gzip.open(file_path, 'rt')
     elif mime == 'text/plain':
