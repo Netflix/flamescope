@@ -21,7 +21,7 @@ from ..common import fileutil
 import os
 import collections
 from flask import abort
-from os.path import abspath, join
+from os.path import abspath, join, getmtime
 from app import config
 from math import ceil, floor
 from app.perf.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
@@ -39,25 +39,19 @@ def calculate_profile_range(filename):
     start = float("+inf")
     end = float("-inf")
     index_factor = 100      # save one timestamp per this many lines
-    path = config.PROFILE_DIR + '/' + filename
 
-    if not fileutil.validpath(path):
-        return abort(500)
+    file_path = join(config.PROFILE_DIR, filename)
 
     # check for cached times
-    try:
-        mtime = os.path.getmtime(path)
-    except Exception:
-        print("ERROR: Can't check file stats for %s." % path)
-        return abort(500)
-    if path in stack_times:
-        if mtime == stack_mtimes[path]:
-            return stack_times[path]
+    mtime = getmtime(file_path)
+    if file_path in stack_times:
+        if mtime == stack_mtimes[file_path]:
+            return stack_times[file_path]
 
-    f = get_file(filename)
+    f = get_file(file_path)
 
     linenum = -1
-    stack_index[path] = []
+    stack_index[file_path] = []
     for line in f:
         linenum += 1
         # 1. Skip '#' comments
@@ -71,7 +65,7 @@ def calculate_profile_range(filename):
         if (r):
             ts = float(r.group(1))
             if ((linenum % index_factor) == 0):
-                stack_index[path].append([linenum, ts])
+                stack_index[file_path].append([linenum, ts])
             if (ts < start):
                 start = ts
             elif (ts > end):
@@ -79,8 +73,8 @@ def calculate_profile_range(filename):
 
     f.close()
     times = collections.namedtuple('range', ['start', 'end'])(floor(start), ceil(end))
-    stack_times[path] = times
-    stack_mtimes[path] = mtime
+    stack_times[file_path] = times
+    stack_mtimes[file_path] = mtime
 
     return times
 
@@ -133,19 +127,12 @@ def add_stack(root, stack, comm):
 
 # return stack samples for a given range
 def generate_flame_graph(filename, range_start=None, range_end=None):
-    path = join(config.PROFILE_DIR, filename)
-    # ensure the file is below PROFILE_DIR:
-    if not abspath(path).startswith(abspath(config.PROFILE_DIR)):
-        print("ERROR: File %s is not in PROFILE_DIR" % path)
-        return abort(404)
+    file_path = join(config.PROFILE_DIR, filename)
 
-    if not fileutil.validpath(path):
-        return abort(500)
-
-    f = get_file(filename)
+    f = get_file(file_path)
 
     # calculate profile file range
-    r = calculate_profile_range(f)
+    r = calculate_profile_range(filename)
     start = r.start
     end = r.end
 
@@ -179,8 +166,8 @@ def generate_flame_graph(filename, range_start=None, range_end=None):
     # determine skip lines
     lastline = 0
     skiplines = 0
-    if path in stack_index:
-        for pair in stack_index[path]:
+    if file_path in stack_index:
+        for pair in stack_index[file_path]:
             if start < pair[1]:
                 # scanned too far, use last entry
                 skiplines = lastline
