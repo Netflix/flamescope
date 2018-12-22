@@ -30,6 +30,7 @@ from app import config
 
 invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')
 
+
 def validpath(file_path):
     if invalidchars.search(file_path):
         return False
