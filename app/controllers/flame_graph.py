@@ -17,11 +17,9 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from ..common import fileutil
-import os
 import collections
 from flask import abort
-from os.path import abspath, join, getmtime
+from os.path import join, getmtime
 from app import config
 from math import ceil, floor
 from app.perf.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
