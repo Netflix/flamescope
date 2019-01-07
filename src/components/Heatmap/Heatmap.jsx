@@ -124,9 +124,12 @@ class Heatmap extends Component {
             heatmapNode.removeChild(heatmapNode.firstChild)
         }
 
-        var width = heatmapNode.offsetWidth
+        const legendNode = document.getElementById('legend')
+        while (legendNode.firstChild) {
+            legendNode.removeChild(legendNode.firstChild)
+        }
 
-        document.getElementById('heatmap')
+        var width = heatmapNode.offsetWidth
 
         var gridSize = width / data.columns.length
 
