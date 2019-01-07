@@ -142,6 +142,7 @@ class FlameGraph extends Component {
             .title('')
             .minFrameSize(5)
             .inverted(this.state.layout === layout.icicle)
+            .selfValue(true)
 
         var details = document.getElementById("details")
         chart.details(details)

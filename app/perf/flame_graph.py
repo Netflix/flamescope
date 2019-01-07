@@ -80,9 +80,8 @@ def calculate_profile_range(filename):
 
 # add a stack to the root tree
 def add_stack(root, stack, comm):
-    root['v'] += 1
     last = root
-    for pair in stack:
+    for i, pair in enumerate(stack):
         # Split inlined frames. "->" is used by software such as java
         # perf-map-agent. For example, "a->b->c" means c() is inlined in b(),
         # and b() is inlined in a(). This code will identify b() and c() as
@@ -90,7 +89,12 @@ def add_stack(root, stack, comm):
         # it is.
         names = pair[0].split('->')
         n = 0
-        for name in names:
+        for j, name in enumerate(names):
+            val = 0
+            # only adding value to the top of the stack
+            if i == (len(stack) - 1):
+                if j == (len(names) - 1):
+                    val = 1
             # strip leading "L" from java symbols (only reason we need comm):
             if (comm == "java" and name.startswith("L")):
                 name = name[1:]
@@ -103,13 +107,13 @@ def add_stack(root, stack, comm):
                     found = 1
                     break
             if (found):
-                last['v'] += 1
+                last['v'] += val
             else:
                 newframe = {}
                 newframe['c'] = []
                 newframe['n'] = name
                 newframe['l'] = libtype
-                newframe['v'] = 1
+                newframe['v'] = val
                 last['c'].append(newframe)
                 last = newframe
     return root
