@@ -22,6 +22,7 @@ from os.path import join, getmtime
 from app import config
 from app.perf.heatmap import perf_read_offsets
 from app.cpuprofile.heatmap import cpuprofile_read_offsets
+from app.trace_event.heatmap import trace_event_read_offsets
 from app.common.fileutil import get_profile_type
 from app.common.error import InvalidFileError
 
@@ -48,8 +49,7 @@ def read_offsets(file_path):
     elif profile_type == 'cpuprofile':
         return cpuprofile_read_offsets(parsed_profile)
     elif profile_type == 'trace_event':
-        # TODO: process trace_event file.
-        raise InvalidFileError('Unknown file type.')
+        return trace_event_read_offsets(parsed_profile)
     else:
         raise InvalidFileError('Unknown file type.')
 
