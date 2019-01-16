@@ -22,6 +22,7 @@ from app.common.fileutil import get_profile_type
 from app.common.error import InvalidFileError
 from app.perf.flame_graph import perf_generate_flame_graph
 from app.cpuprofile.flame_graph import cpuprofile_generate_flame_graph
+from app.trace_event.flame_graph import trace_event_generate_flame_graph
 from app import config
 
 def generate_flame_graph(filename, range_start, range_end, profile_type=None):
@@ -34,7 +35,6 @@ def generate_flame_graph(filename, range_start, range_end, profile_type=None):
     elif profile_type == 'cpuprofile':
         return cpuprofile_generate_flame_graph(filename, range_start, range_end, parsed_profile)
     elif profile_type == 'trace_event':
-        # TODO: process trace_event file.
-        raise InvalidFileError('Unknown file type.')
+        return trace_event_generate_flame_graph(filename, range_start, range_end, parsed_profile)
     else:
         raise InvalidFileError('Unknown file type.')
