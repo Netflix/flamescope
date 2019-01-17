@@ -19,6 +19,7 @@
 
 import json
 import copy
+import math
 from os.path import join
 from app.common.fileutil import get_file
 from app.trace_event.common import get_time_range
@@ -31,10 +32,41 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, p
     root = {'name': 'root', 'value': 0, 'children': []}
     open_partial_slices = {}
 
+    (start_time, end_time) = get_time_range(file_path, mtime, profile)
+
+    adjusted_start = (math.floor(start_time / 1000000) + range_start) * 1000000
+    adjusted_end = (math.floor(start_time / 1000000) + range_end) * 1000000
+
     if not profile:
         f = get_file(file_path)
         profile = json.load(f)
-        f.close() 
+        f.close()
+
+    def filter_and_adjust_slice_times(profile_slice):
+        # slice starts after the range
+        if profile_slice['ts'] > adjusted_end:
+            return None
+        # slice ends before the range
+        if (profile_slice['ts'] + profile_slice['dur']) < adjusted_start:
+            return None
+        # slice starts before the range, need to adjust start time and duration
+        if profile_slice['ts'] < adjusted_start:
+            ts_diff = profile_slice['ts'] - adjusted_start
+            profile_slice['ts']: adjusted_start
+            profile_slice['dur'] = profile_slice['dur'] + ts_diff
+        # slice ends after the range, need to adjust duration
+        if (profile_slice['ts'] + profile_slice['dur']) > adjusted_end:
+            ts_diff = adjusted_end - (profile_slice['ts'] + profile_slice['dur'])
+            profile_slice['dur'] = profile_slice['dur'] + ts_diff
+        # filter children
+        if len(profile_slice['children']) > 0:
+            filtered_children = []
+            for child in profile_slice['children']:
+                filtered_child = filter_and_adjust_slice_times(child)
+                if filtered_child is not None:
+                    filtered_children.append(filtered_child)
+            profile_slice['children'] = filtered_children
+        return profile_slice
 
     def get_child_slice(parent_slice, name):
         for index, child in enumerate(parent_slice['children']):
@@ -73,11 +105,11 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, p
             if partial_slice_count > 0:
                 open_partial_slices[pid][tid][partial_slice_count - 1]['children'].append(current_slice)
             else:
-                insert_slice(root, current_slice)
+                filtered_slice = filter_and_adjust_slice_times(current_slice)
+                if filtered_slice is not None:
+                    insert_slice(root, current_slice)
         else:
             raise Exception("end_slice called without an open slice")
-
-    (start_time, end_time) = get_time_range(file_path, mtime, profile)
 
     for row in profile:
         if row['ph'] == 'B' or row['ph'] == 'E':

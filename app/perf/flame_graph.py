@@ -132,13 +132,13 @@ def perf_generate_flame_graph(filename, range_start=None, range_end=None):
 
     # check range. default to full range if not specified.
     if (range_end):
-        if ((start + float(range_end)) > end):
+        if ((start + range_end) > end):
             print("ERROR: Bad range, %s -> %s." % (str(start), str(end)))
             return abort(416)
         else:
-            end = start + float(range_end)
+            end = start + range_end
     if (range_start):
-        start = start + float(range_start)
+        start = start + range_start
 
     if (start > end):
         print("ERROR: Bad range, %s -> %s." % (str(start), str(end)))

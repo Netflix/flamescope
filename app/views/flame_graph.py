@@ -29,7 +29,11 @@ MOD_FLAME_GRAPH = Blueprint(
 def get_flame_graph():
     filename = request.args.get('filename')
     range_start = request.args.get('start', None)
+    if range_start is not None:
+        range_start = float(range_start)
     range_end = request.args.get('end', None)
+    if range_end is not None:
+        range_end = float(range_end)
     flame_graph = generate_flame_graph(filename, range_start, range_end)
     if isinstance(flame_graph, Node):
         return Response(
