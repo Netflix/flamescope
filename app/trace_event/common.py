@@ -17,7 +17,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import math
 from cachetools import cached, LRUCache
 from cachetools.keys import hashkey
 
@@ -28,12 +27,12 @@ def get_time_range(file_path, mtime, profile):
 
     for row in profile:
         if row['ph'] != 'M':
-            start_time = math.floor(row['ts'] / 1000000) * 1000000
+            start_time = row['ts']
             break
 
     for row in reversed(profile):
         if row['ph'] != 'M':
-            end_time = math.ceil(row['ts'] / 1000000) * 1000000
+            end_time = row['ts']
             break
 
     return (start_time, end_time)

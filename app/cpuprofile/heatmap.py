@@ -18,7 +18,6 @@
 #    limitations under the License.
 
 import collections
-import math
 
 def get_idle_id(nodes):
     for node in nodes:
@@ -32,8 +31,8 @@ def cpuprofile_read_offsets(profile):
     time_deltas = profile['timeDeltas']
     samples = profile['samples']
     idle_id = get_idle_id(profile['nodes'])
-    start_time = math.floor(profile['startTime'] / 1000000) * 1000000
-    end_time = math.ceil(profile['endTime'] / 1000000) * 1000000
+    start_time = profile['startTime']
+    end_time = profile['endTime']
 
     offsets = []
     current_time = start_time
