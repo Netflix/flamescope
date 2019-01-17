@@ -17,7 +17,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from os.path import join
+from os.path import join, getmtime
 from app.common.fileutil import get_profile_type
 from app.common.error import InvalidFileError
 from app.perf.flame_graph import perf_generate_flame_graph
@@ -27,6 +27,8 @@ from app import config
 
 def generate_flame_graph(filename, range_start, range_end, profile_type=None):
     parsed_profile = None
+    file_path = join(config.PROFILE_DIR, filename)
+    mtime = getmtime(file_path)
     if not profile_type:
         file_path = join(config.PROFILE_DIR, filename)
         (profile_type, parsed_profile) = get_profile_type(file_path)
@@ -35,6 +37,6 @@ def generate_flame_graph(filename, range_start, range_end, profile_type=None):
     elif profile_type == 'cpuprofile':
         return cpuprofile_generate_flame_graph(filename, range_start, range_end, parsed_profile)
     elif profile_type == 'trace_event':
-        return trace_event_generate_flame_graph(filename, range_start, range_end, parsed_profile)
+        return trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, parsed_profile)
     else:
         raise InvalidFileError('Unknown file type.')

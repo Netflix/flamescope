@@ -19,6 +19,7 @@
 
 import collections
 import math
+from app.trace_event.common import get_time_range
 
 FREQUENCY = 100 # 100 Hz
 
@@ -26,20 +27,15 @@ FREQUENCY = 100 # 100 Hz
 u_sec_interval = int(1000000 / FREQUENCY)
 
 # TODO: handle CPU time differences, where "E" comes before "B"
-def trace_event_read_offsets(profile):
+def trace_event_read_offsets(file_path, mtime, profile):
     root_slices = []
     events = {}
-    start_time = None
-    end_time = None
     offsets = []
+
+    (start_time, end_time) = get_time_range(file_path, mtime, profile)
 
     # process all events in the profile to extract root events
     for row in profile:
-        if row['ph'] != 'M':
-            if start_time is None or row['ts'] < start_time:
-                start_time = math.floor(row['ts'] / 1000000) * 1000000
-            if end_time is None or row['ts'] > end_time:
-                end_time = math.ceil(row['ts'] / 1000000) * 1000000
         key = str(row['pid']) + '_' + str(row['tid'])
         if row['ph'] == 'B' or row['ph'] == 'E':
             if row['ph'] == 'B':

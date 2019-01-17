@@ -21,20 +21,20 @@ import json
 import copy
 from os.path import join
 from app.common.fileutil import get_file
+from app.trace_event.common import get_time_range
 from app import config
 
 
-def trace_event_generate_flame_graph(filename, range_start, range_end, profile=None):
+def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, profile=None):
     # TODO: handle CPU time differences, where "E" comes before "B"
     
     root = {'name': 'root', 'value': 0, 'children': []}
     open_partial_slices = {}
 
     if not profile:
-        file_path = join(config.PROFILE_DIR, filename)
         f = get_file(file_path)
         profile = json.load(f)
-        f.close()
+        f.close() 
 
     def get_child_slice(parent_slice, name):
         for index, child in enumerate(parent_slice['children']):
@@ -76,6 +76,8 @@ def trace_event_generate_flame_graph(filename, range_start, range_end, profile=N
                 insert_slice(root, current_slice)
         else:
             raise Exception("end_slice called without an open slice")
+
+    (start_time, end_time) = get_time_range(file_path, mtime, profile)
 
     for row in profile:
         if row['ph'] == 'B' or row['ph'] == 'E':

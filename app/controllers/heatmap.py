@@ -49,7 +49,7 @@ def read_offsets(file_path):
     elif profile_type == 'cpuprofile':
         return cpuprofile_read_offsets(parsed_profile)
     elif profile_type == 'trace_event':
-        return trace_event_read_offsets(parsed_profile)
+        return trace_event_read_offsets(file_path, mtime, parsed_profile)
     else:
         raise InvalidFileError('Unknown file type.')
 
