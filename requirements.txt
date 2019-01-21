@@ -5,3 +5,4 @@ Jinja2==2.10
 MarkupSafe==1.0
 python-magic==0.4.15
 Werkzeug==0.14.1
+cachetools
