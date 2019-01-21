@@ -89,10 +89,10 @@ $ cd flamescope
 $ docker build -t flamescope .
 ```
 
-The container expects the profiles to be bind-mounted into `/stacks` and listens on port 5000. To view profiles from `/tmp/stacks`, start the container with the following command:
+The container expects the profiles to be bind-mounted into `/profiles` and listens on port 5000. To view profiles from `/tmp/profiles`, start the container with the following command:
 
 ```
-$ docker run --rm -it -v /tmp/stacks:/stacks:ro -p 5000:5000 flamescope
+$ docker run --rm -it -v /tmp/profiles:/profiles:ro -p 5000:5000 flamescope
 ```
 
 Then access FlameScope on [http://127.0.0.1:5000](http://127.0.0.1:5000/)
