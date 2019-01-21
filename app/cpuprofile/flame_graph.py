@@ -98,7 +98,7 @@ def get_meta_ids(nodes):
 
 
 def generate_stacks(node_id, nodes, stacks, current_stack):
-    node = nodes[node_id] # break in case id doesn't exist
+    node = nodes[node_id]  # break in case id doesn't exist
     if node['function_name'] == '':
         node['function_name'] = '(anonymous)'
     if node['function_name'] != '(root)':
@@ -131,17 +131,17 @@ def cpuprofile_generate_flame_graph(filename, range_start, range_end, profile=No
     samples = profile['samples']
     time_deltas = profile['timeDeltas']
     start_time = profile['startTime']
-    end_time = profile['endTime']
+    #end_time = profile['endTime']
     adjusted_start = (math.floor(start_time / 1000000) + range_start) * 1000000
     adjusted_end = (math.floor(start_time / 1000000) + range_end) * 1000000
     current_time = start_time + time_deltas[0]
     stacks = {}
     generate_stacks(root_id, nodes, stacks, [])
     for index, sample in enumerate(samples):
-        if index == (len(samples) - 1): # last sample
+        if index == (len(samples) - 1):  # last sample
             break
         delta = time_deltas[index + 1]
-        if delta < 0: # TODO: find a better way to deal with negative time deltas
+        if delta < 0:  # TODO: find a better way to deal with negative time deltas
             delta = 0
             continue
         current_time += delta

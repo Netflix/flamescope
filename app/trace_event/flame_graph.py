@@ -18,17 +18,13 @@
 #    limitations under the License.
 
 import json
-import copy
 import math
-from os.path import join
 from app.common.fileutil import get_file
 from app.trace_event.common import get_time_range
-from app import config
-
 
 def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, profile=None):
     # TODO: handle CPU time differences, where "E" comes before "B"
-    
+
     root = {'name': 'root', 'value': 0, 'children': []}
     open_partial_slices = {}
 
@@ -44,10 +40,8 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, p
 
     def filter_and_adjust_slice_times(profile_slice):
         # slice starts after the range
-        if profile_slice['ts'] > adjusted_end:
-            return None
         # slice ends before the range
-        if (profile_slice['ts'] + profile_slice['dur']) < adjusted_start:
+        if profile_slice['ts'] > adjusted_end or (profile_slice['ts'] + profile_slice['dur']) < adjusted_start:
             return None
         # slice starts before the range, need to adjust start time and duration
         if profile_slice['ts'] < adjusted_start:
