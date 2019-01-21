@@ -21,7 +21,7 @@ import collections
 import math
 from app.trace_event.common import get_time_range
 
-FREQUENCY = 100 # 100 Hz
+FREQUENCY = 100  # 100 Hz
 
 # microsecond interval
 u_sec_interval = int(1000000 / FREQUENCY)
@@ -40,7 +40,7 @@ def trace_event_read_offsets(file_path, mtime, profile):
         if row['ph'] == 'B' or row['ph'] == 'E':
             if row['ph'] == 'B':
                 if key not in events:
-                    events[key] = { 'ts': row['ts'], 'tts': row['tts'], 'children_count': 0 }
+                    events[key] = {'ts': row['ts'], 'tts': row['tts'], 'children_count': 0}
                 else:
                     events[key]['children_count'] = events[key]['children_count'] + 1
             elif row['ph'] == 'E':
@@ -51,7 +51,7 @@ def trace_event_read_offsets(file_path, mtime, profile):
                     del events[key]
         elif row['ph'] == 'X':
             if 'dur' in row and row['dur'] > 0 and 'tdur' in row and row['tdur'] > 0:
-                if key not in events: # it's a root event
+                if key not in events:  # it's a root event
                     root_slices.append({'start': row['ts'], 'cpu_start': row['tts'], 'end': row['ts'] + row['dur'], 'cpu_end': row['tts'] + row['tdur']})
 
     # process each root event and generate time offsets based on frequency
