@@ -34,7 +34,7 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, p
     adjusted_end = (math.floor(start_time / 1000000) + range_end) * 1000000
 
     if not profile:
-        f = get_file(file_path)
+        (f, mime) = get_file(file_path)
         profile = json.load(f)
         f.close()
 

@@ -27,6 +27,7 @@ from os.path import abspath
 from app.common.error import InvalidFileError
 from app.perf.regexp import event_regexp
 from app import config
+from app import nflxprofile_pb2
 
 invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')
 
@@ -63,16 +64,23 @@ def get_file(file_path):
     mime = get_file_mime(file_path)
 
     if mime in ['application/x-gzip', 'application/gzip']:
-        return gzip.open(file_path, 'rt')
+        return (gzip.open(file_path, 'rt'), mime)
     elif mime == 'text/plain':
-        return open(file_path, 'r')
+        return (open(file_path, 'r'), mime)
+    elif mime == 'application/octet-stream':
+        return (open(file_path, 'rb'), mime)
     else:
         raise InvalidFileError('Unknown mime type.')
 
 
 def get_profile_type(file_path):
-    f = get_file(file_path)
-    if is_perf_file(f):
+    (f, mime) = get_file(file_path)
+    if mime == 'application/octet-stream':
+        r = nflxprofile_pb2.Profile()
+        r.ParseFromString(f.read())
+        f.close()
+        return ('nflxprofile', r)
+    elif is_perf_file(f):
         f.close()
         return ('perf_script', None)
     else:
@@ -84,7 +92,8 @@ def get_profile_type(file_path):
                 if 'ph' in r[0]:
                     return ('trace_event', r)
             elif 'nodes' in r:
-                return ('cpuprofile', r)
+                if isinstance(r['nodes'], list):
+                    return ('cpuprofile', r)
             raise InvalidFileError('Unknown JSON file.')
         except JSONDecodeError:
             f.close()

@@ -28,7 +28,7 @@ def perf_read_offsets(file_path):
     end = float("-inf")
     offsets = []
 
-    f = get_file(file_path)
+    (f, mime) = get_file(file_path)
 
     stack = ""
     ts = -1

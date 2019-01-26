@@ -48,7 +48,7 @@ def calculate_profile_range(filename):
         if mtime == stack_mtimes[file_path]:
             return stack_times[file_path]
 
-    f = get_file(file_path)
+    (f, mime) = get_file(file_path)
 
     linenum = -1
     stack_index[file_path] = []
@@ -123,7 +123,7 @@ def add_stack(root, stack, comm):
 def perf_generate_flame_graph(filename, range_start=None, range_end=None):
     file_path = join(config.PROFILE_DIR, filename)
 
-    f = get_file(file_path)
+    (f, mime) = get_file(file_path)
 
     # calculate profile file range
     r = calculate_profile_range(filename)

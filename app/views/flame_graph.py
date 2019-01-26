@@ -19,7 +19,7 @@
 
 from flask import Blueprint, Response, request, jsonify
 from app.controllers.flame_graph import generate_flame_graph
-from app.cpuprofile.flame_graph import Node
+from app.common.flame_graph import Node
 
 MOD_FLAME_GRAPH = Blueprint(
     'flamegraph', __name__, url_prefix='/flamegraph'
