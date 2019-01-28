@@ -60,6 +60,7 @@ def cpuprofile_generate_flame_graph(filename, range_start, range_end, profile=No
         f.close()
 
     nodes = parse_nodes(profile)
+    root_id = list(nodes.keys())[0]
     ignore_ids = get_meta_ids(nodes)
     start_time = profile['startTime']
     if range_start is not None:
@@ -67,4 +68,4 @@ def cpuprofile_generate_flame_graph(filename, range_start, range_end, profile=No
     if range_end is not None:
         adjusted_range_end = (math.floor(start_time / 1000000) + range_end) * 1000000
 
-    return generate_flame_graph(nodes, profile['samples'], profile['timeDeltas'], profile['startTime'], adjusted_range_start, adjusted_range_end, ignore_ids)
+    return generate_flame_graph(nodes, root_id, profile['samples'], profile['timeDeltas'], profile['startTime'], adjusted_range_start, adjusted_range_end, ignore_ids)

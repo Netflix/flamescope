@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='nflxprofile',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x11nflxprofile.proto\x12\x0bnflxprofile\"\x9a\x02\n\x07Profile\x12\x12\n\nstart_time\x18\x01 \x02(\x01\x12\x10\n\x08\x65nd_time\x18\x02 \x02(\x01\x12\x13\n\x07samples\x18\x03 \x03(\rB\x02\x10\x01\x12\x17\n\x0btime_deltas\x18\x04 \x03(\x01\x42\x02\x10\x01\x12.\n\x05nodes\x18\x05 \x03(\x0b\x32\x1f.nflxprofile.Profile.NodesEntry\x1a\x42\n\x04Node\x12\x15\n\rfunction_name\x18\x01 \x02(\t\x12\x11\n\thit_count\x18\x02 \x02(\r\x12\x10\n\x08\x63hildren\x18\x03 \x03(\r\x1aG\n\nNodesEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.nflxprofile.Profile.Node:\x02\x38\x01')
+  serialized_pb=_b('\n\x11nflxprofile.proto\x12\x0bnflxprofile\"\xab\x02\n\x07Profile\x12\x12\n\nstart_time\x18\x01 \x02(\x01\x12\x10\n\x08\x65nd_time\x18\x02 \x02(\x01\x12\x13\n\x07samples\x18\x03 \x03(\rB\x02\x10\x01\x12\x17\n\x0btime_deltas\x18\x04 \x03(\x01\x42\x02\x10\x01\x12.\n\x05nodes\x18\x05 \x03(\x0b\x32\x1f.nflxprofile.Profile.NodesEntry\x1aS\n\x04Node\x12\x15\n\rfunction_name\x18\x01 \x02(\t\x12\x11\n\thit_count\x18\x02 \x02(\r\x12\x10\n\x08\x63hildren\x18\x03 \x03(\r\x12\x0f\n\x07libtype\x18\x04 \x01(\t\x1aG\n\nNodesEntry\x12\x0b\n\x03key\x18\x01 \x01(\r\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.nflxprofile.Profile.Node:\x02\x38\x01')
 )
 
 
@@ -53,6 +53,13 @@ _PROFILE_NODE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='libtype', full_name='nflxprofile.Profile.Node.libtype', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -66,7 +73,7 @@ _PROFILE_NODE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=178,
-  serialized_end=244,
+  serialized_end=261,
 )
 
 _PROFILE_NODESENTRY = _descriptor.Descriptor(
@@ -102,8 +109,8 @@ _PROFILE_NODESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=246,
-  serialized_end=317,
+  serialized_start=263,
+  serialized_end=334,
 )
 
 _PROFILE = _descriptor.Descriptor(
@@ -161,7 +168,7 @@ _PROFILE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=35,
-  serialized_end=317,
+  serialized_end=334,
 )
 
 _PROFILE_NODE.containing_type = _PROFILE

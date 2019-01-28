@@ -19,13 +19,15 @@
 
 import json
 import copy
+from app import nflxprofile_pb2
 
 
 class Node:
-    def __init__(self, name):
+    def __init__(self, name, libtype=''):
         self.name = name
         self.value = 0
         self.children = []
+        self.libtype = libtype
 
     def get_child(self, name):
         for child in self.children:
@@ -35,10 +37,12 @@ class Node:
 
     def add(self, stack, value):
         if len(stack) > 0:
-            name = stack[0]
+            frame = stack[0]
+            name = frame[0]
+            libtype = frame[1]
             child = self.get_child(name)
             if child is None:
-                child = Node(name)
+                child = Node(name, libtype)
                 self.children.append(child)
             child.add(stack[1:], value)
         else:
@@ -69,20 +73,29 @@ def generate_callgraph(root, node_id, ignore_ids, nodes, stack):
 
 def generate_stacks(node_id, nodes, stacks, current_stack):
     node = nodes[node_id]  # break in case id doesn't exist
-    if node['function_name'] == '':
-        node['function_name'] = '(anonymous)'
-    if node['function_name'] != '(root)':
-        current_stack.append(node['function_name'])
-        stacks[node_id] = current_stack
-    if node['children']:
-        for child in node['children']:
-            generate_stacks(child, nodes, stacks, copy.copy(current_stack))
+    if isinstance(node, nflxprofile_pb2.Profile.Node):
+        if node.function_name == '':
+            node.function_name = '<unknown>'
+        if node.function_name != 'root': # root function name is always 'root'
+            current_stack.append((node.function_name, node.libtype))
+            stacks[node_id] = current_stack
+        if node.children:
+            for child in node.children:
+                generate_stacks(child, nodes, stacks, copy.copy(current_stack))
+    else:
+        if node['function_name'] == '':
+            node['function_name'] = '(anonymous)'
+        if node['function_name'] != '(root)': # root function name is always '(root)'
+            current_stack.append((node['function_name'], ''))
+            stacks[node_id] = current_stack
+        if node['children']:
+            for child in node['children']:
+                generate_stacks(child, nodes, stacks, copy.copy(current_stack))
     del nodes[node_id]
 
 
-def generate_flame_graph(nodes, samples, time_deltas, start_time, range_start, range_end, ignore_ids):
+def generate_flame_graph(nodes, root_id, samples, time_deltas, start_time, range_start, range_end, ignore_ids):
     root = Node('root')
-    root_id = list(nodes.keys())[0] # assuming first item is root
 
     # no range defined, just return the callgraph
     if range_start is None and range_end is None:
@@ -96,12 +109,9 @@ def generate_flame_graph(nodes, samples, time_deltas, start_time, range_start, r
         if index == (len(samples) - 1):  # last sample
             break
         delta = time_deltas[index + 1]
-        if delta < 0:  # TODO: find a better way to deal with negative time deltas
-            delta = 0
-            continue
         current_time += delta
         if ignore_ids is None or sample not in ignore_ids:
             if current_time >= range_start and current_time < range_end:
                 stack = stacks[sample]
-                root.add(stack, delta)
+                root.add(stack, 1)
     return root

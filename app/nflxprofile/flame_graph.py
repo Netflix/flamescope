@@ -21,20 +21,23 @@ import json
 import math
 from os.path import join
 from app.common.fileutil import get_file
+from app.common.flame_graph import generate_flame_graph
 from app import config
+from app import nflxprofile_pb2
 
 
 def nflxprofile_generate_flame_graph(filename, range_start, range_end, profile=None):
     if not profile:
         file_path = join(config.PROFILE_DIR, filename)
         (f, mime) = get_file(file_path)
-        profile = json.load(f)
+        profile = nflxprofile_pb2.Profile()
+        profile.ParseFromString(f.read())
         f.close()
 
-    start_time = profile['startTime']
+    start_time = profile.start_time
     if range_start is not None:
         adjusted_range_start = (math.floor(start_time) + range_start)
     if range_end is not None:
         adjusted_range_end = (math.floor(start_time) + range_end)
 
-    return generate_flame_graph(profile['nodes'], profile['samples'], profile['timeDeltas'], profile['startTime'], adjusted_range_start, adjusted_range_end, None)
+    return generate_flame_graph(profile.nodes, 0, profile.samples, profile.time_deltas, start_time, adjusted_range_start, adjusted_range_end, None)
