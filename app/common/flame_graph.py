@@ -76,7 +76,7 @@ def generate_stacks(node_id, nodes, stacks, current_stack):
     if isinstance(node, nflxprofile_pb2.Profile.Node):
         if node.function_name == '':
             node.function_name = '<unknown>'
-        if node.function_name != 'root': # root function name is always 'root'
+        if node.function_name != 'root':  # root function name is always 'root'
             current_stack.append((node.function_name, node.libtype))
             stacks[node_id] = current_stack
         if node.children:
@@ -85,7 +85,7 @@ def generate_stacks(node_id, nodes, stacks, current_stack):
     else:
         if node['function_name'] == '':
             node['function_name'] = '(anonymous)'
-        if node['function_name'] != '(root)': # root function name is always '(root)'
+        if node['function_name'] != '(root)':  # root function name is always '(root)'
             current_stack.append((node['function_name'], ''))
             stacks[node_id] = current_stack
         if node['children']:

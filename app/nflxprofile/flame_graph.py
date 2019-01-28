@@ -17,7 +17,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import json
 import math
 from os.path import join
 from app.common.fileutil import get_file

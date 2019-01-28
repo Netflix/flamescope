@@ -20,7 +20,7 @@
 import collections
 
 
-def nflxprofile_readoffsets(profile): 
+def nflxprofile_readoffsets(profile):
     offsets = []
     current_time = profile.start_time
 
