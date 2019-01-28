@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package nflxprofile;
+
+message Profile {
+    required double start_time = 1;
+    required double end_time = 2;
+    repeated uint32 samples = 3 [packed=true];
+    repeated double time_deltas = 4 [packed=true];
+
+    message Node {
+        required string function_name = 1;
+        required uint32 hit_count = 2;
+        repeated uint32 children = 3;
+        optional string libtype = 4;
+    }
+
+    map<uint32, Node> nodes = 5;
+}
