@@ -19,7 +19,6 @@
 
 from flask import Blueprint, Response, request, jsonify
 from app.controllers.flame_graph import generate_flame_graph
-from app.common.flame_graph import Node
 
 MOD_FLAME_GRAPH = Blueprint(
     'flamegraph', __name__, url_prefix='/flamegraph'
@@ -35,10 +34,4 @@ def get_flame_graph():
     if range_end is not None:
         range_end = float(range_end)
     flame_graph = generate_flame_graph(filename, range_start, range_end)
-    if isinstance(flame_graph, Node):
-        return Response(
-            response=flame_graph.toJSON(),
-            status=200,
-            mimetype='application/json'
-        )
     return jsonify(flame_graph)

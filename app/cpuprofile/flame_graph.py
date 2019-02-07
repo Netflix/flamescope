@@ -22,20 +22,26 @@ import math
 from os.path import join
 from app.common.fileutil import get_file
 from app.common.flame_graph import generate_flame_graph
+from app import nflxprofile_pb2
 from app import config
 
 
 def parse_nodes(data):
-    nodes = {}
+    profile = nflxprofile_pb2.Profile()
+    profile.nodes[0].function_name = 'fakenode'
+    profile.nodes[0].hit_count = 0
     for node in data['nodes']:
         node_id = node['id']
         function_name = node['callFrame']['functionName']
-        url = node['callFrame']['url']
-        line_number = node['callFrame']['lineNumber']
-        children = node.get('children')
-        hit_count = node.get('hitCount')
-        nodes[node_id] = {'function_name': function_name, 'url': url, 'line_number': line_number, 'hit_count': hit_count, 'children': children}
-    return nodes
+        children = node.get('children', None)
+        hit_count = node.get('hitCount', 0)
+        profile.nodes[node_id].function_name = function_name
+        profile.nodes[node_id].hit_count = hit_count
+        profile.nodes[node_id].libtype = ''
+        if children:
+            for child_id in children:
+                profile.nodes[node_id].children.append(child_id)
+    return profile.nodes
 
 
 def get_meta_ids(nodes):
@@ -43,11 +49,11 @@ def get_meta_ids(nodes):
     idle_node_id = None
     gc_node_id = None
     for key, node in nodes.items():
-        if node['function_name'] == '(program)':
+        if node.function_name == '(program)':
             program_node_id = key
-        elif node['function_name'] == '(idle)':
+        elif node.function_name == '(idle)':
             idle_node_id = key
-        elif node['function_name'] == '(garbage collector)':
+        elif node.function_name == '(garbage collector)':
             gc_node_id = key
     return program_node_id, idle_node_id, gc_node_id
 
@@ -59,8 +65,8 @@ def cpuprofile_generate_flame_graph(filename, range_start, range_end, profile=No
         profile = json.load(f)
         f.close()
 
+    root_id = profile['nodes'][0]['id']
     nodes = parse_nodes(profile)
-    root_id = list(nodes.keys())[0]
     ignore_ids = get_meta_ids(nodes)
     start_time = profile['startTime']
     if range_start is not None:

@@ -24,7 +24,7 @@ def nflxprofile_readoffsets(profile):
     offsets = []
     current_time = profile.start_time
 
-    for index, delta in enumerate(profile.time_deltas):
+    for delta in profile.time_deltas:
         current_time += delta
         offsets.append(current_time)
 

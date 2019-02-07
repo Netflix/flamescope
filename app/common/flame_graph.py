@@ -17,101 +17,98 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import json
-import copy
+import sys
+import math
 from app import nflxprofile_pb2
 
-
-class Node:
-    def __init__(self, name, libtype=''):
-        self.name = name
-        self.value = 0
-        self.children = []
-        self.libtype = libtype
-
-    def get_child(self, name):
-        for child in self.children:
-            if child.name == name:
-                return child
-        return None
-
-    def add(self, stack, value):
-        if len(stack) > 0:
-            frame = stack[0]
-            name = frame[0]
-            libtype = frame[1]
-            child = self.get_child(name)
-            if child is None:
-                child = Node(name, libtype)
-                self.children.append(child)
-            child.add(stack[1:], value)
-        else:
-            self.value += value
-
-    def toJSON(self):
-        return json.dumps(
-            self,
-            default=lambda o: o.__dict__,
-            sort_keys=True,
-            indent=2
-        )
+RECURSION_LIMIT = 2500
 
 
-def generate_callgraph(root, node_id, ignore_ids, nodes, stack):
-    node = nodes[node_id]  # break in case id doesn't exist
-    if node['id'] not in ignore_ids:
-        if node['function_name'] == '':
-            node['function_name'] = '(anonymous)'
-        stack.append(node['function_name'])
-        if node['hit_count'] > 0:
-            root.add(stack, node['hit_count'])
-        if node['children']:
-            for child in node['children']:
-                generate_callgraph(root, child, ignore_ids, nodes, copy.copy(stack))
-    del nodes[node_id]
+def _get_full_flame_graph(nflxprofile_nodes, nflxprofile_node_id):
+    nflxprofile_node = nflxprofile_nodes[nflxprofile_node_id]  # break in case id doesn't exist
+    if nflxprofile_node.function_name == '':
+        nflxprofile_node.function_name = '[unknown]'
+    node = {
+        'name': nflxprofile_node.function_name,
+        'libtype': nflxprofile_node.libtype,
+        'value': nflxprofile_node.hit_count,
+        'children': []
+    }
+    if nflxprofile_node.children:
+        for nflxprofile_child in nflxprofile_node.children:
+            child = _get_full_flame_graph(nflxprofile_nodes, nflxprofile_child)
+            if child is not None:
+                node['children'].append(child)
+    return node
 
 
-def generate_stacks(node_id, nodes, stacks, current_stack):
-    node = nodes[node_id]  # break in case id doesn't exist
-    if isinstance(node, nflxprofile_pb2.Profile.Node):
-        if node.function_name == '':
-            node.function_name = '<unknown>'
-        if node.function_name != 'root':  # root function name is always 'root'
-            current_stack.append((node.function_name, node.libtype))
-            stacks[node_id] = current_stack
-        if node.children:
-            for child in node.children:
-                generate_stacks(child, nodes, stacks, copy.copy(current_stack))
-    else:
-        if node['function_name'] == '':
-            node['function_name'] = '(anonymous)'
-        if node['function_name'] != '(root)':  # root function name is always '(root)'
-            current_stack.append((node['function_name'], ''))
-            stacks[node_id] = current_stack
-        if node['children']:
-            for child in node['children']:
-                generate_stacks(child, nodes, stacks, copy.copy(current_stack))
-    del nodes[node_id]
-
-
-def generate_flame_graph(nodes, root_id, samples, time_deltas, start_time, range_start, range_end, ignore_ids):
-    root = Node('root')
-
-    # no range defined, just return the callgraph
-    if range_start is None and range_end is None:
-        generate_callgraph(root, root_id, nodes, [])
-        return root
-
-    current_time = start_time + time_deltas[0]
+def _get_stacks(nflxprofile_nodes, root_node_id):
     stacks = {}
-    generate_stacks(root_id, nodes, stacks, [])
+    queue = []
+    queue.append((root_node_id, None))
+
+    while queue:
+        (nflxprofile_node_id, parent_node_id) = queue.pop(0)
+        nflxprofile_node = nflxprofile_nodes[nflxprofile_node_id]
+        if not parent_node_id:
+            stacks[nflxprofile_node_id] = [
+                (nflxprofile_node.function_name, nflxprofile_node.libtype)
+            ]
+        else:
+            stacks[nflxprofile_node_id] = stacks[parent_node_id] + \
+                [(nflxprofile_node.function_name, nflxprofile_node.libtype)]
+        for child_id in nflxprofile_node.children:
+            queue.append((child_id, nflxprofile_node_id))
+
+    return stacks
+
+
+def _get_child(node, name, libtype):
+    for child in node['children']:
+        if child['name'] == name and child['libtype'] == libtype:
+            return child
+    return None
+
+
+def generate_flame_graph(nodes, root_id, samples, time_deltas, start_time, range_start=None, range_end=None, ignore_ids=[]):
+    """Docstring for public method."""
+    # no range defined, just return the full flame graph
+    # should not happen in flamescope
+    if range_start is None and range_end is None:
+        current_recursion_limit = sys.getrecursionlimit()
+        sys.setrecursionlimit(RECURSION_LIMIT)
+        flame_graph = _get_full_flame_graph(nodes, root_id)
+        sys.setrecursionlimit(current_recursion_limit)
+        return flame_graph
+
+    root = {
+        'name': 'root',
+        'libtype': '',
+        'value': 0,
+        'children': []
+    }
+    current_time = start_time + time_deltas[0]
+    stacks = _get_stacks(nodes, root_id)
     for index, sample in enumerate(samples):
         if index == (len(samples) - 1):  # last sample
             break
         delta = time_deltas[index + 1]
         current_time += delta
-        if ignore_ids is None or sample not in ignore_ids:
-            if current_time >= range_start and current_time < range_end:
+        if not ignore_ids or sample not in ignore_ids:
+            if range_start <= current_time < range_end:
                 stack = stacks[sample]
-                root.add(stack, 1)
+                current_node = root
+                for frame in stack:
+                    child = _get_child(current_node, frame[0], frame[1])
+                    if child is None:
+                        child = {
+                            'name': frame[0],
+                            'libtype': frame[1],
+                            'value': 0,
+                            'children': []
+                        }
+                        current_node['children'].append(child)
+                    current_node = child
+                current_node['value'] = current_node['value'] + 1
     return root
+
