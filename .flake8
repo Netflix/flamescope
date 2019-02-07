@@ -1,12 +1,6 @@
 [flake8]
-ignore = E265
-# TODO E265 Block comment should start with '# ' - some start with tab
-         E302
-# TODO E302 Expected 2 blank lines, found 0
-         E501
+ignore = E501
 # TODO E501 Line too long (82 > 79 characters)
-         W292
-# TODO W292	No newline at end of file
 
 # TODO get complexity down to ~10
 exclude = app/nflxprofile_pb2.py

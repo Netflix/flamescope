@@ -22,7 +22,7 @@ import math
 from app.common.fileutil import get_file
 from app.trace_event.common import get_time_range
 
-def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, profile=None):
+def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end):
     # TODO: handle CPU time differences, where "E" comes before "B"
 
     root = {'name': 'root', 'value': 0, 'children': []}
@@ -33,10 +33,9 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end, p
     adjusted_start = (math.floor(start_time / 1000000) + range_start) * 1000000
     adjusted_end = (math.floor(start_time / 1000000) + range_end) * 1000000
 
-    if not profile:
-        (f, mime) = get_file(file_path)
-        profile = json.load(f)
-        f.close()
+    f = get_file(file_path)
+    profile = json.load(f)
+    f.close()
 
     def filter_and_adjust_slice_times(profile_slice):
         # slice starts after the range

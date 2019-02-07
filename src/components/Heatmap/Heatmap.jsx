@@ -84,9 +84,9 @@ class Heatmap extends Component {
     }
 
     UNSAFE_componentWillMount() {
-        const { filename } = this.props.match.params
+        const { filename, type } = this.props.match.params
 
-        this.props.pushBreadcrumb('heatmap_' + filename, 'Heatmap (' + filename + ')', '/#/heatmap/' + filename)
+        this.props.pushBreadcrumb('heatmap_' + filename, 'Heatmap (' + filename + ')', `/#/heatmap/${type}/${filename}`)
     }
 
     componentDidMount() {
@@ -99,11 +99,11 @@ class Heatmap extends Component {
     }
 
     fetchData() {
-        const { filename } = this.props.match.params
+        const { filename, type } = this.props.match.params
         const { rows } = this.state
 
         this.setState({loading: true})
-        fetch('/heatmap/?filename=' + filename + '&rows=' + rows)
+        fetch(`/heatmap/?filename=${filename}&type=${type}&rows=${rows}`)
             .then(res => {
                 return res.json()
             })
@@ -117,7 +117,7 @@ class Heatmap extends Component {
 
     drawHeatmap() {
         const { data , enhanceColors} = this.state;
-        const { filename } = this.props.match.params
+        const { filename, type } = this.props.match.params
 
         const heatmapNode = document.getElementById('heatmap')
         while (heatmapNode.firstChild) {
@@ -206,7 +206,7 @@ class Heatmap extends Component {
               }
               chart.setHighlight([{"start": selectStart, "end": selectEnd}])
               chart.updateHighlight()
-              window.location.href = `/#/heatmap/${filename}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
+              window.location.href = `/#/heatmap/${filename}/${type}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
             } else {
               selectStart = cell
               selectEnd = null

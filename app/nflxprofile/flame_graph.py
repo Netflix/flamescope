@@ -21,17 +21,14 @@ import math
 from os.path import join
 from app.common.fileutil import get_file
 from app.common.flame_graph import generate_flame_graph
-from app import config
 from app import nflxprofile_pb2
 
 
-def nflxprofile_generate_flame_graph(filename, range_start, range_end, profile=None):
-    if not profile:
-        file_path = join(config.PROFILE_DIR, filename)
-        (f, mime) = get_file(file_path)
-        profile = nflxprofile_pb2.Profile()
-        profile.ParseFromString(f.read())
-        f.close()
+def nflxprofile_generate_flame_graph(file_path, range_start, range_end):
+    f = get_file(file_path)
+    profile = nflxprofile_pb2.Profile()
+    profile.ParseFromString(f.read())
+    f.close()
 
     start_time = profile.start_time
     if range_start is not None:

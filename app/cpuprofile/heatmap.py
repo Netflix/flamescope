@@ -17,7 +17,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+import json
 import collections
+
+from app.common.fileutil import get_file
 
 def get_idle_id(nodes):
     for node in nodes:
@@ -27,7 +30,10 @@ def get_idle_id(nodes):
             return node_id
 
 
-def cpuprofile_read_offsets(profile):
+def cpuprofile_read_offsets(file_path):
+    f = get_file(file_path)
+    profile = json.load(f)
+    f.close()
     time_deltas = profile['timeDeltas']
     samples = profile['samples']
     idle_id = get_idle_id(profile['nodes'])

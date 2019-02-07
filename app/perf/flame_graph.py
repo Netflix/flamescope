@@ -20,7 +20,6 @@
 import collections
 from flask import abort
 from os.path import join, getmtime
-from app import config
 from math import ceil, floor
 from app.perf.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
 from app.common.fileutil import get_file
@@ -35,12 +34,10 @@ stack_index = {}        # cached event times
 # At this point we've probably already made a pass through the profile file
 # for generating its heatmap, so why not fetch these times then? Because we're
 # supporting a stateless interface, and the user may start here.
-def calculate_profile_range(filename):
+def _get_profile_range(file_path):
     start = float("+inf")
     end = float("-inf")
     index_factor = 100      # save one timestamp per this many lines
-
-    file_path = join(config.PROFILE_DIR, filename)
 
     # check for cached times
     mtime = getmtime(file_path)
@@ -48,7 +45,7 @@ def calculate_profile_range(filename):
         if mtime == stack_mtimes[file_path]:
             return stack_times[file_path]
 
-    (f, mime) = get_file(file_path)
+    f = get_file(file_path)
 
     linenum = -1
     stack_index[file_path] = []
@@ -78,8 +75,9 @@ def calculate_profile_range(filename):
 
     return times
 
+
 # add a stack to the root tree
-def add_stack(root, stack, comm):
+def _add_stack(root, stack, comm):
     last = root
     for i, pair in enumerate(stack):
         # Split inlined frames. "->" is used by software such as java
@@ -120,13 +118,9 @@ def add_stack(root, stack, comm):
 
 
 # return stack samples for a given range
-def perf_generate_flame_graph(filename, range_start=None, range_end=None):
-    file_path = join(config.PROFILE_DIR, filename)
-
-    (f, mime) = get_file(file_path)
-
+def perf_generate_flame_graph(file_path, range_start=None, range_end=None):
     # calculate profile file range
-    r = calculate_profile_range(filename)
+    r = _get_profile_range(file_path)
     start = r.start
     end = r.end
 
@@ -168,6 +162,8 @@ def perf_generate_flame_graph(filename, range_start=None, range_end=None):
                 break
             lastline = pair[0]
 
+    f = get_file(file_path)
+
     # process perf script output and search for two things:
     # - event_regexp: to identify event timestamps
     # - idle_regexp: for filtering idle stacks
@@ -197,7 +193,7 @@ def perf_generate_flame_graph(filename, range_start=None, range_end=None):
                     # skip idle
                     stack = []
                 elif (ts >= start and ts <= end):
-                    root = add_stack(root, stack, comm)
+                    root = _add_stack(root, stack, comm)
                 stack = []
             ts = float(r.group(1))
             if (ts > end + overscan):
@@ -219,7 +215,7 @@ def perf_generate_flame_graph(filename, range_start=None, range_end=None):
                 stack.insert(1, [name, r.group(2)])
     # last stack
     if (ts >= start and ts <= end):
-        root = add_stack(root, stack, comm)
+        root = _add_stack(root, stack, comm)
 
     # close file
     f.close()

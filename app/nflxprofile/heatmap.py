@@ -19,8 +19,16 @@
 
 import collections
 
+from app import nflxprofile_pb2
+from app.common.fileutil import get_file
 
-def nflxprofile_readoffsets(profile):
+
+def nflxprofile_readoffsets(file_path):
+    f = get_file(file_path)
+    profile = nflxprofile_pb2.Profile()
+    profile.ParseFromString(f.read())
+    f.close()
+
     offsets = []
     current_time = profile.start_time
 

@@ -19,7 +19,9 @@
 
 from os import walk
 from os.path import join
+
 from app import config
+from app.common.fileutil import get_profile_type
 
 # get profile files
 def get_profile_list():
@@ -28,6 +30,12 @@ def get_profile_list():
         start = root[len(config.PROFILE_DIR) + 1:]
         for f in files:
             if not f.startswith('.'):
-                all_files.append(join(start, f))
+                filename = join(start, f)
+                file_path = join(config.PROFILE_DIR, filename)
+                file_type = get_profile_type(file_path)
+                all_files.append({
+                    'filename': filename,
+                    'type': file_type
+                })
 
     return all_files

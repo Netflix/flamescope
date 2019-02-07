@@ -23,7 +23,6 @@ from os.path import join
 from app.common.fileutil import get_file
 from app.common.flame_graph import generate_flame_graph
 from app import nflxprofile_pb2
-from app import config
 
 
 def parse_nodes(data):
@@ -58,12 +57,10 @@ def get_meta_ids(nodes):
     return program_node_id, idle_node_id, gc_node_id
 
 
-def cpuprofile_generate_flame_graph(filename, range_start, range_end, profile=None):
-    if not profile:
-        file_path = join(config.PROFILE_DIR, filename)
-        (f, mime) = get_file(file_path)
-        profile = json.load(f)
-        f.close()
+def cpuprofile_generate_flame_graph(file_path, range_start, range_end):
+    f = get_file(file_path)
+    profile = json.load(f)
+    f.close()
 
     root_id = profile['nodes'][0]['id']
     nodes = parse_nodes(profile)

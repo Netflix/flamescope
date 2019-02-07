@@ -19,6 +19,9 @@
 
 import collections
 import math
+import json
+
+from app.common.fileutil import get_file
 from app.trace_event.common import get_time_range
 
 FREQUENCY = 100  # 100 Hz
@@ -27,7 +30,11 @@ FREQUENCY = 100  # 100 Hz
 u_sec_interval = int(1000000 / FREQUENCY)
 
 # TODO: handle CPU time differences, where "E" comes before "B"
-def trace_event_read_offsets(file_path, mtime, profile):
+def trace_event_read_offsets(file_path, mtime):
+    f = get_file(file_path)
+    profile = json.load(f)
+    f.close()
+
     root_slices = []
     events = {}
     offsets = []

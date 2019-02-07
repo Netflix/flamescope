@@ -57,10 +57,12 @@ export default class FileList extends Component {
                     <Loader size='massive' inverted>Loading</Loader>
                 </Dimmer>
                 <List>
-                    {this.state.files.sort().map(function(filename) {
+                    {this.state.files.sort().map(function(file) {
+                        const filename = file.filename
+                        const type = file.type
                         const path = encodeURIComponent(filename);
                         return (
-                            <List.Item style={styles.listItem} as='a' href={`/#/heatmap/${path}`} key={filename}>
+                            <List.Item style={styles.listItem} as='a' href={`/#/heatmap/${type}/${path}`} key={filename}>
                                 <List.Icon name='file' />
                                 <List.Content>{filename}</List.Content>
                             </List.Item>

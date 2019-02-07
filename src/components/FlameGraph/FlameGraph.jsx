@@ -75,20 +75,20 @@ class FlameGraph extends Component {
     }
 
     UNSAFE_componentWillMount() {
-        const { filename, start, end } = this.props.match.params
-        this.props.pushBreadcrumb('f_heatmap_' + filename, 'Heatmap (' + filename + ')', '/#/heatmap/' + filename)
+        const { filename, type, start, end } = this.props.match.params
+        this.props.pushBreadcrumb('f_heatmap_' + filename, 'Heatmap (' + filename + ')', `/#/heatmap/${type}/${filename}`)
         this.props.pushBreadcrumb(
             'flamegraph_' + filename + '_' + start + '_' + end, 
             'Flame Graph (' + start + ', ' + end + ')', 
-            '/#/heatmap/' + filename + '/flamegraph/' + start + '/' + end
+            `/#/heatmap/${type}/${filename}/${start}/${end}`
         )
     }
 
     componentDidMount() {
-        const { filename, start, end } = this.props.match.params
+        const { filename, type, start, end } = this.props.match.params
 
         this.setState({loading: true})
-        fetch('/flamegraph/?filename=' + filename + '&start=' + start + '&end=' + end)
+        fetch(`/flamegraph/?filename=${filename}&type=${type}&start=${start}&end=${end}`)
             .then(res => {
                 return res.json()
             })

@@ -29,8 +29,8 @@ const App = () => (
     <Container>
       <Switch>
         <Route exact path="/" component={FileList}/>
-        <Route exact path="/heatmap/:filename" component={Heatmap} />
-        <Route exact path="/heatmap/:filename/flamegraph/:start/:end" component={FlameGraph} />
+        <Route exact path="/heatmap/:type/:filename" component={Heatmap} />
+        <Route exact path="/heatmap/:type/:filename/flamegraph/:start/:end" component={FlameGraph} />
         <Route exact path="/error/:code" component={Error} />
         <Redirect to="/error/404" />
       </Switch>
