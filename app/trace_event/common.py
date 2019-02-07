@@ -20,6 +20,7 @@
 from cachetools import cached, LRUCache
 from cachetools.keys import hashkey
 
+
 @cached(cache=LRUCache(maxsize=256), key=lambda file_path, mtime, profile: hashkey(file_path, mtime))
 def get_time_range(file_path, mtime, profile):
     start_time = None

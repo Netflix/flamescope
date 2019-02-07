@@ -24,6 +24,7 @@ MOD_FLAME_GRAPH = Blueprint(
     'flamegraph', __name__, url_prefix='/flamegraph'
 )
 
+
 @MOD_FLAME_GRAPH.route("/", methods=['GET'])
 def get_flame_graph():
     filename = request.args.get('filename')

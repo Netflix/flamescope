@@ -16,6 +16,9 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
+#
+# TODO: handle CPU time differences, where "E" comes before "B"
+#
 
 import collections
 import math
@@ -29,7 +32,7 @@ FREQUENCY = 100  # 100 Hz
 # microsecond interval
 u_sec_interval = int(1000000 / FREQUENCY)
 
-# TODO: handle CPU time differences, where "E" comes before "B"
+
 def trace_event_read_offsets(file_path, mtime):
     f = get_file(file_path)
     profile = json.load(f)

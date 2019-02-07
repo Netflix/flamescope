@@ -25,6 +25,7 @@ MOD_HEATMAP = Blueprint(
     'heatmap', __name__, url_prefix='/heatmap'
 )
 
+
 @MOD_HEATMAP.route("/", methods=['GET'])
 def get_heatmap():
     filename = request.args.get('filename')

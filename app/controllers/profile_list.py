@@ -23,6 +23,7 @@ from os.path import join
 from app import config
 from app.common.fileutil import get_profile_type
 
+
 # get profile files
 def get_profile_list():
     all_files = []

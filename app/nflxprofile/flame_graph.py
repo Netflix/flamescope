@@ -18,7 +18,6 @@
 #    limitations under the License.
 
 import math
-from os.path import join
 from app.common.fileutil import get_file
 from app.common.flame_graph import generate_flame_graph
 from app import nflxprofile_pb2

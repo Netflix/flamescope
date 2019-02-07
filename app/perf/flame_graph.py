@@ -19,7 +19,7 @@
 
 import collections
 from flask import abort
-from os.path import join, getmtime
+from os.path import getmtime
 from math import ceil, floor
 from app.perf.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
 from app.common.fileutil import get_file

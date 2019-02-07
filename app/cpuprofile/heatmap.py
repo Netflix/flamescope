@@ -22,6 +22,7 @@ import collections
 
 from app.common.fileutil import get_file
 
+
 def get_idle_id(nodes):
     for node in nodes:
         node_id = node['id']

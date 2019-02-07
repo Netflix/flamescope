@@ -25,6 +25,7 @@ MOD_PROFILE_LIST = Blueprint(
     'profile', __name__, url_prefix='/profile'
 )
 
+
 @MOD_PROFILE_LIST.route("/", methods=['GET'])
 def get_list():
     return jsonify(get_profile_list())

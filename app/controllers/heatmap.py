@@ -61,7 +61,7 @@ def generate_heatmap(filename, file_type, rows=None):
     maxvalue = 0
 
     if rows is None:
-        rows = DEFAULT_ROWS 
+        rows = DEFAULT_ROWS
 
     rowoffsets = []
     for i in range(0, rows):

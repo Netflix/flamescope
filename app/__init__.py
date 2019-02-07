@@ -43,9 +43,11 @@ APP = Flask(__name__,
 
 APP.config.from_pyfile('config.py', silent=True)
 
+
 @APP.route('/')
 def root():
     return APP.send_static_file('index.html')
+
 
 @APP.errorhandler(400)
 def bad_request(err):

@@ -25,6 +25,7 @@ from app.nflxprofile.flame_graph import nflxprofile_generate_flame_graph
 from app.trace_event.flame_graph import trace_event_generate_flame_graph
 from app import config
 
+
 def generate_flame_graph(filename, file_type, range_start, range_end):
     file_path = join(config.PROFILE_DIR, filename)
     mtime = getmtime(file_path)

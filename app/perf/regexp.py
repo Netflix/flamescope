@@ -26,22 +26,22 @@ import re
 # Stack examples (-g):
 #
 # swapper     0 [021] 28648.467059: cpu-clock:
-#	ffffffff810013aa xen_hypercall_sched_op ([kernel.kallsyms])
-#	ffffffff8101cb2f default_idle ([kernel.kallsyms])
-#	ffffffff8101d406 arch_cpu_idle ([kernel.kallsyms])
-#	ffffffff810bf475 cpu_startup_entry ([kernel.kallsyms])
-#	ffffffff81010228 cpu_bringup_and_idle ([kernel.kallsyms])
+# 	ffffffff810013aa xen_hypercall_sched_op ([kernel.kallsyms])
+# 	ffffffff8101cb2f default_idle ([kernel.kallsyms])
+# 	ffffffff8101d406 arch_cpu_idle ([kernel.kallsyms])
+# 	ffffffff810bf475 cpu_startup_entry ([kernel.kallsyms])
+# 	ffffffff81010228 cpu_bringup_and_idle ([kernel.kallsyms])
 #
 # java 14375 [022] 28648.467079: cpu-clock:
-#	    7f92bdd98965 Ljava/io/OutputStream;::write (/tmp/perf-11936.map)
-#	    7f8808cae7a8 [unknown] ([unknown])
+# 	    7f92bdd98965 Ljava/io/OutputStream;::write (/tmp/perf-11936.map)
+# 	    7f8808cae7a8 [unknown] ([unknown])
 #
 # swapper     0 [005]  5076.836336: cpu-clock:
-#	ffffffff81051586 native_safe_halt ([kernel.kallsyms])
-#	ffffffff8101db4f default_idle ([kernel.kallsyms])
-#	ffffffff8101e466 arch_cpu_idle ([kernel.kallsyms])
-#	ffffffff810c2b31 cpu_startup_entry ([kernel.kallsyms])
-#	ffffffff810427cd start_secondary ([kernel.kallsyms])
+# 	ffffffff81051586 native_safe_halt ([kernel.kallsyms])
+# 	ffffffff8101db4f default_idle ([kernel.kallsyms])
+# 	ffffffff8101e466 arch_cpu_idle ([kernel.kallsyms])
+# 	ffffffff810c2b31 cpu_startup_entry ([kernel.kallsyms])
+# 	ffffffff810427cd start_secondary ([kernel.kallsyms])
 #
 # swapper     0 [002] 6034779.719110:   10101010 cpu-clock:
 #       2013aa xen_hypercall_sched_op+0xfe20000a (/lib/modules/4.9-virtual/build/vmlinux)

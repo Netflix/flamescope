@@ -21,14 +21,11 @@ import os
 import re
 import magic
 import gzip
-import json
 from cachetools import cached, LRUCache
-from json import JSONDecodeError
 from os.path import abspath
 from app.common.error import InvalidFileError
 from app.perf.regexp import event_regexp
 from app import config
-from app import nflxprofile_pb2
 
 invalidchars = re.compile('[^a-zA-Z0-9.,/_%+: -\\\\]')
 
@@ -64,9 +61,7 @@ def get_file(file_path):
         raise InvalidFileError("File %s is not in PROFILE_DIR" % file_path)
     if not _validpath(file_path):
         raise InvalidFileError("Invalid characters or file %s does not exist." % file_path)
-
     mime = _get_file_mime(file_path)
-
     if mime in ['application/x-gzip', 'application/gzip']:
         return gzip.open(file_path, 'rt')
     elif mime == 'text/plain':
@@ -80,7 +75,6 @@ def get_file(file_path):
 @cached(cache=LRUCache(maxsize=1024))
 def get_profile_type(file_path):
     mime = _get_file_mime(file_path)
-    
     if mime == 'application/octet-stream':
         return 'nflxprofile'
     elif mime in ['text/plain', 'application/x-gzip', 'application/gzip']:

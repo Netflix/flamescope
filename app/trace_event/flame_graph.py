@@ -16,14 +16,20 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
+#
+# TODO: handle CPU time differences, where "E" comes before "B"
+#
 
 import json
 import math
 from app.common.fileutil import get_file
 from app.trace_event.common import get_time_range
 
+
 def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end):
-    # TODO: handle CPU time differences, where "E" comes before "B"
+    f = get_file(file_path)
+    profile = json.load(f)
+    f.close()
 
     root = {'name': 'root', 'value': 0, 'children': []}
     open_partial_slices = {}
@@ -32,10 +38,6 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end):
 
     adjusted_start = (math.floor(start_time / 1000000) + range_start) * 1000000
     adjusted_end = (math.floor(start_time / 1000000) + range_end) * 1000000
-
-    f = get_file(file_path)
-    profile = json.load(f)
-    f.close()
 
     def filter_and_adjust_slice_times(profile_slice):
         # slice starts after the range
