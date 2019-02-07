@@ -18,8 +18,6 @@
 #    limitations under the License.
 
 import sys
-import math
-from app import nflxprofile_pb2
 
 RECURSION_LIMIT = 2500
 
@@ -111,4 +109,3 @@ def generate_flame_graph(nodes, root_id, samples, time_deltas, start_time, range
                     current_node = child
                 current_node['value'] = current_node['value'] + 1
     return root
-
