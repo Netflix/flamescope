@@ -27,6 +27,7 @@ import 'd3-flame-graph/dist/d3-flamegraph.css'
 import './flamegraph.less'
 import queryString from 'query-string'
 import { layout } from '../../config.jsx'
+import checkStatus from '../../common/CheckStatus'
 
 const styles = {
     container: {
@@ -89,6 +90,7 @@ class FlameGraph extends Component {
 
         this.setState({loading: true})
         fetch(`/flamegraph/?filename=${filename}&type=${type}&start=${start}&end=${end}`)
+            .then(checkStatus)
             .then(res => {
                 return res.json()
             })
@@ -106,7 +108,15 @@ class FlameGraph extends Component {
                     this.state.chart.search(sq);
                 }
             })
-
+            .catch((error) => {
+                error.response.json()
+                    .then( json => {
+                        this.props.history.push(`/error/${error.code}?${queryString.stringify({message: json.error})}`)
+                    })
+                    .catch(() => {
+                        this.props.history.push(`/error/${error.code}?${queryString.stringify({message: error.message})}`)
+                    })
+            })
     }
 
     componentWillUnmount() {

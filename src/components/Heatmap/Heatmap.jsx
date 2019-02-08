@@ -24,8 +24,10 @@ import { connect } from 'react-redux'
 import { select } from 'd3-selection'
 import { scaleLinear } from 'd3-scale'
 import { heatmap } from 'd3-heatmap2'
+import queryString from 'query-string'
 import 'd3-heatmap2/dist/d3-heatmap2.css'
 import './heatmap.less'
+import checkStatus from '../../common/CheckStatus'
 
 const styles = {
     container: {
@@ -104,6 +106,7 @@ class Heatmap extends Component {
 
         this.setState({loading: true})
         fetch(`/heatmap/?filename=${filename}&type=${type}&rows=${rows}`)
+            .then(checkStatus)
             .then(res => {
                 return res.json()
             })
@@ -112,6 +115,15 @@ class Heatmap extends Component {
             })
             .then( () => {
                 this.drawHeatmap()
+            })
+            .catch((error) => {
+                error.response.json()
+                    .then( json => {
+                        this.props.history.push(`/error/${error.code}?${queryString.stringify({message: json.error})}`)
+                    })
+                    .catch(() => {
+                        this.props.history.push(`/error/${error.code}?${queryString.stringify({message: error.message})}`)
+                    })
             })
     }
 
@@ -206,7 +218,7 @@ class Heatmap extends Component {
               }
               chart.setHighlight([{"start": selectStart, "end": selectEnd}])
               chart.updateHighlight()
-              window.location.href = `/#/heatmap/${filename}/${type}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
+              window.location.href = `/#/heatmap/${type}/${filename}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
             } else {
               selectStart = cell
               selectEnd = null
@@ -384,6 +396,7 @@ class Heatmap extends Component {
 
 Heatmap.propTypes = {
     match: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     popBreadcrumb: PropTypes.func.isRequired,
     pushBreadcrumb: PropTypes.func.isRequired,
 }

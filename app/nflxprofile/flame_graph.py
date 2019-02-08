@@ -18,16 +18,22 @@
 #    limitations under the License.
 
 import math
+from flask import abort
+
 from app.common.fileutil import get_file
 from app.common.flame_graph import generate_flame_graph
 from app import nflxprofile_pb2
 
 
 def nflxprofile_generate_flame_graph(file_path, range_start, range_end):
-    f = get_file(file_path)
-    profile = nflxprofile_pb2.Profile()
-    profile.ParseFromString(f.read())
-    f.close()
+    try:
+        f = get_file(file_path)
+        profile = nflxprofile_pb2.Profile()
+        profile.ParseFromString(f.read())
+    except TypeError:
+        abort(500, 'Failed to parse profile.')
+    finally:
+        f.close()
 
     start_time = profile.start_time
     if range_start is not None:

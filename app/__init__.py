@@ -66,7 +66,7 @@ def page_not_found(err):
 @APP.errorhandler(500)
 def internal_error(err):
     """Return a custom 500 error."""
-    return jsonify(error='Sorry, unexpected error: {}'.format(err)), 500
+    return jsonify(error=err.description), 500
 
 
 # Registering module blueprints

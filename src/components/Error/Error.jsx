@@ -17,8 +17,9 @@
  */
 
 import React, { Component } from 'react'
-import { Header } from 'semantic-ui-react'
+import { Header, Segment } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
+import queryString from 'query-string'
 
 const styles = {
     header: {
@@ -29,14 +30,20 @@ const styles = {
 class Error extends Component {
     render() {
         const { code } = this.props.match.params
+        const query = queryString.parse(this.props.location.search)
+        const message = query['message']
         return (
-            <Header style={styles.header}>{code}</Header>
+            <div>
+                <Header as='h1' style={styles.header}>Error {code}</Header>
+                <Segment>{message}</Segment>
+            </div>
         )
     }
 }
 
 Error.propTypes = {
     match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
 }
 
 export default Error

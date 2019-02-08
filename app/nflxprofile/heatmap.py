@@ -18,16 +18,21 @@
 #    limitations under the License.
 
 import collections
+from flask import abort
 
 from app import nflxprofile_pb2
 from app.common.fileutil import get_file
 
 
 def nflxprofile_readoffsets(file_path):
-    f = get_file(file_path)
-    profile = nflxprofile_pb2.Profile()
-    profile.ParseFromString(f.read())
-    f.close()
+    try:
+        f = get_file(file_path)
+        profile = nflxprofile_pb2.Profile()
+        profile.ParseFromString(f.read())
+    except TypeError:
+        abort(500, 'Failed to parse profile.')
+    finally:
+        f.close()
 
     offsets = []
     current_time = profile.start_time
