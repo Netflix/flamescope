@@ -21,6 +21,7 @@ import json
 import collections
 
 from app.common.fileutil import get_file
+from app.cpuprofile.chrome import get_cpuprofiles
 
 
 def get_idle_id(nodes):
@@ -33,8 +34,16 @@ def get_idle_id(nodes):
 
 def cpuprofile_read_offsets(file_path):
     f = get_file(file_path)
-    profile = json.load(f)
+    chrome_profile = json.load(f)
     f.close()
+
+    cpuprofiles = get_cpuprofiles(chrome_profile)
+
+    # a chrome profile can contain multiple cpu profiles
+    # using only the first one for now
+    # TODO: add support for multiple cpu profiles
+    profile = cpuprofiles[0]
+
     time_deltas = profile['timeDeltas']
     samples = profile['samples']
     idle_id = get_idle_id(profile['nodes'])

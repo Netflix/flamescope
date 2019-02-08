@@ -29,7 +29,7 @@ from app import config
 def generate_flame_graph(filename, file_type, range_start, range_end):
     file_path = join(config.PROFILE_DIR, filename)
     mtime = getmtime(file_path)
-    if file_type == 'perf_script':
+    if file_type == 'perf':
         return perf_generate_flame_graph(file_path, range_start, range_end)
     elif file_type == 'cpuprofile':
         return cpuprofile_generate_flame_graph(file_path, range_start, range_end)

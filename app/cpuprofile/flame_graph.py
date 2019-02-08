@@ -21,6 +21,7 @@ import json
 import math
 from app.common.fileutil import get_file
 from app.common.flame_graph import generate_flame_graph
+from app.cpuprofile.chrome import get_cpuprofiles
 from app import nflxprofile_pb2
 
 
@@ -58,8 +59,15 @@ def get_meta_ids(nodes):
 
 def cpuprofile_generate_flame_graph(file_path, range_start, range_end):
     f = get_file(file_path)
-    profile = json.load(f)
+    chrome_profile = json.load(f)
     f.close()
+
+    cpuprofiles = get_cpuprofiles(chrome_profile)
+
+    # a chrome profile can contain multiple cpu profiles
+    # using only the first one for now
+    # TODO: add support for multiple cpu profiles
+    profile = cpuprofiles[0]
 
     root_id = profile['nodes'][0]['id']
     nodes = parse_nodes(profile)

@@ -79,7 +79,7 @@ def get_profile_type(file_path):
         return 'nflxprofile'
     elif mime in ['text/plain', 'application/x-gzip', 'application/gzip']:
         if _is_perf_file(file_path):
-            return 'perf_script'
+            return 'perf'
         else:
             return 'trace_event'
     else:

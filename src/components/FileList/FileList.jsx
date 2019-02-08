@@ -27,17 +27,21 @@ const styles = {
 }
 
 const profileOptions = {
-    perf_script: {
-        text: 'Open Linux Perf',
-        value: 'perf_script'
+    perf: {
+        text: 'Open as Linux Perf',
+        value: 'perf'
     },
     nflxprofile: {
-        text: 'Open Netflix Profile',
+        text: 'Open as Netflix Profile',
         value: 'nflxprofile'
     },
     trace_event: {
-        text: 'Open Trace Event',
+        text: 'Open as Trace Event',
         value: 'trace_event'
+    },
+    cpuprofile: {
+        text: 'Open as Chrome CPU Profile',
+        value: 'cpuprofile'
     },
 }
 
@@ -84,7 +88,7 @@ class FileList extends Component {
                     <Table.Body>
                     {this.state.files.sort().map(function(file) {
                         const filename = file.filename
-                        const type = file.type == 'unknown' ? 'perf_script' : file.type
+                        const type = file.type == 'unknown' ? 'perf' : file.type
 
                         const path = encodeURIComponent(filename)
                         return (
@@ -92,7 +96,7 @@ class FileList extends Component {
                                 <Table.Cell>{filename}</Table.Cell>
                                 <Table.Cell textAlign='center'>
                                 <Button.Group color='teal'>
-                                    <Button onClick={() => {self.handleHeatmapClick(type, path)}}>{profileOptions[type].text}</Button>
+                                    <Button onClick={() => {self.handleHeatmapClick(type, path)}}>{type in profileOptions ? profileOptions[type].text : `Open as ${type}`}</Button>
                                     <Dropdown floating button className='icon'>
                                         <Dropdown.Menu>
                                             {Object.keys(profileOptions).map(key => {

@@ -42,7 +42,7 @@ def _read_offsets(file_path, file_type):
         if mtime == offsets_mtimes[file_path]:
             # use cached heatmap
             return offsets_cache[file_path]
-    if file_type == 'perf_script':
+    if file_type == 'perf':
         return perf_read_offsets(file_path)
     elif file_type == 'cpuprofile':
         return cpuprofile_read_offsets(file_path)
