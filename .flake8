@@ -4,4 +4,4 @@ ignore = E501
 
 # TODO get complexity down to ~10
 exclude = app/nflxprofile_pb2.py
-max-complexity = 30
+max-complexity = 32

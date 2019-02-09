@@ -32,7 +32,7 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end):
     try:
         f = get_file(file_path)
         profile = json.load(f)
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         abort(500, 'Failed to parse profile.')
     finally:
         f.close()

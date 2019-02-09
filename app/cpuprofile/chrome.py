@@ -17,6 +17,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+
 def get_cpuprofiles(chrome_profile):
     profile_events = []
     for row in chrome_profile:
