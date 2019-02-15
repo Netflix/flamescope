@@ -19,7 +19,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown } from 'semantic-ui-react'
-import { pushBreadcrumb, popBreadcrumb } from '../../actions/Navbar'
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
 import { select } from 'd3-selection'
@@ -75,16 +74,6 @@ class FlameGraph extends Component {
         };
     }
 
-    UNSAFE_componentWillMount() {
-        const { filename, type, start, end } = this.props.match.params
-        this.props.pushBreadcrumb('f_heatmap_' + filename, 'Heatmap (' + filename + ')', `/#/heatmap/${type}/${filename}`)
-        this.props.pushBreadcrumb(
-            'flamegraph_' + filename + '_' + start + '_' + end, 
-            'Flame Graph (' + start + ', ' + end + ')', 
-            `/#/heatmap/${type}/${filename}/${start}/${end}`
-        )
-    }
-
     componentDidMount() {
         const { filename, type, start, end } = this.props.match.params
 
@@ -117,12 +106,6 @@ class FlameGraph extends Component {
                         this.props.history.push(`/error/${error.code}?${queryString.stringify({message: error.message})}`)
                     })
             })
-    }
-
-    componentWillUnmount() {
-        const { filename, start, end } = this.props.match.params
-        this.props.popBreadcrumb('flamegraph_' + filename + '_' + start + '_' + end)
-        this.props.popBreadcrumb('f_heatmap_' + filename)
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -270,8 +253,6 @@ FlameGraph.propTypes = {
     location: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
-    popBreadcrumb: PropTypes.func.isRequired,
-    pushBreadcrumb: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = () => {
@@ -279,14 +260,8 @@ const mapStateToProps = () => {
     }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = () => {
     return {
-        pushBreadcrumb: (key, content, href) => {
-            dispatch(pushBreadcrumb(key, content, href))
-        },
-        popBreadcrumb: key => {
-            dispatch(popBreadcrumb(key))
-        }
     }
 }
 

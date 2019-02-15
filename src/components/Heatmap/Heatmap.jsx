@@ -19,7 +19,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Dimmer, Loader, Divider, Button, Container, Modal, Dropdown, Label, Checkbox } from 'semantic-ui-react'
-import { pushBreadcrumb, popBreadcrumb } from '../../actions/Navbar'
 import { connect } from 'react-redux'
 import { select } from 'd3-selection'
 import { scaleLinear } from 'd3-scale'
@@ -85,19 +84,8 @@ class Heatmap extends Component {
         };
     }
 
-    UNSAFE_componentWillMount() {
-        const { filename, type } = this.props.match.params
-
-        this.props.pushBreadcrumb('heatmap_' + filename, 'Heatmap (' + filename + ')', `/#/heatmap/${type}/${filename}`)
-    }
-
     componentDidMount() {
         this.fetchData()
-    }
-
-    componentWillUnmount() {
-        const { filename } = this.props.match.params
-        this.props.popBreadcrumb('heatmap_' + filename)
     }
 
     fetchData() {
@@ -397,8 +385,6 @@ class Heatmap extends Component {
 Heatmap.propTypes = {
     match: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
-    popBreadcrumb: PropTypes.func.isRequired,
-    pushBreadcrumb: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = () => {
@@ -406,14 +392,8 @@ const mapStateToProps = () => {
     }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = () => {
     return {
-        pushBreadcrumb: (key, content, href) => {
-            dispatch(pushBreadcrumb(key, content, href))
-        },
-        popBreadcrumb: key => {
-            dispatch(popBreadcrumb(key))
-        }
     }
 }
 
