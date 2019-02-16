@@ -53,7 +53,7 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end):
         # slice starts before the range, need to adjust start time and duration
         if profile_slice['ts'] < adjusted_start:
             ts_diff = profile_slice['ts'] - adjusted_start
-            profile_slice['ts']: adjusted_start
+            profile_slice['ts'] = adjusted_start
             profile_slice['dur'] = profile_slice['dur'] + ts_diff
         # slice ends after the range, need to adjust duration
         if (profile_slice['ts'] + profile_slice['dur']) > adjusted_end:
