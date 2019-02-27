@@ -39,24 +39,32 @@ def cpuprofile_read_offsets(file_path):
 
     cpuprofiles = get_cpuprofiles(chrome_profile)
 
-    # a chrome profile can contain multiple cpu profiles
-    # using only the first one for now
-    # TODO: add support for multiple cpu profiles
-    profile = cpuprofiles[0]
-
-    time_deltas = profile['timeDeltas']
-    samples = profile['samples']
-    idle_id = get_idle_id(profile['nodes'])
-    start_time = profile['startTime']
-    end_time = profile['endTime']
-
     offsets = []
-    current_time = start_time
+    start_time = None
+    end_time = None
 
-    for index, delta in enumerate(time_deltas):
-        current_time += delta
-        if samples[index] != idle_id:
-            offsets.append(current_time / 1000000)
+    for profile in cpuprofiles:
+
+        time_deltas = profile['timeDeltas']
+        samples = profile['samples']
+        idle_id = get_idle_id(profile['nodes'])
+        if start_time is None or profile['startTime'] < start_time:
+            start_time = profile['startTime']
+        
+        current_time = profile['startTime']
+
+        for index, delta in enumerate(time_deltas):
+            current_time += delta
+            if samples[index] != idle_id:
+                offsets.append(current_time / 1000000)
+        
+        if 'endTime' in profile:
+            if end_time is None or profile['endTime'] > end_time:
+                end_time = profile['endTime']
+        else:
+            if end_time is None or current_time > end_time:
+                end_time = current_time
 
     res = collections.namedtuple('offsets', ['start', 'end', 'offsets'])(start_time / 1000000, end_time / 1000000, offsets)
+
     return res

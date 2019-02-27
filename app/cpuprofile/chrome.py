@@ -20,7 +20,27 @@
 
 def get_cpuprofiles(chrome_profile):
     profile_events = []
+    open_chunked_profile = None
+
     for row in chrome_profile:
         if row['ph'] == 'I' and row['name'] == 'CpuProfile':
+            # older chrome profiles
             profile_events.append(row['args']['data']['cpuProfile'])
+        elif row['ph'] == 'P' and row['name'] == 'Profile':
+            if open_chunked_profile is not None:
+                profile_events.append(open_chunked_profile)
+            open_chunked_profile = {
+                'nodes': [],
+                'samples': [],
+                'timeDeltas': [],
+                'startTime': row['args']['data']['startTime']
+            }
+        elif row['ph'] == 'P' and row['name'] == 'ProfileChunk':
+            open_chunked_profile['nodes'].extend(row['args']['data']['cpuProfile']['nodes'])
+            open_chunked_profile['samples'].extend(row['args']['data']['cpuProfile']['samples'])
+            open_chunked_profile['timeDeltas'].extend(row['args']['data']['cpuProfile']['timeDeltas'])
+
+    if open_chunked_profile is not None:
+        profile_events.append(open_chunked_profile)
+
     return profile_events
