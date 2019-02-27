@@ -41,4 +41,4 @@ def nflxprofile_generate_flame_graph(file_path, range_start, range_end):
     if range_end is not None:
         adjusted_range_end = (math.floor(start_time) + range_end)
 
-    return generate_flame_graph(profile.nodes, 0, profile.samples, profile.time_deltas, start_time, adjusted_range_start, adjusted_range_end, None)
+    return generate_flame_graph([profile], [0], [None], adjusted_range_start, adjusted_range_end)

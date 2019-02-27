@@ -25,11 +25,11 @@ from app.cpuprofile.chrome import get_cpuprofiles
 from app import nflxprofile_pb2
 
 
-def parse_nodes(data):
+def parse_nodes(nodes):
     profile = nflxprofile_pb2.Profile()
     profile.nodes[0].function_name = 'fakenode'
     profile.nodes[0].hit_count = 0
-    for node in data['nodes']:
+    for node in nodes:
         node_id = node['id']
         function_name = node['callFrame']['functionName']
         children = node.get('children', None)
@@ -62,20 +62,22 @@ def cpuprofile_generate_flame_graph(file_path, range_start, range_end):
     chrome_profile = json.load(f)
     f.close()
 
-    cpuprofiles = get_cpuprofiles(chrome_profile)
+    profiles = get_cpuprofiles(chrome_profile)
+    root_ids = []
+    ignore_ids = []
+    start_time = None
 
-    # a chrome profile can contain multiple cpu profiles
-    # using only the first one for now
-    # TODO: add support for multiple cpu profiles
-    profile = cpuprofiles[0]
-
-    root_id = profile['nodes'][0]['id']
-    nodes = parse_nodes(profile)
-    ignore_ids = get_meta_ids(nodes)
-    start_time = profile['startTime']
+    for profile in profiles:
+        root_ids.append(profile['nodes'][0]['id'])
+        parsed_nodes = parse_nodes(profile['nodes'])
+        ignore_ids.append(get_meta_ids(parsed_nodes))
+        profile['nodes'] = parsed_nodes
+        if start_time is None or profile['startTime'] < start_time:
+            start_time = profile['startTime']
+    
     if range_start is not None:
         adjusted_range_start = (math.floor(start_time / 1000000) + range_start) * 1000000
     if range_end is not None:
         adjusted_range_end = (math.floor(start_time / 1000000) + range_end) * 1000000
 
-    return generate_flame_graph(nodes, root_id, profile['samples'], profile['timeDeltas'], profile['startTime'], adjusted_range_start, adjusted_range_end, ignore_ids)
+    return generate_flame_graph(profiles, root_ids, ignore_ids, adjusted_range_start, adjusted_range_end)

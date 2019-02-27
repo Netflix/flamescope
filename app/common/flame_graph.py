@@ -17,29 +17,8 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import sys
 
-RECURSION_LIMIT = 2500
-
-
-def _get_full_flame_graph(nflxprofile_nodes, nflxprofile_node_id):
-    nflxprofile_node = nflxprofile_nodes[nflxprofile_node_id]  # break in case id doesn't exist
-    if nflxprofile_node.function_name == '':
-        nflxprofile_node.function_name = '[unknown]'
-    node = {
-        'name': nflxprofile_node.function_name,
-        'libtype': nflxprofile_node.libtype,
-        'value': nflxprofile_node.hit_count,
-        'children': []
-    }
-    if nflxprofile_node.children:
-        for nflxprofile_child in nflxprofile_node.children:
-            child = _get_full_flame_graph(nflxprofile_nodes, nflxprofile_child)
-            if child is not None:
-                node['children'].append(child)
-    return node
-
-
+# TODO: including parent in the nodes will remove the need for stack generation
 def _get_stacks(nflxprofile_nodes, root_node_id):
     stacks = {}
     queue = []
@@ -68,44 +47,51 @@ def _get_child(node, name, libtype):
     return None
 
 
-def generate_flame_graph(nodes, root_id, samples, time_deltas, start_time, range_start=None, range_end=None, ignore_ids=[]):
+def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end):
     """Docstring for public method."""
-    # no range defined, just return the full flame graph
-    # should not happen in flamescope
-    if range_start is None and range_end is None:
-        current_recursion_limit = sys.getrecursionlimit()
-        sys.setrecursionlimit(RECURSION_LIMIT)
-        flame_graph = _get_full_flame_graph(nodes, root_id)
-        sys.setrecursionlimit(current_recursion_limit)
-        return flame_graph
-
     root = {
         'name': 'root',
         'libtype': '',
         'value': 0,
         'children': []
     }
-    current_time = start_time + time_deltas[0]
-    stacks = _get_stacks(nodes, root_id)
-    for index, sample in enumerate(samples):
-        if index == (len(samples) - 1):  # last sample
-            break
-        delta = time_deltas[index + 1]
-        current_time += delta
-        if not ignore_ids or sample not in ignore_ids:
-            if range_start <= current_time < range_end:
-                stack = stacks[sample]
-                current_node = root
-                for frame in stack:
-                    child = _get_child(current_node, frame[0], frame[1])
-                    if child is None:
-                        child = {
-                            'name': frame[0],
-                            'libtype': frame[1],
-                            'value': 0,
-                            'children': []
-                        }
-                        current_node['children'].append(child)
-                    current_node = child
-                current_node['value'] = current_node['value'] + 1
+
+    for profile_index, profile in enumerate(profiles):
+        if isinstance(profile, dict):
+            nodes = profile['nodes']
+            samples = profile['samples']
+            time_deltas = profile['timeDeltas']
+            start_time = profile['startTime']
+        else:
+            nodes = profile.nodes
+            samples = profile.samples
+            time_deltas = profile.time_deltas
+            start_time = profile.start_time
+
+        root_id = root_ids[profile_index]
+        ignore_id = ignore_ids[profile_index]
+
+        current_time = start_time + time_deltas[0]
+        stacks = _get_stacks(nodes, root_id)
+        for sample_index, sample in enumerate(samples):
+            if sample_index == (len(samples) - 1):  # last sample
+                break
+            delta = time_deltas[sample_index + 1]
+            current_time += delta
+            if not ignore_id or sample not in ignore_id:
+                if range_start <= current_time < range_end:
+                    stack = stacks[sample]
+                    current_node = root
+                    for frame in stack:
+                        child = _get_child(current_node, frame[0], frame[1])
+                        if child is None:
+                            child = {
+                                'name': frame[0],
+                                'libtype': frame[1],
+                                'value': 0,
+                                'children': []
+                            }
+                            current_node['children'].append(child)
+                        current_node = child
+                    current_node['value'] = current_node['value'] + 1
     return root
