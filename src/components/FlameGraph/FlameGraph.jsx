@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown } from 'semantic-ui-react'
+import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown, Grid } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
 import { select } from 'd3-selection'
@@ -55,6 +55,7 @@ class FlameGraph extends Component {
             'handleOnKeyDown',
             'updateSearchQuery',
             'handleLayoutChange',
+            'handleBackClick',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -188,6 +189,10 @@ class FlameGraph extends Component {
         })
     }
 
+    handleBackClick() {
+        this.props.history.goBack();
+    }
+
     render() {
         const searchButton = 
         <Button inverted color='red' size='small' onClick={this.handleSearchClick}>
@@ -210,26 +215,31 @@ class FlameGraph extends Component {
                     <Loader size='huge' inverted>Loading</Loader>
                 </Dimmer> 
                 <Container style={styles.container}>
-                    <Container textAlign='right'>
-                        <Dropdown selection style={styles.layoutDropdown} options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} compact />
-                        <Button size='small' onClick={this.handleResetClick}>
-                            <Button.Content>
-                                Reset Zoom
-                            </Button.Content>
-                        </Button>
-                        <Button size='small' onClick={this.handleClearClick}>
-                            <Button.Content>
-                                Clear
-                            </Button.Content>
-                        </Button>
-                        <Input
-                            action={searchButton}
-                            placeholder='Search...'
-                            value={this.state.searchTerm}
-                            onChange={this.handleSearchInputChange}
-                            onKeyDown={this.handleOnKeyDown}
-                        />
-                    </Container>
+                    <Grid>
+                        <Grid.Column width={4}>
+                            <Button content='Back' icon='left arrow' onClick={this.handleBackClick} />
+                        </Grid.Column>
+                        <Grid.Column width={12} textAlign='right'>
+                            <Dropdown selection style={styles.layoutDropdown} options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} compact />
+                            <Button size='small' onClick={this.handleResetClick}>
+                                <Button.Content>
+                                    Reset Zoom
+                                </Button.Content>
+                            </Button>
+                            <Button size='small' onClick={this.handleClearClick}>
+                                <Button.Content>
+                                    Clear
+                                </Button.Content>
+                            </Button>
+                            <Input
+                                action={searchButton}
+                                placeholder='Search...'
+                                value={this.state.searchTerm}
+                                onChange={this.handleSearchInputChange}
+                                onKeyDown={this.handleOnKeyDown}
+                            />
+                        </Grid.Column>
+                    </Grid>
                     <Divider />
                     <div
                         ref={`flamegraph`}

@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Dimmer, Loader, Divider, Button, Container, Modal, Dropdown, Label, Checkbox } from 'semantic-ui-react'
+import { Dimmer, Loader, Divider, Button, Container, Modal, Dropdown, Label, Checkbox, Grid } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { select } from 'd3-selection'
 import { scaleLinear } from 'd3-scale'
@@ -71,6 +71,7 @@ class Heatmap extends Component {
             'handleEnhanceColors',
             'handleRowsChange',
             'fetchData',
+            'handleBackClick',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -302,6 +303,10 @@ class Heatmap extends Component {
         )
     }
 
+    handleBackClick() {
+        this.props.history.goBack();
+    }
+
     render() {
         return (
             <div>
@@ -327,34 +332,39 @@ class Heatmap extends Component {
                     </Modal.Actions>
                 </Modal>
                 <Container style={styles.container}>
-                    <Container textAlign='right'>
-                        <Label pointing='right' color='red' size='large'>
-                            Rows
-                        </Label>
-                        <Dropdown
-                            options={rowsOptions}
-                            onChange={this.handleRowsChange}
-                            value={this.state.rows}
-                            compact
-                            selection
-                            labeled
-                        />
-                        {/*<Button animated='vertical' color='red' onClick={this.handleSettingsOpen}>
-                            <Button.Content hidden>Settings</Button.Content>
-                            <Button.Content visible>
-                                <Icon name='cogs' />
-                            </Button.Content>
-                        </Button>*/}
-                        <Label pointing='right' color='red' size='large' style={styles.enhanceLabel}>
-                            Enhanced
-                        </Label>
-                        <Checkbox
-                            toggle
-                            checked={this.state.enhanceColors}
-                            onClick={this.handleEnhanceColors}
-                            style={styles.enhanceToggle}
-                        />
-                    </Container>
+                    <Grid>
+                        <Grid.Column width={4}>
+                            <Button content='Back' icon='left arrow' onClick={this.handleBackClick} />
+                        </Grid.Column>
+                        <Grid.Column width={12} textAlign='right'>
+                            <Label pointing='right' color='red' size='large'>
+                                Rows
+                            </Label>
+                            <Dropdown
+                                options={rowsOptions}
+                                onChange={this.handleRowsChange}
+                                value={this.state.rows}
+                                compact
+                                selection
+                                labeled
+                            />
+                            {/*<Button animated='vertical' color='red' onClick={this.handleSettingsOpen}>
+                                <Button.Content hidden>Settings</Button.Content>
+                                <Button.Content visible>
+                                    <Icon name='cogs' />
+                                </Button.Content>
+                            </Button>*/}
+                            <Label pointing='right' color='red' size='large' style={styles.enhanceLabel}>
+                                Enhanced
+                            </Label>
+                            <Checkbox
+                                toggle
+                                checked={this.state.enhanceColors}
+                                onClick={this.handleEnhanceColors}
+                                style={styles.enhanceToggle}
+                            />
+                        </Grid.Column>
+                    </Grid>
                     <Divider />
                     <div
                         ref={`heatmap`}
