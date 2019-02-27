@@ -50,14 +50,14 @@ def cpuprofile_read_offsets(file_path):
         idle_id = get_idle_id(profile['nodes'])
         if start_time is None or profile['startTime'] < start_time:
             start_time = profile['startTime']
-        
+
         current_time = profile['startTime']
 
         for index, delta in enumerate(time_deltas):
             current_time += delta
             if samples[index] != idle_id:
                 offsets.append(current_time / 1000000)
-        
+
         if 'endTime' in profile:
             if end_time is None or profile['endTime'] > end_time:
                 end_time = profile['endTime']

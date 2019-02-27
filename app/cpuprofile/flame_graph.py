@@ -74,7 +74,7 @@ def cpuprofile_generate_flame_graph(file_path, range_start, range_end):
         profile['nodes'] = parsed_nodes
         if start_time is None or profile['startTime'] < start_time:
             start_time = profile['startTime']
-    
+
     if range_start is not None:
         adjusted_range_start = (math.floor(start_time / 1000000) + range_start) * 1000000
     if range_end is not None:
