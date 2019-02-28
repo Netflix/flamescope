@@ -66,8 +66,22 @@ class FileList extends Component {
             })
     }
 
-    handleHeatmapClick(type, path) {
-        this.props.history.push(`/heatmap/${type}/${path}`)
+    handleHeatmapClick(type, filename) {
+        const { compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
+
+        let url = `/heatmap/${type}/${filename}`
+
+        if (compareType && compareFilename) {
+            url = `/compare/${compareType}/${compareFilename}`
+            if (compareStart && compareEnd) {
+                url += `/${compareStart}/${compareEnd}`
+            }
+            url += `/heatmap/${type}/${filename}`
+        }
+
+        console.log(url)
+
+        this.props.history.push(url)
     }
 
     render() {
@@ -121,6 +135,7 @@ class FileList extends Component {
 
 FileList.propTypes = {
     history: PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
 }
 
 export default FileList

@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown, Grid } from 'semantic-ui-react'
+import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown, Grid, Icon } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
 import { select } from 'd3-selection'
@@ -57,6 +57,7 @@ class FlameGraph extends Component {
             'updateSearchQuery',
             'handleLayoutChange',
             'handleBackClick',
+            'handleCompareClick',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -215,6 +216,18 @@ class FlameGraph extends Component {
         this.props.history.goBack();
     }
 
+    handleCompareClick() {
+        const { type, filename, start, end } = this.props.match.params
+
+        let url = `/#/compare/${type}/${filename}`
+
+        if (start && end) {
+            url += `/${start}/${end}`
+        }
+
+        window.location.href = url
+    }
+
     render() {
         const searchButton = 
         <Button inverted color='red' size='small' onClick={this.handleSearchClick}>
@@ -269,12 +282,24 @@ class FlameGraph extends Component {
                         key={`flamegraph`}
                     />
                     <Divider />
-                    <div
-                        ref={`details`}
-                        id={`details`}
-                        key={`details`}
-                        style={styles.details}
-                    />
+                    <Grid>
+                        <Grid.Column width={12}>
+                            <div
+                                ref={`details`}
+                                id={`details`}
+                                key={`details`}
+                                style={styles.details}
+                            />
+                        </Grid.Column>
+                        <Grid.Column width={4} textAlign='right'>
+                            { this.props.match.params.compare ?
+                            <Button icon labelPosition='right' onClick={this.handleCompareClick}>
+                                Compare
+                                <Icon name='right arrow' />
+                            </Button>
+                            : null }
+                        </Grid.Column>
+                    </Grid>
                 </Container>
             </div>
         )

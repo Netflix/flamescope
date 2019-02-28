@@ -32,6 +32,10 @@ const App = () => (
         <Route exact path="/heatmap/:type/:filename" component={Heatmap} />
         <Route exact path="/flamegraph/:type/:filename/:start/:end" component={FlameGraph} />
         <Route exact path="/flamegraph/:type/:filename" component={FlameGraph} />
+        <Route exact path="/compare/:compareType/:compareFilename/:compareStart/:compareEnd" component={FileList} />
+        <Route exact path="/compare/:compareType/:compareFilename" component={FileList} />
+        <Route exact path="/compare/:compareType/:compareFilename/:compareStart/:compareEnd/heatmap/:type/:filename" component={Heatmap} />
+        <Route exact path="/compare/:compareType/:compareFilename/heatmap/:type/:filename" component={Heatmap} />
         <Route exact path="/differential/:type/:filename/:start/:end/compare/:compareType/:compareFilename/:compareStart/:compareEnd" component={DifferentialFlameGraph} />
         <Route exact path="/differential/:type/:filename/:start/:end/compare/:compareType/:compareFilename" component={DifferentialFlameGraph} />
         <Route exact path="/differential/:type/:filename/compare/:compareType/:compareFilename/:compareStart/:compareEnd" component={DifferentialFlameGraph} />

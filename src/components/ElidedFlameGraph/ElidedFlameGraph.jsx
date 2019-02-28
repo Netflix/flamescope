@@ -23,12 +23,13 @@ import FlameGraph from '../FlameGraph'
 class ElidedFlameGraph extends Component {
     render() {
         return (
-            <FlameGraph compare='elided' match={this.props.match} location={this.props.location} />
+            <FlameGraph compare='elided' match={this.props.match} location={this.props.location} history={this.props.history} />
         )
     }
 }
 
 ElidedFlameGraph.propTypes = {
+    history: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
 }

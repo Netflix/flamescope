@@ -118,8 +118,9 @@ class Heatmap extends Component {
     }
 
     drawHeatmap() {
+        const self = this
         const { data , enhanceColors} = this.state;
-        const { filename, type } = this.props.match.params
+        const { filename, type, compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
 
         const heatmapNode = document.getElementById('heatmap')
         while (heatmapNode.firstChild) {
@@ -200,15 +201,26 @@ class Heatmap extends Component {
               chart.setHighlight([{"start": selectStart, "end": selectStart}])
               chart.updateHighlight()
             } else if (!selectEnd) {
-              if (isBefore(selectStart, cell)) {
-                selectEnd = cell
-              } else {
-                selectEnd = selectStart
-                selectStart = cell
-              }
-              chart.setHighlight([{"start": selectStart, "end": selectEnd}])
-              chart.updateHighlight()
-              window.location.href = `/#/flamegraph/${type}/${filename}/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}`;
+                if (isBefore(selectStart, cell)) {
+                    selectEnd = cell
+                } else {
+                    selectEnd = selectStart
+                    selectStart = cell
+                }
+                chart.setHighlight([{"start": selectStart, "end": selectEnd}])
+                chart.updateHighlight()
+
+                let url = `/flamegraph/${type}/${filename}/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}`
+
+                if (compareType && compareFilename) {
+                    url = `/differential/${compareType}/${compareFilename}`
+                    if (compareStart && compareEnd) {
+                        url += `/${compareStart}/${compareEnd}`
+                    }
+                    url += `/compare/${type}/${filename}/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}`
+                }
+
+                self.props.history.push(url)
             } else {
               selectStart = cell
               selectEnd = null
@@ -309,8 +321,19 @@ class Heatmap extends Component {
     }
 
     handleFullProfileClick() {
-        const { filename, type } = this.props.match.params
-        window.location.href = `/#/flamegraph/${type}/${filename}`;
+        const { filename, type, compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
+
+        let url = `/flamegraph/${type}/${filename}`
+
+        if (compareType && compareFilename) {
+            url = `/differential/${compareType}/${compareFilename}`
+            if (compareStart && compareEnd) {
+                url += `/${compareStart}/${compareEnd}`
+            }
+            url += `/compare/${type}/${filename}`
+        }
+
+        this.props.history.push(url)
     }
 
     render() {

@@ -23,12 +23,13 @@ import FlameGraph from '../FlameGraph'
 class DifferentialFlameGraph extends Component {
     render() {
         return (
-            <FlameGraph compare='differential' match={this.props.match} location={this.props.location} />
+            <FlameGraph compare='differential' match={this.props.match} location={this.props.location} history={this.props.history} />
         )
     }
 }
 
 DifferentialFlameGraph.propTypes = {
+    history: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
 }
