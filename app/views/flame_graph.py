@@ -30,12 +30,10 @@ def get_flame_graph():
     filename = request.args.get('filename')
     file_type = request.args.get('type')
     range_start = request.args.get('start', None)
-    if range_start is None:
-        abort(500, 'Missing range start parameter.')
-    range_start = float(range_start)
+    if range_start is not None:
+        range_start = float(range_start)
     range_end = request.args.get('end', None)
-    if range_end is None:
-        abort(500, 'Missing range end parameter.')
-    range_end = float(range_end)
+    if range_end is not None:
+        range_end = float(range_end)
     flame_graph = generate_flame_graph(filename, file_type, range_start, range_end)
     return jsonify(flame_graph)

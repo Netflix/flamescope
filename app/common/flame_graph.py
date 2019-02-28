@@ -79,7 +79,7 @@ def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end)
             delta = time_deltas[sample_index + 1]
             current_time += delta
             if not ignore_id or sample not in ignore_id:
-                if range_start <= current_time < range_end:
+                if (range_start is None or range_end is None) or (range_start <= current_time < range_end):
                     stack = stacks[sample]
                     current_node = root
                     for frame in stack:

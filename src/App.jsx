@@ -31,8 +31,15 @@ const App = () => (
         <Route exact path="/" component={FileList}/>
         <Route exact path="/heatmap/:type/:filename" component={Heatmap} />
         <Route exact path="/flamegraph/:type/:filename/:start/:end" component={FlameGraph} />
-        <Route exact path="/differential/:type/:filename/:start/:end/:compareType/:compareFilename/:compareStart/:compareEnd" component={DifferentialFlameGraph} />
-        <Route exact path="/elided/:type/:filename/:start/:end/:compareType/:compareFilename/:compareStart/:compareEnd" component={ElidedFlameGraph} />
+        <Route exact path="/flamegraph/:type/:filename" component={FlameGraph} />
+        <Route exact path="/differential/:type/:filename/:start/:end/compare/:compareType/:compareFilename/:compareStart/:compareEnd" component={DifferentialFlameGraph} />
+        <Route exact path="/differential/:type/:filename/:start/:end/compare/:compareType/:compareFilename" component={DifferentialFlameGraph} />
+        <Route exact path="/differential/:type/:filename/compare/:compareType/:compareFilename/:compareStart/:compareEnd" component={DifferentialFlameGraph} />
+        <Route exact path="/differential/:type/:filename/compare/:compareType/:compareFilename" component={DifferentialFlameGraph} />
+        <Route exact path="/elided/:type/:filename/:start/:end/compare/:compareType/:compareFilename/:compareStart/:compareEnd" component={ElidedFlameGraph} />
+        <Route exact path="/elided/:type/:filename/:start/:end/compare/:compareType/:compareFilename" component={ElidedFlameGraph} />
+        <Route exact path="/elided/:type/:filename/compare/:compareType/:compareFilename/:compareStart/:compareEnd" component={ElidedFlameGraph} />
+        <Route exact path="/elided/:type/:filename/compare/:compareType/:compareFilename" component={ElidedFlameGraph} />
         <Route exact path="/error/:code" component={Error} />
         <Redirect to="/error/404" />
       </Switch>

@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Dimmer, Loader, Divider, Button, Container, Modal, Dropdown, Label, Checkbox, Grid } from 'semantic-ui-react'
+import { Dimmer, Loader, Divider, Button, Container, Modal, Dropdown, Label, Checkbox, Grid, Icon } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { select } from 'd3-selection'
 import { scaleLinear } from 'd3-scale'
@@ -72,6 +72,7 @@ class Heatmap extends Component {
             'handleRowsChange',
             'fetchData',
             'handleBackClick',
+            'handleFullProfileClick',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -307,6 +308,11 @@ class Heatmap extends Component {
         this.props.history.goBack();
     }
 
+    handleFullProfileClick() {
+        const { filename, type } = this.props.match.params
+        window.location.href = `/#/flamegraph/${type}/${filename}`;
+    }
+
     render() {
         return (
             <div>
@@ -372,7 +378,6 @@ class Heatmap extends Component {
                         key={`heatmap`}
                         className={`heatmap`}
                     />
-
                     <div
                         ref={`legend`}
                         id={`legend`}
@@ -380,12 +385,22 @@ class Heatmap extends Component {
                         className={`legend`}
                     />
                     <Divider />
-                    <div
-                        ref={`details`}
-                        id={`details`}
-                        key={`details`}
-                        style={styles.details}
-                    />
+                    <Grid>
+                        <Grid.Column width={12}>
+                            <div
+                                ref={`details`}
+                                id={`details`}
+                                key={`details`}
+                                style={styles.details}
+                            />
+                        </Grid.Column>
+                        <Grid.Column width={4} textAlign='right'>
+                            <Button icon labelPosition='right' onClick={this.handleFullProfileClick}>
+                                Whole Profile
+                                <Icon name='right arrow' />
+                            </Button>
+                        </Grid.Column>
+                    </Grid>
                 </Container>
             </div>
         )

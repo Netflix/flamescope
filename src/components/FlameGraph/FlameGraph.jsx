@@ -101,8 +101,18 @@ class FlameGraph extends Component {
         console.log(`Compare Start: ${compareStart}`)
         console.log(`Compare End: ${compareEnd}`)
 
+        let url = `/flamegraph/?filename=${filename}&type=${type}`
+
+        if (start) {
+            url += `&start=${start}`
+        }
+
+        if (end) {
+            url += `&end=${end}`
+        }
+
         this.setState({loading: true})
-        fetch(`/flamegraph/?filename=${filename}&type=${type}&start=${start}&end=${end}`)
+        fetch(url)
             .then(checkStatus)
             .then(res => {
                 return res.json()
