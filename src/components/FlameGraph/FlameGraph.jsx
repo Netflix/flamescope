@@ -48,6 +48,7 @@ class FlameGraph extends Component {
     
         [
             'drawFlamegraph',
+            'executeQuery',
             'handleResetClick',
             'handleClearClick',
             'handleSearchInputChange',
@@ -76,7 +77,29 @@ class FlameGraph extends Component {
     }
 
     componentDidMount() {
-        const { filename, type, start, end } = this.props.match.params
+        this.executeQuery()
+    }
+
+    componentDidUpdate(prevProps) {
+        if (
+            this.props.location.search !== prevProps.location.search || 
+            this.props.match.params !== prevProps.match.params ||
+            this.props.compare !== prevProps.compare
+        ) {
+            select('#flamegraph').selectAll('svg').remove()
+            this.executeQuery()
+        }
+    }
+
+    executeQuery() {
+        const { type, filename, start, end, compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
+        const { compare } = this.props
+
+        console.log(`Compare: ${compare}`)
+        console.log(`Compare Type: ${compareType}`)
+        console.log(`Compare Filename: ${compareFilename}`)
+        console.log(`Compare Start: ${compareStart}`)
+        console.log(`Compare End: ${compareEnd}`)
 
         this.setState({loading: true})
         fetch(`/flamegraph/?filename=${filename}&type=${type}&start=${start}&end=${end}`)
@@ -96,7 +119,10 @@ class FlameGraph extends Component {
                 if (sq) {
                     this.setState({searchTerm: sq});
                     this.state.chart.search(sq);
-                }
+                } else {
+                    this.setState({searchTerm: ''});
+                    this.state.chart.clear()
+                }    
             })
             .catch((error) => {
                 error.response.json()
@@ -107,20 +133,6 @@ class FlameGraph extends Component {
                         this.props.history.push(`/error/${error.code}?${queryString.stringify({message: error.message})}`)
                     })
             })
-    }
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.location.search !== this.props.location.search) {
-            const query = queryString.parse(nextProps.location.search);
-            const sq = query['search'];
-            if (sq) {
-                this.setState({searchTerm: sq});
-                this.state.chart.search(sq);
-            } else {
-                this.setState({searchTerm: ''});
-                this.state.chart.clear()
-            }
-        }
     }
 
     drawFlamegraph() {
@@ -260,6 +272,7 @@ class FlameGraph extends Component {
 }
 
 FlameGraph.propTypes = {
+    compare: PropTypes.string,
     location: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,

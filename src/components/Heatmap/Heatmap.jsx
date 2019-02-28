@@ -207,7 +207,7 @@ class Heatmap extends Component {
               }
               chart.setHighlight([{"start": selectStart, "end": selectEnd}])
               chart.updateHighlight()
-              window.location.href = `/#/heatmap/${type}/${filename}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
+              window.location.href = `/#/flamegraph/${type}/${filename}/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}`;
             } else {
               selectStart = cell
               selectEnd = null

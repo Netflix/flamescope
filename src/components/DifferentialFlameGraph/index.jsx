@@ -1,6 +1,6 @@
 /**
  *
- *  Copyright 2018 Netflix, Inc.
+ *  Copyright 2019 Netflix, Inc.
  *
  *     Licensed under the Apache License, Version 2.0 (the "License");
  *     you may not use this file except in compliance with the License.
@@ -16,10 +16,4 @@
  *
  */
 
-export { default as FlameGraph } from './FlameGraph'
-export { default as DifferentialFlameGraph } from './DifferentialFlameGraph'
-export { default as ElidedFlameGraph } from './ElidedFlameGraph'
-export { default as Heatmap } from './Heatmap'
-export { default as Navbar } from './Navbar'
-export { default as FileList } from './FileList'
-export { default as Error } from './Error'
+export { default } from './DifferentialFlameGraph'
