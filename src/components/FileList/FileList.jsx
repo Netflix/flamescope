@@ -79,8 +79,6 @@ class FileList extends Component {
             url += `/heatmap/${type}/${filename}`
         }
 
-        console.log(url)
-
         this.props.history.push(url)
     }
 

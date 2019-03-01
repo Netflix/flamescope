@@ -88,6 +88,12 @@ module.exports = {
       '/flamegraph/**': {
         target: 'http://localhost:5000',
       },
+      '/differential/**': {
+        target: 'http://localhost:5000',
+      },
+      '/elided/**': {
+        target: 'http://localhost:5000',
+      },
     },
   },
 }

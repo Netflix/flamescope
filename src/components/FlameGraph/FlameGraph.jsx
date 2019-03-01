@@ -96,20 +96,20 @@ class FlameGraph extends Component {
         const { type, filename, start, end, compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
         const { compare } = this.props
 
-        console.log(`Compare: ${compare}`)
-        console.log(`Compare Type: ${compareType}`)
-        console.log(`Compare Filename: ${compareFilename}`)
-        console.log(`Compare Start: ${compareStart}`)
-        console.log(`Compare End: ${compareEnd}`)
-
         let url = `/flamegraph/?filename=${filename}&type=${type}`
 
-        if (start) {
-            url += `&start=${start}`
+        if (compare == 'differential') {
+            url = `/differential/?filename=${filename}&type=${type}&compareFilename=${compareFilename}&compareType=${compareType}`
+        } else if (compare == 'elided') {
+            url = `/elided/?filename=${filename}&type=${type}&compareFilename=${compareFilename}&compareType=${compareType}`
         }
 
-        if (end) {
-            url += `&end=${end}`
+        if (start && end) {
+            url += `&start=${start}&end=${end}`
+        }
+
+        if (compareStart && compareEnd) {
+            url += `&compareStart=${compareStart}&compareEnd=${compareEnd}`
         }
 
         this.setState({loading: true})
@@ -147,7 +147,8 @@ class FlameGraph extends Component {
     }
 
     drawFlamegraph() {
-        const { data } = this.state;
+        const { data } = this.state
+        const { compare } = this.props
         const width = document.getElementById('flamegraph').offsetWidth
 
         const cellHeight = 16
@@ -157,6 +158,7 @@ class FlameGraph extends Component {
             .transitionDuration(750)
             .sort(true)
             .title('')
+            .differential(compare === 'differential' ? true : false)
             .minFrameSize(5)
             .inverted(this.state.layout === layout.icicle)
             .selfValue(true)
@@ -292,7 +294,7 @@ class FlameGraph extends Component {
                             />
                         </Grid.Column>
                         <Grid.Column width={4} textAlign='right'>
-                            { this.props.match.params.compare ?
+                            { !this.props.compare ?
                             <Button icon labelPosition='right' onClick={this.handleCompareClick}>
                                 Compare
                                 <Icon name='right arrow' />

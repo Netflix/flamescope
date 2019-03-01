@@ -42,3 +42,22 @@ def nflxprofile_generate_flame_graph(file_path, range_start, range_end):
         range_end = (math.floor(start_time) + range_end)
 
     return generate_flame_graph([profile], [0], [None], range_start, range_end)
+
+
+def nflxprofile_generate_differential_flame_graph(file_path, range_start, range_end):
+    try:
+        f = get_file(file_path)
+        profile = nflxprofile_pb2.Profile()
+        profile.ParseFromString(f.read())
+    except TypeError:
+        abort(500, 'Failed to parse profile.')
+    finally:
+        f.close()
+
+    start_time = profile.start_time
+    if range_start is not None:
+        range_start = (math.floor(start_time) + range_start)
+    if range_end is not None:
+        range_end = (math.floor(start_time) + range_end)
+
+    return generate_flame_graph([profile], [0], [None], range_start, range_end)
