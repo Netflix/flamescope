@@ -59,6 +59,7 @@ class FlameGraph extends Component {
             'handleBackClick',
             'handleCompareClick',
             'handleFlipClick',
+            'handleElidedDifferentialFlipClick',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -247,6 +248,23 @@ class FlameGraph extends Component {
         this.props.history.push(url)
     }
 
+
+    handleElidedDifferentialFlipClick() {
+        const { type, filename, start, end, compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
+        const { compare } = this.props
+
+        let url = `/${compare === 'differential' ? 'elided' : 'differential'}/${type}/${filename}`
+        if (start && end) {
+            url += `/${start}/${end}`
+        }
+        url += `/compare/${compareType}/${compareFilename}`
+        if (compareStart && compareEnd) {
+            url += `/${compareStart}/${compareEnd}`
+        }
+        
+        this.props.history.push(url)
+    }
+
     render() {
         const searchButton = 
         <Button inverted color='red' size='small' onClick={this.handleSearchClick}>
@@ -323,7 +341,15 @@ class FlameGraph extends Component {
                                 Compare
                                 <Icon name='right arrow' />
                             </Button>
-                            : null }
+                            : this.props.compare === 'differential' ?
+                            <Button icon labelPosition='right' onClick={this.handleElidedDifferentialFlipClick}>
+                                View Elided Frames
+                                <Icon name='right arrow' />
+                            </Button> :
+                            <Button icon labelPosition='right' onClick={this.handleElidedDifferentialFlipClick}>
+                                View Differential
+                                <Icon name='right arrow' />
+                            </Button> }
                         </Grid.Column>
                     </Grid>
                 </Container>
