@@ -1,6 +1,6 @@
 {
   "name": "flamescope",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "main": "app/public/index.html",
   "scripts": {
     "dev": "concurrently \"python run.py\" \"NODE_ENV=development webpack-dev-server --hot --mode=development\"",
