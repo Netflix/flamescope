@@ -17,7 +17,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify
 from app.controllers.elided import generate_elided_flame_graph
 
 MOD_ELIDED_FLAME_GRAPH = Blueprint(

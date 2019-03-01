@@ -34,11 +34,11 @@ def generate_elided_flame_graph(filename, file_type, compare_filename, compare_t
     if file_type == 'perf':
         flame_graph_1 = perf_generate_flame_graph(file_path_1, start, end)
     elif file_type == 'cpuprofile':
-        flame_graph_1 =  cpuprofile_generate_flame_graph(file_path_1, start, end)
+        flame_graph_1 = cpuprofile_generate_flame_graph(file_path_1, start, end)
     elif file_type == 'trace_event':
-        flame_graph_1 =  trace_event_generate_flame_graph(file_path_1, mtime_1, start, end)
+        flame_graph_1 = trace_event_generate_flame_graph(file_path_1, mtime_1, start, end)
     elif file_type == 'nflxprofile':
-        flame_graph_1 =  nflxprofile_generate_flame_graph(file_path_1, start, end)
+        flame_graph_1 = nflxprofile_generate_flame_graph(file_path_1, start, end)
     else:
         raise InvalidFileError('Unknown file type.')
 
@@ -48,11 +48,11 @@ def generate_elided_flame_graph(filename, file_type, compare_filename, compare_t
     if compare_type == 'perf':
         flame_graph_2 = perf_generate_flame_graph(file_path_2, compare_start, compare_end)
     elif compare_type == 'cpuprofile':
-        flame_graph_2 =  cpuprofile_generate_flame_graph(file_path_2, compare_start, compare_end)
+        flame_graph_2 = cpuprofile_generate_flame_graph(file_path_2, compare_start, compare_end)
     elif compare_type == 'trace_event':
-        flame_graph_2 =  trace_event_generate_flame_graph(file_path_2, mtime_2, compare_start, compare_end)
+        flame_graph_2 = trace_event_generate_flame_graph(file_path_2, mtime_2, compare_start, compare_end)
     elif compare_type == 'nflxprofile':
-        flame_graph_2 =  nflxprofile_generate_flame_graph(file_path_2, compare_start, compare_end)
+        flame_graph_2 = nflxprofile_generate_flame_graph(file_path_2, compare_start, compare_end)
     else:
         raise InvalidFileError('Unknown file type.')
 
