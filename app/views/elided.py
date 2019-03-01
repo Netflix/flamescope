@@ -18,7 +18,7 @@
 #    limitations under the License.
 
 from flask import Blueprint, request, jsonify, abort
-from app.controllers.flame_graph import generate_flame_graph
+from app.controllers.elided import generate_elided_flame_graph
 
 MOD_ELIDED_FLAME_GRAPH = Blueprint(
     'elided', __name__, url_prefix='/elided'
@@ -29,11 +29,21 @@ MOD_ELIDED_FLAME_GRAPH = Blueprint(
 def get_elided_flame_graph():
     filename = request.args.get('filename')
     file_type = request.args.get('type')
-    range_start = request.args.get('start', None)
-    if range_start is not None:
-        range_start = float(range_start)
-    range_end = request.args.get('end', None)
-    if range_end is not None:
-        range_end = float(range_end)
-    flame_graph = generate_flame_graph(filename, file_type, range_start, range_end)
-    return jsonify(flame_graph)
+    compare_filename = request.args.get('compareFilename')
+    compare_type = request.args.get('compareType')
+    start = request.args.get('start', None)
+    if start is not None:
+        start = float(start)
+    end = request.args.get('end', None)
+    if end is not None:
+        end = float(end)
+    compare_start = request.args.get('compareStart', None)
+    if compare_start is not None:
+        compare_start = float(compare_start)
+    compare_end = request.args.get('compareEnd', None)
+    if compare_end is not None:
+        compare_end = float(compare_end)
+
+    elided_flame_graph = generate_elided_flame_graph(
+        filename, file_type, compare_filename, compare_type, start, end, compare_start, compare_end)
+    return jsonify(elided_flame_graph)

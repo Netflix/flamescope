@@ -58,6 +58,7 @@ class FlameGraph extends Component {
             'handleLayoutChange',
             'handleBackClick',
             'handleCompareClick',
+            'handleFlipClick',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -230,6 +231,22 @@ class FlameGraph extends Component {
         window.location.href = url
     }
 
+    handleFlipClick() {
+        const { type, filename, start, end, compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
+        const { compare } = this.props
+
+        let url = `/${compare}/${compareType}/${compareFilename}`
+        if (compareStart && compareEnd) {
+            url += `/${compareStart}/${compareEnd}`
+        }
+        url += `/compare/${type}/${filename}`
+        if (start && end) {
+            url += `/${start}/${end}`
+        }
+        
+        this.props.history.push(url)
+    }
+
     render() {
         const searchButton = 
         <Button inverted color='red' size='small' onClick={this.handleSearchClick}>
@@ -257,6 +274,13 @@ class FlameGraph extends Component {
                             <Button content='Back' icon='left arrow' onClick={this.handleBackClick} />
                         </Grid.Column>
                         <Grid.Column width={12} textAlign='right'>
+                            { this.props.compare ?
+                                <Button inverted color='red' size='small' onClick={this.handleFlipClick}>
+                                    <Button.Content>
+                                        Flip
+                                    </Button.Content>
+                                </Button>
+                            : null }
                             <Dropdown selection style={styles.layoutDropdown} options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} compact />
                             <Button size='small' onClick={this.handleResetClick}>
                                 <Button.Content>
