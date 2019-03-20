@@ -24,7 +24,6 @@ import collections
 import math
 import json
 from flask import abort
-from json.decoder import JSONDecodeError
 
 from app.common.fileutil import get_file
 from app.trace_event.common import get_time_range
@@ -39,7 +38,7 @@ def trace_event_read_offsets(file_path, mtime):
     try:
         f = get_file(file_path)
         profile = json.load(f)
-    except JSONDecodeError:
+    except ValueError:
         abort(500, 'Failed to parse profile.')
     finally:
         f.close()

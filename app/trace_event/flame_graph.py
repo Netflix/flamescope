@@ -23,7 +23,6 @@
 import json
 import math
 from flask import abort
-from json.decoder import JSONDecodeError
 from app.common.fileutil import get_file
 from app.trace_event.common import get_time_range
 
@@ -32,7 +31,7 @@ def trace_event_generate_flame_graph(file_path, mtime, range_start, range_end):
     try:
         f = get_file(file_path)
         profile = json.load(f)
-    except JSONDecodeError:
+    except ValueError:
         abort(500, 'Failed to parse profile.')
     finally:
         f.close()
