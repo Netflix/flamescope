@@ -19,7 +19,7 @@
 
 
 # TODO: including parent in the nodes will remove the need for stack generation
-def _get_stacks(nflxprofile_nodes, root_node_id):
+def _get_regular_stacks(nflxprofile_nodes, root_node_id):
     stacks = {}
     queue = []
     queue.append((root_node_id, None))
@@ -40,6 +40,26 @@ def _get_stacks(nflxprofile_nodes, root_node_id):
     return stacks
 
 
+def _get_package_name_stacks(nflxprofile_nodes):
+    stacks = {}
+    for key in nflxprofile_nodes:
+        nflxprofile_node = nflxprofile_nodes[key]
+        function_name = nflxprofile_node.function_name.split(';')[0]
+        function_name_arr = function_name.split('/')
+        stack_arr = []
+        for package_name in function_name_arr:
+            stack_arr.append((package_name, nflxprofile_node.libtype))
+        stacks[key] = stack_arr
+
+    return stacks
+
+
+def _get_stacks(nflxprofile_nodes, root_node_id, package_name=False):
+    if package_name:
+        return _get_package_name_stacks(nflxprofile_nodes)
+    return _get_regular_stacks(nflxprofile_nodes, root_node_id)
+
+
 def _get_child(node, name, libtype):
     for child in node['children']:
         if child['name'] == name and child['libtype'] == libtype:
@@ -47,7 +67,7 @@ def _get_child(node, name, libtype):
     return None
 
 
-def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end):
+def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end, package_name=False):
     """Docstring for public method."""
     root = {
         'name': 'root',
@@ -72,7 +92,7 @@ def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end)
         ignore_id = ignore_ids[profile_index]
 
         current_time = start_time + time_deltas[0]
-        stacks = _get_stacks(nodes, root_id)
+        stacks = _get_stacks(nodes, root_id, package_name)
         for sample_index, sample in enumerate(samples):
             if sample_index == (len(samples) - 1):  # last sample
                 break

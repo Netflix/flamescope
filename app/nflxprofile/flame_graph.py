@@ -25,7 +25,7 @@ from app.common.flame_graph import generate_flame_graph
 from app import nflxprofile_pb2
 
 
-def nflxprofile_generate_flame_graph(file_path, range_start, range_end):
+def nflxprofile_generate_flame_graph(file_path, range_start, range_end, package_name=False):
     try:
         f = get_file(file_path)
         profile = nflxprofile_pb2.Profile()
@@ -41,4 +41,4 @@ def nflxprofile_generate_flame_graph(file_path, range_start, range_end):
     if range_end is not None:
         adjusted_range_end = (math.floor(start_time) + range_end)
 
-    return generate_flame_graph([profile], [0], [None], adjusted_range_start, adjusted_range_end)
+    return generate_flame_graph([profile], [0], [None], adjusted_range_start, adjusted_range_end, package_name)

@@ -26,7 +26,7 @@ from app.trace_event.flame_graph import trace_event_generate_flame_graph
 from app import config
 
 
-def generate_flame_graph(filename, file_type, range_start, range_end):
+def generate_flame_graph(filename, file_type, range_start, range_end, package_name=False):
     file_path = join(config.PROFILE_DIR, filename)
     mtime = getmtime(file_path)
     if file_type == 'perf':
@@ -36,6 +36,6 @@ def generate_flame_graph(filename, file_type, range_start, range_end):
     elif file_type == 'trace_event':
         return trace_event_generate_flame_graph(file_path, mtime, range_start, range_end)
     elif file_type == 'nflxprofile':
-        return nflxprofile_generate_flame_graph(file_path, range_start, range_end)
+        return nflxprofile_generate_flame_graph(file_path, range_start, range_end, package_name)
     else:
         raise InvalidFileError('Unknown file type.')

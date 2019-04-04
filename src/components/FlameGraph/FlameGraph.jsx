@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown, Grid } from 'semantic-ui-react'
+import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown, Grid, Checkbox } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
 import { select } from 'd3-selection'
@@ -40,6 +40,9 @@ const styles = {
     layoutDropdown: {
         marginRight: 3.25,
     },
+    packageNameToggle: {
+        marginRight: 5,
+    },
 }
 
 class FlameGraph extends Component {
@@ -56,6 +59,8 @@ class FlameGraph extends Component {
             'updateSearchQuery',
             'handleLayoutChange',
             'handleBackClick',
+            'fetchFlameGraph',
+            'handlePackageNameClick',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -71,15 +76,18 @@ class FlameGraph extends Component {
           loading: false,
           chart: null,
           searchTerm: '',
-          layout: preferredLayout()
+          layout: preferredLayout(),
+          packageName: false,
         };
     }
 
-    componentDidMount() {
+    fetchFlameGraph() {
         const { filename, type, start, end } = this.props.match.params
 
+        const { packageName } = this.state
+
         this.setState({loading: true})
-        fetch(`/flamegraph/?filename=${filename}&type=${type}&start=${start}&end=${end}`)
+        fetch(`/flamegraph/?filename=${filename}&type=${type}&start=${start}&end=${end}&packageName=${packageName ? 'true' : 'false'}`)
             .then(checkStatus)
             .then(res => {
                 return res.json()
@@ -107,6 +115,10 @@ class FlameGraph extends Component {
                         this.props.history.push(`/error/${error.code}?${queryString.stringify({message: error.message})}`)
                     })
             })
+    }
+
+    componentDidMount() {
+        this.fetchFlameGraph()
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -146,6 +158,12 @@ class FlameGraph extends Component {
             .call(chart)
 
         this.setState({chart: chart})
+    }
+
+    handlePackageNameClick() {
+        this.setState({packageName: !this.state.packageName}, () => {
+            this.fetchFlameGraph()
+        })
     }
 
     handleResetClick() {
@@ -194,6 +212,7 @@ class FlameGraph extends Component {
     }
 
     render() {
+        const { type } = this.props.match.params
         const searchButton = 
         <Button inverted color='red' size='small' onClick={this.handleSearchClick}>
             <Button.Content>Search</Button.Content>
@@ -220,6 +239,15 @@ class FlameGraph extends Component {
                             <Button content='Back' icon='left arrow' onClick={this.handleBackClick} />
                         </Grid.Column>
                         <Grid.Column width={12} textAlign='right'>
+                            { type == 'nflxprofile' || type == 'cpuprofile' ?
+                                <Checkbox
+                                    toggle
+                                    checked={this.state.packageName}
+                                    onClick={this.handlePackageNameClick}
+                                    label='Java Package Name'
+                                    style={styles.packageNameToggle}
+                                />
+                            : null }
                             <Dropdown selection style={styles.layoutDropdown} options={layoutOptions} onChange={this.handleLayoutChange} defaultValue={this.state.layout} compact />
                             <Button size='small' onClick={this.handleResetClick}>
                                 <Button.Content>

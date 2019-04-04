@@ -29,6 +29,8 @@ MOD_FLAME_GRAPH = Blueprint(
 def get_flame_graph():
     filename = request.args.get('filename')
     file_type = request.args.get('type')
+    package_name = request.args.get('packageName', False)
+    package_name = True if package_name and package_name == 'true' else False
     range_start = request.args.get('start', None)
     if range_start is None:
         abort(500, 'Missing range start parameter.')
@@ -37,5 +39,5 @@ def get_flame_graph():
     if range_end is None:
         abort(500, 'Missing range end parameter.')
     range_end = float(range_end)
-    flame_graph = generate_flame_graph(filename, file_type, range_start, range_end)
+    flame_graph = generate_flame_graph(filename, file_type, range_start, range_end, package_name)
     return jsonify(flame_graph)
