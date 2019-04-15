@@ -22,5 +22,5 @@ message Profile {
     map<uint32, Node> nodes = 5;
     optional string title = 6;
     optional string description = 7;
-
+    map<string, string> params = 8;
 }
