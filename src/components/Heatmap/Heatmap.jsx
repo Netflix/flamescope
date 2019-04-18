@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Dimmer, Loader, Divider, Button, Container, Modal, Dropdown, Label, Checkbox, Grid } from 'semantic-ui-react'
+import { Dimmer, Loader, Divider, Button, Container, Modal, Dropdown, Label, Checkbox, Grid, Icon } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { select } from 'd3-selection'
 import { scaleLinear } from 'd3-scale'
@@ -72,6 +72,7 @@ class Heatmap extends Component {
             'handleRowsChange',
             'fetchData',
             'handleBackClick',
+            'handleFullProfileClick',
         ].forEach((k) => {
           this[k] = this[k].bind(this);
         });
@@ -117,8 +118,9 @@ class Heatmap extends Component {
     }
 
     drawHeatmap() {
+        const self = this
         const { data , enhanceColors} = this.state;
-        const { filename, type } = this.props.match.params
+        const { filename, type, compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
 
         const heatmapNode = document.getElementById('heatmap')
         while (heatmapNode.firstChild) {
@@ -199,15 +201,26 @@ class Heatmap extends Component {
               chart.setHighlight([{"start": selectStart, "end": selectStart}])
               chart.updateHighlight()
             } else if (!selectEnd) {
-              if (isBefore(selectStart, cell)) {
-                selectEnd = cell
-              } else {
-                selectEnd = selectStart
-                selectStart = cell
-              }
-              chart.setHighlight([{"start": selectStart, "end": selectEnd}])
-              chart.updateHighlight()
-              window.location.href = `/#/heatmap/${type}/${filename}/flamegraph/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}/`;
+                if (isBefore(selectStart, cell)) {
+                    selectEnd = cell
+                } else {
+                    selectEnd = selectStart
+                    selectStart = cell
+                }
+                chart.setHighlight([{"start": selectStart, "end": selectEnd}])
+                chart.updateHighlight()
+
+                let url = `/flamegraph/${type}/${filename}/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}`
+
+                if (compareType && compareFilename) {
+                    url = `/differential/${compareType}/${compareFilename}`
+                    if (compareStart && compareEnd) {
+                        url += `/${compareStart}/${compareEnd}`
+                    }
+                    url += `/compare/${type}/${filename}/${heatmap2time(selectStart)}/${heatmap2time(selectEnd, true)}`
+                }
+
+                self.props.history.push(url)
             } else {
               selectStart = cell
               selectEnd = null
@@ -307,6 +320,22 @@ class Heatmap extends Component {
         this.props.history.goBack();
     }
 
+    handleFullProfileClick() {
+        const { filename, type, compareType, compareFilename, compareStart, compareEnd } = this.props.match.params
+
+        let url = `/flamegraph/${type}/${filename}`
+
+        if (compareType && compareFilename) {
+            url = `/differential/${compareType}/${compareFilename}`
+            if (compareStart && compareEnd) {
+                url += `/${compareStart}/${compareEnd}`
+            }
+            url += `/compare/${type}/${filename}`
+        }
+
+        this.props.history.push(url)
+    }
+
     render() {
         return (
             <div>
@@ -372,7 +401,6 @@ class Heatmap extends Component {
                         key={`heatmap`}
                         className={`heatmap`}
                     />
-
                     <div
                         ref={`legend`}
                         id={`legend`}
@@ -380,12 +408,22 @@ class Heatmap extends Component {
                         className={`legend`}
                     />
                     <Divider />
-                    <div
-                        ref={`details`}
-                        id={`details`}
-                        key={`details`}
-                        style={styles.details}
-                    />
+                    <Grid>
+                        <Grid.Column width={12}>
+                            <div
+                                ref={`details`}
+                                id={`details`}
+                                key={`details`}
+                                style={styles.details}
+                            />
+                        </Grid.Column>
+                        <Grid.Column width={4} textAlign='right'>
+                            <Button icon labelPosition='right' onClick={this.handleFullProfileClick}>
+                                Whole Profile
+                                <Icon name='right arrow' />
+                            </Button>
+                        </Grid.Column>
+                    </Grid>
                 </Container>
             </div>
         )

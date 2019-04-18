@@ -34,6 +34,8 @@ import os
 from app.views.flame_graph import MOD_FLAME_GRAPH
 from app.views.heatmap import MOD_HEATMAP
 from app.views.profile_list import MOD_PROFILE_LIST
+from app.views.differential import MOD_DIFFERENTIAL_FLAME_GRAPH
+from app.views.elided import MOD_ELIDED_FLAME_GRAPH
 
 from flask import Flask, jsonify
 
@@ -73,3 +75,5 @@ def internal_error(err):
 APP.register_blueprint(MOD_FLAME_GRAPH)
 APP.register_blueprint(MOD_HEATMAP)
 APP.register_blueprint(MOD_PROFILE_LIST)
+APP.register_blueprint(MOD_DIFFERENTIAL_FLAME_GRAPH)
+APP.register_blueprint(MOD_ELIDED_FLAME_GRAPH)

@@ -99,7 +99,7 @@ def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end,
             delta = time_deltas[sample_index + 1]
             current_time += delta
             if not ignore_id or sample not in ignore_id:
-                if range_start <= current_time < range_end:
+                if (range_start is None or range_end is None) or (range_start <= current_time < range_end):
                     stack = stacks[sample]
                     current_node = root
                     for frame in stack:
@@ -115,3 +115,71 @@ def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end,
                         current_node = child
                     current_node['value'] = current_node['value'] + 1
     return root
+
+
+def _apply_weight(node, weight):
+    queue = []
+    queue.append(node)
+    while queue:
+        current_node = queue.pop(0)
+        current_node['value'] = int(round(current_node['value'] * weight))
+        for child in current_node['children']:
+            queue.append(child)
+
+
+def _get_full_value(flame_graph):
+    full_value = 0
+    queue = []
+    queue.append(flame_graph)
+    while queue:
+        node = queue.pop(0)
+        full_value += node['value']
+        for child in node['children']:
+            queue.append(child)
+    return full_value
+
+
+def get_differential_flame_graph(flame_graph_1, flame_graph_2):
+    """Docstring for public method."""
+    full_value_1 = _get_full_value(flame_graph_1)
+    full_value_2 = _get_full_value(flame_graph_2)
+
+    weight = full_value_1 / full_value_2
+
+    queue = []
+    queue.append((flame_graph_1, flame_graph_2))
+    while queue:
+        (node_1, node_2) = queue.pop(0)
+        if node_2 is not None:
+            node_1['delta'] = int(round(node_1['value'] - (node_2['value'] * weight)))
+            for child_1 in node_1['children']:
+                child_2 = _get_child(node_2, child_1['name'], child_1['libtype'])
+                queue.append((child_1, child_2))
+        else:
+            node_1['delta'] = -node_1['value']
+
+    return flame_graph_1
+
+
+def get_elided_flame_graph(flame_graph_1, flame_graph_2):
+    """Docstring for public method."""
+    full_value_1 = _get_full_value(flame_graph_1)
+    full_value_2 = _get_full_value(flame_graph_2)
+
+    weight = full_value_1 / full_value_2
+
+    queue = []
+    queue.append((flame_graph_1, flame_graph_2))
+    while queue:
+        (node_1, node_2) = queue.pop(0)
+        if node_1 is None:
+            # it's an elided frame
+            _apply_weight(node_2, weight)
+        else:
+            # it's not an elided frame
+            node_2['value'] = 0
+            for child_2 in node_2['children']:
+                child_1 = _get_child(node_1, child_2['name'], child_2['libtype'])
+                queue.append((child_1, child_2))
+
+    return flame_graph_2

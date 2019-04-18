@@ -1,6 +1,6 @@
 /**
  *
- *  Copyright 2018 Netflix, Inc.
+ *  Copyright 2019 Netflix, Inc.
  *
  *     Licensed under the Apache License, Version 2.0 (the "License");
  *     you may not use this file except in compliance with the License.
@@ -16,10 +16,22 @@
  *
  */
 
-export { default as FlameGraph } from './FlameGraph'
-export { default as DifferentialFlameGraph } from './DifferentialFlameGraph'
-export { default as ElidedFlameGraph } from './ElidedFlameGraph'
-export { default as Heatmap } from './Heatmap'
-export { default as Navbar } from './Navbar'
-export { default as FileList } from './FileList'
-export { default as Error } from './Error'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import FlameGraph from '../FlameGraph'
+
+class ElidedFlameGraph extends Component {
+    render() {
+        return (
+            <FlameGraph compare='elided' match={this.props.match} location={this.props.location} history={this.props.history} />
+        )
+    }
+}
+
+ElidedFlameGraph.propTypes = {
+    history: PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+}
+
+export default ElidedFlameGraph
