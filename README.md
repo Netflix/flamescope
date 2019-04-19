@@ -26,6 +26,8 @@ $ pip install -r requirements.txt
 $ python run.py
 ```
 
+(Note python3 is assumed, python2 _may_ work)
+
 Then browse to http://127.0.0.1:5000/, and you can begin exploring profiles from the `examples` directory. You can add new profiles to that directory, collected using Linux `perf`. Here are instructions for a generic CPU profile at 49 Hertz for 120 seconds:
 
 ```bash
