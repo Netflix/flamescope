@@ -156,7 +156,7 @@ def get_differential_flame_graph(flame_graph_1, flame_graph_2):
                 child_2 = _get_child(node_2, child_1['n'], child_1['l'])
                 queue.append((child_1, child_2))
         else:
-            node_1['d'] = -node_1['v']
+            node_1['d'] = node_1['v']
 
     return flame_graph_1
 
