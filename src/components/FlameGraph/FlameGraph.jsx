@@ -60,7 +60,6 @@ class FlameGraph extends Component {
             'updateSearchQuery',
             'handleLayoutChange',
             'handleBackClick',
-            'fetchFlameGraph',
             'handlePackageNameClick',
             'handleCompareClick',
             'handleFlipClick',
@@ -185,7 +184,7 @@ class FlameGraph extends Component {
 
     handlePackageNameClick() {
         this.setState({packageName: !this.state.packageName}, () => {
-            this.fetchFlameGraph()
+            this.executeQuery()
         })
     }
 
