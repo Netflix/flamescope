@@ -17,6 +17,7 @@ message Profile {
         optional uint32 pid = 6;
         optional uint32 tid = 7;
         optional uint32 cpu = 8;
+        optional uint32 value = 9;
     }
 
     map<uint32, Node> nodes = 5;
