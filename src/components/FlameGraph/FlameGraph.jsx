@@ -168,7 +168,6 @@ class FlameGraph extends Component {
             .sort(true)
             .title('')
             .differential(compare === 'differential' ? true : false)
-            .minFrameSize(5)
             .inverted(this.state.layout === layout.icicle)
             .selfValue(true)
 

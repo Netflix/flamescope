@@ -101,6 +101,10 @@ def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end,
             if not ignore_id or sample not in ignore_id:
                 if (range_start is None or range_end is None) or (range_start <= current_time < range_end):
                     stack = stacks[sample]
+                    value = 1
+                    node = nodes[sample]
+                    if node.value:
+                        value = node.value
                     current_node = root
                     for frame in stack:
                         child = _get_child(current_node, frame[0], frame[1])
@@ -113,7 +117,7 @@ def generate_flame_graph(profiles, root_ids, ignore_ids, range_start, range_end,
                             }
                             current_node['c'].append(child)
                         current_node = child
-                    current_node['v'] = current_node['v'] + 1
+                    current_node['v'] = current_node['v'] + value
     return root
 
 
