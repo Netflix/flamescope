@@ -170,6 +170,7 @@ class FlameGraph extends Component {
             .differential(compare === 'differential' ? true : false)
             .inverted(this.state.layout === layout.icicle)
             .selfValue(true)
+            .minFrameSize(1)
 
         var details = document.getElementById("details")
         chart.details(details)
