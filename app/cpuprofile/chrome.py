@@ -22,6 +22,9 @@ def get_cpuprofiles(chrome_profile):
     profile_events = []
     open_chunked_profile = None
 
+    if "nodes" in chrome_profile:
+        return [chrome_profile]
+
     for row in chrome_profile:
         if row['ph'] == 'I' and row['name'] == 'CpuProfile':
             # older chrome profiles
