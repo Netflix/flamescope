@@ -2,6 +2,11 @@ syntax = "proto2";
 
 package nflxprofile;
 
+message StackFrame {
+    required string function_name = 1;
+    optional string libtype = 2;
+}
+
 message Profile {
     required double start_time = 1;
     required double end_time = 2;
@@ -15,13 +20,18 @@ message Profile {
         optional string libtype = 4;
         optional uint32 parent = 5;
         optional uint32 pid = 6;
-        optional uint32 tid = 7;
+        optional string tid = 7;
         optional uint32 cpu = 8;
         optional uint64 value = 9;
+        repeated StackFrame stack = 10;
     }
 
     map<uint32, Node> nodes = 5;
     optional string title = 6;
     optional string description = 7;
     map<string, string> params = 8;
+    repeated uint32 samples_cpu = 9 [packed=true];
+    repeated uint32 samples_pid = 10 [packed=true];
+    repeated uint32 samples_tid = 11 [packed=true];
+    repeated uint64 samples_value = 12 [packed=true];
 }
