@@ -20,7 +20,7 @@ message Profile {
         optional string libtype = 4;
         optional uint32 parent = 5;
         optional uint32 pid = 6;
-        optional string tid = 7;
+        optional uint32 tid = 7;
         optional uint32 cpu = 8;
         optional uint64 value = 9;
         repeated StackFrame stack = 10;
