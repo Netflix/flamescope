@@ -22,7 +22,7 @@ from flask import abort
 
 from app.common.fileutil import get_file
 from app.common.flame_graph import generate_flame_graph
-from app import nflxprofile_pb2
+from nflxprofile import nflxprofile_pb2
 
 
 def nflxprofile_generate_flame_graph(file_path, range_start, range_end, package_name=False):

@@ -20,7 +20,7 @@
 import collections
 from flask import abort
 
-from app import nflxprofile_pb2
+from nflxprofile import nflxprofile_pb2
 from app.common.fileutil import get_file
 
 
