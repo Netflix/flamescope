@@ -22,7 +22,7 @@ import math
 from app.common.fileutil import get_file
 from app.common.flame_graph import generate_flame_graph
 from app.cpuprofile.chrome import get_cpuprofiles
-from app import nflxprofile_pb2
+from nflxprofile import nflxprofile_pb2
 
 
 def parse_nodes(nodes):

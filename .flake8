@@ -3,5 +3,4 @@ ignore = E501
 # TODO E501 Line too long (82 > 79 characters)
 
 # TODO get complexity down to ~10
-exclude = app/nflxprofile_pb2.py
 max-complexity = 32
