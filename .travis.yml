@@ -2,7 +2,7 @@ matrix:
   include:
     - language: node_js
       node_js:
-        - "8.9.4"
+        - "lts/*"
       install:
         - npm install --global yarn
       before_script:
