@@ -21,11 +21,19 @@ import math
 from flask import abort
 
 from app.common.fileutil import get_file
-from app.common.flame_graph import generate_flame_graph
 from nflxprofile import nflxprofile_pb2
+from nflxprofile.flamegraph import get_flame_graph, NodeJsStackProcessor, StackProcessor
+from nflxprofile.flamegraph import NodeJsPackageStackProcessor
 
 
-def nflxprofile_generate_flame_graph(file_path, range_start, range_end, package_name=False):
+FLAVORS = {
+    'standard': StackProcessor,
+    'nodejs': NodeJsStackProcessor,
+    'nodejs-packages': NodeJsPackageStackProcessor
+}
+
+
+def nflxprofile_generate_flame_graph(file_path, range_start, range_end, package_name=False, flavor='standard'):
     try:
         f = get_file(file_path)
         profile = nflxprofile_pb2.Profile()
@@ -35,13 +43,15 @@ def nflxprofile_generate_flame_graph(file_path, range_start, range_end, package_
     finally:
         f.close()
 
+    stack_processor = FLAVORS.get(flavor, StackProcessor)
+
     start_time = profile.start_time
     if range_start is not None:
         range_start = (math.floor(start_time) + range_start)
     if range_end is not None:
         range_end = (math.floor(start_time) + range_end)
 
-    return generate_flame_graph([profile], [0], [None], range_start, range_end)
+    return get_flame_graph(profile, {}, range_start=range_start, range_end=range_end, package_name=package_name, stack_processor=stack_processor)
 
 
 def nflxprofile_generate_differential_flame_graph(file_path, range_start, range_end):
@@ -60,4 +70,4 @@ def nflxprofile_generate_differential_flame_graph(file_path, range_start, range_
     if range_end is not None:
         range_end = (math.floor(start_time) + range_end)
 
-    return generate_flame_graph([profile], [0], [None], range_start, range_end)
+    return get_flame_graph(profile, {}, range_start=range_start, range_end=range_end)

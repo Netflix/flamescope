@@ -29,13 +29,12 @@ MOD_FLAME_GRAPH = Blueprint(
 def get_flame_graph():
     filename = request.args.get('filename')
     file_type = request.args.get('type')
-    package_name = request.args.get('packageName', False)
-    package_name = True if package_name and package_name == 'true' else False
+    flavor = request.args.get('flavor', 'standard')
     range_start = request.args.get('start', None)
     if range_start is not None:
         range_start = float(range_start)
     range_end = request.args.get('end', None)
     if range_end is not None:
         range_end = float(range_end)
-    flame_graph = generate_flame_graph(filename, file_type, range_start, range_end, package_name)
+    flame_graph = generate_flame_graph(filename, file_type, range_start, range_end, flavor)
     return jsonify(flame_graph)

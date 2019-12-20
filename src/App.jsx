@@ -25,7 +25,7 @@ import '../semantic/semantic.less'
 
 const App = () => (
   <div>
-    <Navbar />    
+    <Navbar />
     <Container>
       <Switch>
         <Route exact path="/" component={FileList}/>
