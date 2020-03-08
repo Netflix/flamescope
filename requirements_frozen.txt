@@ -1,0 +1,14 @@
+appdirs==1.4.3
+cachetools==3.0.0
+click==6.7
+Flask==1.0
+itsdangerous==0.24
+Jinja2==2.10
+MarkupSafe==1.0
+nflxprofile==1.0.0
+packaging==16.8
+protobuf==3.6.1
+pyparsing==2.2.0
+python-magic==0.4.15
+six==1.12.0
+Werkzeug==0.15.3
