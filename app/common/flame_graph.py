@@ -27,13 +27,18 @@ def _get_regular_stacks(nflxprofile_nodes, root_node_id):
     while queue:
         (nflxprofile_node_id, parent_node_id) = queue.pop(0)
         nflxprofile_node = nflxprofile_nodes[nflxprofile_node_id]
-        if not parent_node_id:
-            stacks[nflxprofile_node_id] = [
-                (nflxprofile_node.function_name, nflxprofile_node.libtype)
-            ]
+
+        if parent_node_id:
+            stacks[nflxprofile_node_id] = stacks[parent_node_id]
         else:
-            stacks[nflxprofile_node_id] = stacks[parent_node_id] + \
-                [(nflxprofile_node.function_name, nflxprofile_node.libtype)]
+            stacks[nflxprofile_node_id] = []
+
+        if nflxprofile_node.stack:
+            for frame in nflxprofile_node.stack:
+                stacks[nflxprofile_node_id].append((frame.function_name, frame.libtype))
+        else:
+            stacks[nflxprofile_node_id].append((nflxprofile_node.function_name, nflxprofile_node.libtype))
+
         for child_id in nflxprofile_node.children:
             queue.append((child_id, nflxprofile_node_id))
 
