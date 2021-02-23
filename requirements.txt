@@ -3,7 +3,7 @@ click==6.7
 Flask==1.0
 itsdangerous==0.24
 Jinja2==2.10
-MarkupSafe==1.0
+MarkupSafe==1.1.1
 protobuf==3.6.1
 python-magic==0.4.15
 six==1.12.0
