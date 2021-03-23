@@ -99,20 +99,20 @@ def _add_stack(root, stack, comm):
             libtype = library2type(pair[1]) if n == 0 else "inlined"
             n += 1
             found = 0
-            for child in last['c']:
-                if child['n'] == name and child['l'] == libtype:
+            for child in last['children']:
+                if child['name'] == name and child['libtype'] == libtype:
                     last = child
                     found = 1
                     break
             if (found):
-                last['v'] += val
+                last['value'] += val
             else:
                 newframe = {}
-                newframe['c'] = []
-                newframe['n'] = name
-                newframe['l'] = libtype
-                newframe['v'] = val
-                last['c'].append(newframe)
+                newframe['children'] = []
+                newframe['name'] = name
+                newframe['libtype'] = libtype
+                newframe['value'] = val
+                last['children'].append(newframe)
                 last = newframe
     return root
 
@@ -139,10 +139,10 @@ def perf_generate_flame_graph(file_path, range_start=None, range_end=None):
         return abort(416)
 
     root = {}
-    root['c'] = []
-    root['n'] = "root"
-    root['l'] = ""
-    root['v'] = 0
+    root['children'] = []
+    root['name'] = "root"
+    root['libtype'] = ""
+    root['value'] = 0
 
     stack = []
     ts = -1
