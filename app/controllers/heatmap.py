@@ -46,7 +46,7 @@ def _read_offsets(file_path, file_type):
     if file_type == 'perf':
         offsets = perf_read_offsets(file_path)
     elif file_type == 'cpuprofile':
-        offsets =  cpuprofile_read_offsets(file_path)
+        offsets = cpuprofile_read_offsets(file_path)
     elif file_type == 'trace_event':
         offsets = trace_event_read_offsets(file_path, mtime)
     elif file_type == 'nflxprofile':
@@ -54,11 +54,10 @@ def _read_offsets(file_path, file_type):
     else:
         raise InvalidFileError('Unknown file type.')
     if offsets is None:
-	    raise RuntimeError('Offsets parse error.')
+        raise RuntimeError('Offsets parse error.')
     offsets_cache[file_path] = offsets
     offsets_mtimes[file_path] = mtime
     return offsets
-
 
 
 # return a heatmap from the cached offsets
