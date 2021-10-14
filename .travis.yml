@@ -3,10 +3,8 @@ matrix:
     - language: node_js
       node_js:
         - "lts/*"
-      install:
-        - npm install --global yarn
       before_script:
-        - yarn install
+        - npm install
       script:
         - npm run webpack
     - language: python

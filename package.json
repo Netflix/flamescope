@@ -26,8 +26,7 @@
     "react-router-dom": "^5.3.0",
     "redux": "^4.1.1",
     "semantic-ui-less": "^2.4.1",
-    "semantic-ui-react": "^2.0.4",
-    "yarn": "^1.22.15"
+    "semantic-ui-react": "^2.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",

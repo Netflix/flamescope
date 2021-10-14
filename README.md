@@ -65,12 +65,11 @@ JSONIFY_PRETTYPRINT_REGULAR = False # pretty print api json responses
 In order to build the client application from source, the following command line tools must be installed:
 
 - [Node.js/Npm](https://nodejs.org/en/download/)
-- [Yarn](https://yarnpkg.com/lang/en/docs/install/)
 
 Once those tools are available, you will be able to install the project dependencies and generate a build.
 
 ```bash
-$ yarn install
+$ npm install
 $ npm run webpack
 ```
 

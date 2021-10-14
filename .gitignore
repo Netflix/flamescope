@@ -1,5 +1,4 @@
 node_modules/*
-yarn-error.log
 .vscode/settings.json
 .vscode/launch.json
 *.pyc
