@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const config = {
   entry: path.resolve(__dirname, 'src/index'),
@@ -19,7 +20,7 @@ const config = {
   module: {
     rules: [{
         test: /\.jsx$/,
-        loaders: ['babel-loader'],
+        use: ['babel-loader'],
         exclude: /node_modules/,
       },
       {
@@ -27,14 +28,19 @@ const config = {
         use: [{
           loader: "style-loader"
         }, {
-            loader: "css-loader"
+          loader: "css-loader"
         }, {
-            loader: "less-loader"
+          loader: "less-loader",
+          options: {
+            lessOptions: {
+              math: "always"
+            }
+          }
         }],
       },
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader",
+        use: ["style-loader", "css-loader"],
       },
       {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
@@ -50,29 +56,19 @@ const config = {
         options: {
           name: 'fonts/[name].[ext]',
         }
-      },
-      {
-        test: /\.jsx$/,
-        enforce: "pre",
-        loader: "eslint-loader",
-        exclude: /node_modules/,
       }
     ]
   },
   plugins: [
     new webpack.EnvironmentPlugin(['NODE_ENV']),
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        eslint: {
-          configFile: '.eslintrc.js'
-        }
-      }
-    }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/assets/templates/index.template.ejs'),
       inject: 'body',
       filename: 'index.html'
-    })
+    }),
+    new ESLintPlugin({
+      extensions: 'jsx',
+    }),
   ],
   performance: {
     hints: false,
