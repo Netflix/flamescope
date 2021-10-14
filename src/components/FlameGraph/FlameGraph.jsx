@@ -21,7 +21,7 @@ import PropTypes from 'prop-types'
 import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown, Grid, Icon, Modal, Form } from 'semantic-ui-react'
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
-import { nodeJsColorMapper } from 'd3-flame-graph/dist/d3-flamegraph-colorMapper'
+import { nodeJsColorMapper, differentialColorMapper } from 'd3-flame-graph/dist/d3-flamegraph-colorMapper'
 import { select } from 'd3-selection'
 import { default as d3Tip } from 'd3-tip'
 import { format } from 'd3-format'
@@ -153,6 +153,7 @@ class FlameGraph extends Component {
                 }
             })
             .catch((error) => {
+                console.log(error)
                 error.response.json()
                     .then( json => {
                         this.props.history.push(`/error/${error.code}?${queryString.stringify({message: json.error})}`)
@@ -229,10 +230,13 @@ class FlameGraph extends Component {
             .tooltip(tipHandler)
             .label(labelHandler)
             .setColorMapper(this.getColorMapperFunction())
-            .differential(compare === 'differential' ? true : false)
             .minFrameSize(5)
             .inverted(this.state.layout === layout.icicle)
             .selfValue(true)
+        
+        if (compare === 'differential') {
+            chart.setColorMapper(differentialColorMapper)
+        }
 
         var details = document.getElementById("details")
         chart.details(details)
