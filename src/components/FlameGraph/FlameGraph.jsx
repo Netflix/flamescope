@@ -22,8 +22,8 @@ import { Dimmer, Loader, Divider, Container, Button, Input, Dropdown, Grid, Icon
 import { connect } from 'react-redux'
 import { flamegraph } from 'd3-flame-graph'
 import { nodeJsColorMapper, differentialColorMapper } from 'd3-flame-graph/dist/d3-flamegraph-colorMapper'
+import { defaultFlamegraphTooltip } from 'd3-flame-graph/dist/d3-flamegraph-tooltip'
 import { select } from 'd3-selection'
-import { default as d3Tip } from 'd3-tip'
 import { format } from 'd3-format'
 import 'd3-flame-graph/dist/d3-flamegraph.css'
 import './flamegraph.less'
@@ -175,7 +175,7 @@ class FlameGraph extends Component {
     getNameWithFile = (d) => {
       if (d.data.extras && d.data.extras.file)
         return `${d.data.name} in ${d.data.extras.file}`
-      return d.data.name || d.data.extras.realName
+      return d.data.n || d.data.n
     }
 
     tooltip = (d) => {
@@ -207,12 +207,6 @@ class FlameGraph extends Component {
           return l
         })
 
-        const tipHandler = d3Tip()
-            .direction('s')
-            .offset([8, 0])
-            .attr('class', 'd3-flame-graph-tip')
-            .html(this.tooltip)
-
         const cellHeight = 16
 
         select('#flamegraph').selectAll('svg').remove()
@@ -227,12 +221,15 @@ class FlameGraph extends Component {
               return -1
             })
             .title('')
-            .tooltip(tipHandler)
             .label(labelHandler)
             .setColorMapper(this.getColorMapperFunction())
             .minFrameSize(5)
             .inverted(this.state.layout === layout.icicle)
             .selfValue(true)
+
+        const tip = defaultFlamegraphTooltip()
+            .html(this.tooltip)
+        chart.tooltip(tip)
         
         if (compare === 'differential') {
             chart.setColorMapper(differentialColorMapper)
