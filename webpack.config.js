@@ -44,18 +44,17 @@ const config = {
       },
       {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-        loader: require.resolve('url-loader'),
-        options: {
-          limit: 10000,
-          name: 'images/[name].[ext]',
+        generator: {
+          filename: 'images/[hash][ext][query]'
         },
+        type: 'asset/inline'
       },
       {
-        test: [/\.eot$/, /\.ttf$/, /\.svg$/, /\.woff$/, /\.woff2$/],
-        loader: require.resolve('file-loader'),
-        options: {
-          name: 'fonts/[name].[ext]',
-        }
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        generator: {
+          filename: 'fonts/[hash][ext][query]'
+        },
+        type: 'asset/resource'
       }
     ]
   },

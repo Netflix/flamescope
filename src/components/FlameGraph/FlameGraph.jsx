@@ -427,7 +427,10 @@ class FlameGraph extends Component {
                 <Container style={styles.container}>
                     <Grid>
                         <Grid.Column width={4}>
-                            <Button content='Back' icon='left arrow' onClick={this.handleBackClick} />
+                            <Button icon onClick={this.handleBackClick}>
+                                <Icon name='left arrow' />
+                                Back
+                            </Button>
                         </Grid.Column>
                         <Grid.Column width={12} textAlign='right'>
                             <Button size='small' onClick={this.handleSettingsOpen}>
