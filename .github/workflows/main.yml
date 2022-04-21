@@ -1,0 +1,54 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+    
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+        python-version: ["3.9"]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: Install Node.js dependencies
+      run: npm install
+    - name: Build with webpack
+      run: npm run webpack
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f test-requirements.txt ]; then pip install -r test-requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        flake8 app
+    - name: Test with pytest
+      run: |
+        pytest
+    - name: Create tarball
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        tar -zcvf dist.tar.gz ./app ./requirements.txt ./run.py
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: dist.tar.gz
