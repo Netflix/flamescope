@@ -23,6 +23,8 @@ The quickest way to get started is to run the pre-built client bundle:
 $ git clone https://github.com/Netflix/flamescope
 $ cd flamescope
 $ pip install -r requirements.txt
+$ npm install 
+$ npm run webpack
 $ python run.py
 ```
 
