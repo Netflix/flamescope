@@ -7,5 +7,5 @@ MarkupSafe==2.0.1
 protobuf==3.18.1
 python-magic==0.4.24
 six==1.16.0
-Werkzeug==2.0.2
+Werkzeug==2.2.3
 nflxprofile==1.6.4
