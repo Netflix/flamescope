@@ -44,15 +44,19 @@ def _get_file_mime(file_path):
 
 def _is_perf_file(file_path):
     f = get_file(file_path)
-    for line in f:
-        if (line[0] == '#'):
-            continue
-        r = event_regexp.search(line)
-        if r:
-            f.close()
-            return True
-        f.close()
+    try:
+        for line in f:
+            if line and line[0] == '#':
+                continue
+            r = event_regexp.search(line)
+            if r:
+                return True
+            return False
+    except Exception:
         return False
+    finally:
+        f.close()
+    return False
 
 
 def get_file(file_path):
