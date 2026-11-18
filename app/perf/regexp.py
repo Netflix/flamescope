@@ -80,3 +80,9 @@ comm_regexp = re.compile(r"^ *([^0-9]+)")
 idle_process = re.compile("swapper")
 idle_stack = re.compile("(cpuidle|cpu_idle|cpu_bringup_and_idle|native_safe_halt|xen_hypercall_sched_op|xen_hypercall_vcpu_op)")
 idle_regexp = re.compile("%s.*%s" % (idle_process.pattern, idle_stack.pattern))
+softirq_dispatch = re.compile(r"\b(?:__do_softirq|__softirqentry_text_start|handle_softirqs)\b")
+
+
+def is_idle_stack(stack):
+    # A softirq can interrupt the idle task and leave its idle frames on the stack.
+    return idle_regexp.search(stack) is not None and softirq_dispatch.search(stack) is None
