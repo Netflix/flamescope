@@ -18,7 +18,7 @@
 #    limitations under the License.
 
 import collections
-from .regexp import event_regexp, idle_regexp
+from .regexp import event_regexp, is_idle_stack
 from app.common.fileutil import get_file
 
 
@@ -35,7 +35,7 @@ def perf_read_offsets(file_path):
 
     # process perf script output and search for two things:
     # - event_regexp: to identify event timestamps
-    # - idle_regexp: for filtering idle stacks
+    # - is_idle_stack: for filtering idle stacks
     # this populates start, end, and offsets
     for line in f:
         if (line[0] == '#'):
@@ -44,7 +44,7 @@ def perf_read_offsets(file_path):
         if (r):
             if (stack != ""):
                 # process prior stack
-                if (not idle_regexp.search(stack)):
+                if not is_idle_stack(stack):
                     offsets.append(ts)
                 # don't try to cache stacks (could be many Gbytes):
                 stack = ""
@@ -55,7 +55,7 @@ def perf_read_offsets(file_path):
         else:
             stack += line.rstrip()
     # last stack
-    if (not idle_regexp.search(stack)):
+    if not is_idle_stack(stack):
         offsets.append(ts)
     if (ts > end):
         end = ts

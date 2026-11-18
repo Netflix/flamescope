@@ -21,7 +21,7 @@ import collections
 from flask import abort
 from os.path import getmtime
 from math import ceil, floor
-from app.perf.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
+from app.perf.regexp import event_regexp, is_idle_stack, comm_regexp, frame_regexp
 from app.common.fileutil import get_file
 from app.common.libtype import library2type
 
@@ -78,6 +78,9 @@ def _get_profile_range(file_path):
 
 # add a stack to the root tree
 def _add_stack(root, stack, comm):
+    if is_idle_stack(";".join(pair[0] for pair in stack)):
+        return root
+
     last = root
     for i, pair in enumerate(stack):
         # Split inlined frames. "->" is used by software such as java
@@ -164,9 +167,6 @@ def perf_generate_flame_graph(file_path, range_start=None, range_end=None):
 
     f = get_file(file_path)
 
-    # process perf script output and search for two things:
-    # - event_regexp: to identify event timestamps
-    # - idle_regexp: for filtering idle stacks
     linenum = -1
     for line in f:
         linenum += 1
@@ -184,17 +184,9 @@ def perf_generate_flame_graph(file_path, range_start=None, range_end=None):
         if (line[0] != '\t'):
             r = event_regexp.search(line)
         if (r):
-            if (stack):
-                # process prior stack
-                stackstr = ""
-                for pair in stack:
-                    stackstr += pair[0] + ";"
-                if (idle_regexp.search(stackstr)):
-                    # skip idle
-                    stack = []
-                elif (ts >= start and ts <= end):
-                    root = _add_stack(root, stack, comm)
-                stack = []
+            if stack and start <= ts <= end:
+                root = _add_stack(root, stack, comm)
+            stack = []
             ts = float(r.group(1))
             if (ts > end + overscan):
                 break
